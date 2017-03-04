@@ -8,5 +8,11 @@
     ],
     "files.associations": {
         "*.vue": "vue"
-    }
+    },
+  // The number of spaces a tab is equal to.
+  "editor.tabSize": 2,
+  // Insert spaces when pressing Tab.
+  "editor.insertSpaces": true,
+  // When opening a file, `editor.tabSize` and `editor.insertSpaces` will be not be automatitcally setting
+  "editor.detectIndentation": false
 }

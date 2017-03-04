@@ -73,49 +73,21 @@
             },
             debug: true,
             searchPath: 'knex,public',
-            pool: {
-              min: 0,
-              max: 10,
-              afterCreate(conn, cb) {
-                // Only way to test if connection worked is by using afterCreate hook
-                // https://github.com/tgriesser/knex/issues/1364
-                // Execute a bullshit query to test if connection works.
-                conn.query('SET timezone="UTC";', (err) => {
-                  if (err) {
-                    debugger; // eslint-disable-line
-                    cb(err, conn);
-                  } else {
-                    // set trigram search match similarity limit
-                    debugger; // eslint-disable-line
-                    conn.query('SELECT set_limit(0.01);', (err) => {
-                      cb(err, conn);
-                    });
-                  }
-                });
-              },
-            },
           });
         } catch (error) {
           this.message = error.message;
           return;
         }
 
-        debugger; // eslint-disable-line
 
         // Above constructor provides no feedback on whether credentials are ok so run
-        // query now to get list of tables
+        // query now to get list of tables which will trigger connection error if failed
 
         // PostgreSQL
         // SELECT table_name
         //  FROM information_schema.tables
         //  WHERE table_schema='public'
         //    AND table_type='BASE TABLE';
-
-        process.on('unhandledRejection', (reason) => {
-          debugger;   // eslint-disable-line
-          console.error(reason);// eslint-disable-line
-          process.exit(1);
-        });
 
 
         this.connection('information_schema.tables')
