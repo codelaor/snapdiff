@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import store from 'renderer/vuex/store';
+  import store from './store';
   export default {
     store,
   };
@@ -30,9 +30,5 @@
     font-family: Lato, Helvetica, sans-serif;
     justify-content: center;
     text-align: center;
-  }
-
-  form {
-    text-align: left;
   }
 </style>

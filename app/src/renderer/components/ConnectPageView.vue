@@ -3,31 +3,31 @@
     <h1>Connect</h1>
     <h2>Client</h2>
     <form action="">
-      <input type="radio" v-model="client" name="gender" value="pg"> PostgreSQL<br>
-      <input type="radio" v-model="client" name="gender" value="sqlite3"> SQLite
+      <input type="radio" v-model="props.client" name="gender" value="pg"> PostgreSQL<br>
+      <input type="radio" v-model="props.client" name="gender" value="sqlite3"> SQLite
     </form>
     <h2>Connection</h2>
     <form action="">
       <table>
         <tr>
           <td>Host:</td>
-          <td><input type="text" name="host" v-model="host"></td>
+          <td><input type="text" name="host" v-model="props.host"></td>
         </tr>
         <tr>
           <td>Port:</td>
-          <td><input type="number" name="port" v-model="port"></td>
+          <td><input type="number" name="port" v-model="props.port"></td>
         </tr>
         <tr>
           <td>User:</td>
-          <td><input type="text" name="user" v-model="user"></td>
+          <td><input type="text" name="user" v-model="props.user"></td>
         </tr>
         <tr>
           <td>Password:</td>
-          <td><input type="password" name="password" v-model="password"></td>
+          <td><input type="password" name="password" v-model="props.password"></td>
         </tr>
         <tr>
           <td>Database:</td>
-          <td><input type="text" name="database" v-model="database"></td>
+          <td><input type="text" name="database" v-model="props.database"></td>
         </tr>
       </table>
     </form>
@@ -49,12 +49,7 @@
     name: 'connect',
     data() {
       return {
-        client: 'pg',
-        host: 'localhost',
-        port: '5432',
-        user: 'postgres',
-        password: '',
-        database: 'postgres',
+        props: this.$store.state.connection.props,
         connection: '',
         message: '',
       };
