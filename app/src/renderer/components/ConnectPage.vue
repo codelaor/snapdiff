@@ -58,13 +58,13 @@
       connect() {
         try {
           this.connection = knex({
-            client: this.client,
+            client: this.props.client,
             connection: {
-              host: this.host,
-              port: this.port,
-              user: this.user,
-              password: this.password,
-              database: this.database,
+              host: this.props.host,
+              port: this.props.port,
+              user: this.props.user,
+              password: this.props.password,
+              database: this.props.database,
             },
             debug: true,
             searchPath: 'knex,public',

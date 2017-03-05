@@ -76,21 +76,21 @@ const actions = {
       return Promise.reject(this.message);
     }
   },
-  increment: ({ commit }) => commit('increment'),
-  decrement: ({ commit }) => commit('decrement'),
-  incrementIfOdd({ commit, state }) {
-    if ((state.count + 1) % 2 === 0) {
-      commit('increment');
-    }
-  },
-  incrementAsync({ commit }) {
-    return new Promise((resolve, reject) => { // eslint-disable-line 
-      setTimeout(() => {
-        commit('increment');
-        resolve();
-      }, 1000);
-    });
-  },
+  // increment: ({ commit }) => commit('increment'),
+  // decrement: ({ commit }) => commit('decrement'),
+  // incrementIfOdd({ commit, state }) {
+  //   if ((state.count + 1) % 2 === 0) {
+  //     commit('increment');
+  //   }
+  // },
+  // incrementAsync({ commit }) {
+  //   return new Promise((resolve, reject) => { // eslint-disable-line
+  //     setTimeout(() => {
+  //       commit('increment');
+  //       resolve();
+  //     }, 1000);
+  //   });
+  // },
 };
 
 // getters are functions

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img src="./LandingPageView/assets/logo.png" alt="electron-vue">
+    <img src="./LandingPage/assets/logo.png" alt="electron-vue">
     <h1>Welcome.</h1>
     <p>Please ensure your database is running and accessible to your machine before continuing.</p>
     <router-link to="/connect-page">Begin</router-link>

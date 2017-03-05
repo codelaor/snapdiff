@@ -2,12 +2,12 @@ export default [
   {
     path: '/',
     name: 'landing-page',
-    component: require('components/LandingPageView'),
+    component: require('components/LandingPage'),
   },
   {
     path: '/connect-page',
     name: 'connect-page',
-    component: require('components/ConnectPageView'),
+    component: require('components/ConnectPage'),
   },
   {
     path: '*',
