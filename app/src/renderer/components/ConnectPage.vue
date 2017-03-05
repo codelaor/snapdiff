@@ -95,13 +95,16 @@
         //  WHERE table_schema='public'
         //    AND table_type='BASE TABLE';
 
+        // this.$router.push({ name: 'tables' });
 
+        const router = this.$router;
         this.connection('information_schema.tables')
           .select('table_name')
           .where('table_schema', 'public')
           .where('table_type', 'BASE TABLE')
           .then((result) => {
             console.log(result); // eslint-disable-line
+            router.push({ name: 'tables' });
           })
           .catch((error) => {
             this.message = error.message;

@@ -17,6 +17,7 @@ const state = {
     },
     knex: '',
   },
+  tables: [],
 };
 
 const mutations = {
@@ -28,7 +29,7 @@ const mutations = {
 
     state.connection.knex = connection;
   },
-  setConnectionProperties(state, props) {
+  setConnectionProps(state, props) {
     // Kill any existing connection
     if (state.connection) {
       state.connection.destroy();
@@ -45,13 +46,13 @@ const actions = {
     // Create connection object (does not attempt to connect until first query)
     try {
       const knexConnection = knex({
-        client: state.connection.properties.client,
+        client: state.connection.props.client,
         connection: {
-          host: state.connection.properties.host,
-          port: state.connection.properties.port,
-          user: state.connection.properties.user,
-          password: state.connection.properties.password,
-          database: state.connection.properties.database,
+          host: state.connection.props.host,
+          port: state.connection.props.port,
+          user: state.connection.props.user,
+          password: state.connection.props.password,
+          database: state.connection.props.database,
         },
         debug: true,
         searchPath: 'knex,public',
@@ -95,8 +96,6 @@ const actions = {
 
 // getters are functions
 const getters = {
-  connectionProperties: state => state.connection.props,
-  knex: state => state.connection.knex,
 };
 
 // A Vuex instance is created by combining the state, mutations, actions,
