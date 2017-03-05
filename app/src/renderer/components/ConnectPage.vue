@@ -3,8 +3,11 @@
     <h1>Connect</h1>
     <h2>Client</h2>
     <form action="">
-      <input type="radio" v-model="props.client" name="gender" value="pg"> PostgreSQL<br>
-      <input type="radio" v-model="props.client" name="gender" value="sqlite3"> SQLite
+      <input type="radio" v-model="props.client" name="client" value="pg"><label>PostgreSQL</label><br>
+      <input type="radio" v-model="props.client" name="client" value="mysql" disabled><label>MySQL (coming soon)</label><br>
+      <input type="radio" v-model="props.client" name="client" value="oracle" disabled><label>Oracle (coming soon)</label><br>
+      <input type="radio" v-model="props.client" name="client" value="sqlite3" disabled><label>SQLite 3 (coming soon)</label><br>
+      <input type="radio" v-model="props.client" name="client" value="sqlite3" disabled><label>Maria DB (coming soon)</label>
     </form>
     <h2>Connection</h2>
     <form action="">
@@ -54,6 +57,14 @@
         message: '',
       };
     },
+    watch: {
+      props: {
+        handler: function watchProps() {    // eslint-disable-line object-shorthand
+          this.message = '';
+        },
+        deep: true,
+      },
+    },
     methods: {
       connect() {
         try {
@@ -100,3 +111,11 @@
   };
 
 </script>
+
+<style>
+
+input[type="radio"]:disabled + label {
+  font-style: italic;
+}
+
+</style>
