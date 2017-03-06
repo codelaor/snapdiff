@@ -41,8 +41,8 @@
 
       <button v-on:click="connect">Connect</button>
 
-      <div class="message-box">
-        <div class="error-message">
+      <div class="message-area">
+        <div class="error-message" v-bind:hidden="!message">
           {{ message }}
         </div>
       </div>
@@ -129,14 +129,23 @@
     font-style: italic;
   }
   
-  .message-box {
-    margin-top: 15px;
-    height: 30px;
+  .message-area {
+    height: 60px;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .error-message {
     background-color: red;
     color: white;
+    font-weight: bold;
+    margin-top: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 3px;
+    width:fit-content;
   }
+
 </style>
