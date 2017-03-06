@@ -5,6 +5,8 @@
     </div>
     <div class="header-page-content-top">
       <button v-on:click="disconnect">Disconnect</button>
+      <p>{{ props }}</p>
+      <p>{{ tables }}</p>
     </div>
   </div>
 </template>
@@ -14,14 +16,16 @@
     name: 'tables',
     data() {
       return {
+        tables: this.$store.state.tables,
+        props: this.$store.state.connection.props,
       };
     },
     watch: {
     },
     methods: {
       disconnect() {
-        // TODO disconnect knex connection
-        this.$router.push({ name: 'connect' });
+        this.$store.dispatch('disconnect')
+          .then(() => this.$router.push({ name: 'connect' }));
       },
     },
   };

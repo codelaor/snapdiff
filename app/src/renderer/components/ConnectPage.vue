@@ -54,9 +54,6 @@
 </template>
 
 <script>
-  import * as knex from 'knex';
-  import * as pg from 'pg'; // eslint-disable-line
-
   export default {
     name: 'connect',
     data() {
@@ -76,47 +73,12 @@
     },
     methods: {
       connect() {
-        try {
-          this.connection = knex({
-            client: this.props.client,
-            connection: {
-              host: this.props.host,
-              port: this.props.port,
-              user: this.props.user,
-              password: this.props.password,
-              database: this.props.database,
-            },
-            debug: true,
-            searchPath: 'knex,public',
-          });
-        } catch (error) {
-          this.message = error.message;
-          return;
-        }
-
-
-        // Above constructor provides no feedback on whether credentials are ok so run
-        // query now to get list of tables which will trigger connection error if failed
-
-        // PostgreSQL
-        // SELECT table_name
-        //  FROM information_schema.tables
-        //  WHERE table_schema='public'
-        //    AND table_type='BASE TABLE';
-
-        // this.$router.push({ name: 'tables' });
-
-        const router = this.$router;
-        this.connection('information_schema.tables')
-          .select('table_name')
-          .where('table_schema', 'public')
-          .where('table_type', 'BASE TABLE')
-          .then((result) => {
-            console.log(result); // eslint-disable-line
-            router.push({ name: 'tables' });
+        this.$store.dispatch('connect', this.props)
+          .then(() => {
+            this.$router.push({ name: 'tables' });
           })
-          .catch((error) => {
-            this.message = error.message;
+          .catch((err) => {
+            this.message = err.message;
           });
       },
     },
@@ -145,7 +107,6 @@
     padding: 10px;
     box-sizing: border-box;
     border-radius: 3px;
-    width:fit-content;
+    width: fit-content;
   }
-
 </style>

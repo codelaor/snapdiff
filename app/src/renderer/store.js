@@ -16,6 +16,7 @@ const state = {
       database: 'postgres',
     },
     knex: '',
+    error: '',
   },
   tables: [],
 };
@@ -23,75 +24,54 @@ const state = {
 const mutations = {
   setConnection(state, connection) {
     // Kill any existing connection
-    if (state.connection) {
-      state.connection.destroy();
+    if (state.connection.knex) {
+      state.connection.knex.destroy();
     }
 
     state.connection.knex = connection;
   },
   setConnectionProps(state, props) {
-    // Kill any existing connection
-    if (state.connection) {
-      state.connection.destroy();
-    }
-
-    Object.assign(props, state.connection.props);
+    Object.assign(state.connection.props, props);
+  },
+  setTables(state, tables) {
+    state.tables = tables;
   },
 };
 
 // actions are functions that causes side effects and can involve
 // asynchronous operations.
 const actions = {
-  connect: ({ commit, state }) => {
+  connect: ({ commit, state }, connectionProps) => {
+    commit('setConnectionProps', connectionProps);
+
     // Create connection object (does not attempt to connect until first query)
-    try {
-      const knexConnection = knex({
-        client: state.connection.props.client,
-        connection: {
-          host: state.connection.props.host,
-          port: state.connection.props.port,
-          user: state.connection.props.user,
-          password: state.connection.props.password,
-          database: state.connection.props.database,
-        },
-        debug: true,
-        searchPath: 'knex,public',
+    const knexConnection = knex({
+      client: state.connection.props.client,
+      connection: {
+        host: state.connection.props.host,
+        port: state.connection.props.port,
+        user: state.connection.props.user,
+        password: state.connection.props.password,
+        database: state.connection.props.database,
+      },
+      searchPath: 'knex,public',
+    });
+    commit('setConnection', knexConnection);
+
+    // Get database tables from connection.  We need these anyway and it has the benefit
+    // of testing our connection was successful
+    return knexConnection('information_schema.tables')
+      .select('table_name')
+      .where('table_schema', 'public')
+      .where('table_type', 'BASE TABLE')
+      .then((result) => {
+        commit('setTables', result);
       });
-      commit('setConnection', knexConnection);
-
-
-      // Get database tables from connection.  We need these anyway and it has the benefit
-      // of testing our connection was successful
-      return this.connection('information_schema.tables')
-        .select('table_name')
-        .where('table_schema', 'public')
-        .where('table_type', 'BASE TABLE')
-        .then((result) => {
-          console.log(result); // eslint-disable-line
-        })
-        .catch((error) => {
-          this.message = error.message;
-        });
-    } catch (error) {
-      this.message = error.message;
-      return Promise.reject(this.message);
-    }
   },
-  // increment: ({ commit }) => commit('increment'),
-  // decrement: ({ commit }) => commit('decrement'),
-  // incrementIfOdd({ commit, state }) {
-  //   if ((state.count + 1) % 2 === 0) {
-  //     commit('increment');
-  //   }
-  // },
-  // incrementAsync({ commit }) {
-  //   return new Promise((resolve, reject) => { // eslint-disable-line
-  //     setTimeout(() => {
-  //       commit('increment');
-  //       resolve();
-  //     }, 1000);
-  //   });
-  // },
+  disconnect: ({ commit, state }) => {
+    state.connection.knex.destroy();
+    commit('setConnection', null);
+  },
 };
 
 // getters are functions
