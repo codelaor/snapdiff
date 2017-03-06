@@ -5,14 +5,24 @@
       <h1>Connect</h1>
     </div>
     <div class="header-page-content-centered">
+      
       <h2>Client</h2>
       <form action="">
-        <input type="radio" v-model="props.client" name="client" value="pg"><label>PostgreSQL</label><br>
-        <input type="radio" v-model="props.client" name="client" value="mysql" disabled><label>MySQL (coming soon)</label><br>
-        <input type="radio" v-model="props.client" name="client" value="oracle" disabled><label>Oracle (coming soon)</label><br>
-        <input type="radio" v-model="props.client" name="client" value="sqlite3" disabled><label>SQLite 3 (coming soon)</label><br>
-        <input type="radio" v-model="props.client" name="client" value="sqlite3" disabled><label>Maria DB (coming soon)</label>
+        <div v-for="client in clients">
+          <table>
+            <tr>
+              <td>
+                <input type="radio" v-model="props.client" name="client" v-bind:value="client.id" v-bind:disabled="!client.supported">
+              </td>
+              <td>
+                <label v-bind:class="{ 'not-supported': !client.supported }">{{ client.name }}</label>
+                <label class="coming-soon" v-if="!client.supported">coming soon</label>
+              </td>
+            </tr>
+          </table>
+        </div>      
       </form>
+
       <h2>Connection</h2>
       <form action="">
         <table>
@@ -58,6 +68,7 @@
     name: 'connect',
     data() {
       return {
+        clients: this.$store.getters.connectionClients,
         props: this.$store.state.connection.props,
         connection: '',
         message: '',
@@ -87,10 +98,25 @@
 </script>
 
 <style>
+  input {
+    padding: 3px;
+  }
+
   input[type="radio"]:disabled + label {
     font-style: italic;
   }
+
+  .not-supported {
+    font-style: italic;
+  }
   
+  .coming-soon {
+    margin-left: 3px;
+    vertical-align: baseline;
+    font-size: .7em;
+    font-weight: bold;
+  }
+
   .message-area {
     height: 60px;
     width: 100%;

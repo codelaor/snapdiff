@@ -76,6 +76,29 @@ const actions = {
 
 // getters are functions
 const getters = {
+  connectionClients() {
+    return [{
+      id: 'pg',
+      name: 'PostgresQL',
+      supported: true,
+    }, {
+      id: 'mysql',
+      name: 'MySQL',
+      supported: false,
+    }, {
+      id: 'sqlite3',
+      name: 'SQLite3',
+      supported: false,
+    }, {
+      id: 'mariasql',
+      name: 'MariaDB',
+      supported: false,
+    }, {
+      id: 'oracle',
+      name: 'Oracle',
+      supported: false,
+    }];
+  },
 };
 
 // A Vuex instance is created by combining the state, mutations, actions,
