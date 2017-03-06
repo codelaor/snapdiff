@@ -14,8 +14,8 @@
     "postinstall": "npm run lint:fix && cd app && npm install"
   },
   "build": {
-    "productName": "ElectronVue",
-    "appId": "org.simulatedgreg.electron-vue",
+    "productName": "SnapDiff",
+    "appId": "com.codelaor.snapdiff",
     "category": "public.app-category.tools",
     "dmg": {
       "contents": [
@@ -49,8 +49,8 @@
       ]
     }
   },
-  "author": "Greg Holguin <simulatedgreg@gmail.com>",
-  "license": "MIT",
+  "author": "Peter Roehlen",
+  "license": "UNLICENSED",
   "devDependencies": {
     "babel-core": "^6.8.0",
     "babel-loader": "^6.2.4",

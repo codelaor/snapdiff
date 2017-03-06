@@ -1,45 +1,54 @@
 <template>
-  <div class="connect">
-    <h1>Connect</h1>
-    <h2>Client</h2>
-    <form action="">
-      <input type="radio" v-model="props.client" name="client" value="pg"><label>PostgreSQL</label><br>
-      <input type="radio" v-model="props.client" name="client" value="mysql" disabled><label>MySQL (coming soon)</label><br>
-      <input type="radio" v-model="props.client" name="client" value="oracle" disabled><label>Oracle (coming soon)</label><br>
-      <input type="radio" v-model="props.client" name="client" value="sqlite3" disabled><label>SQLite 3 (coming soon)</label><br>
-      <input type="radio" v-model="props.client" name="client" value="sqlite3" disabled><label>Maria DB (coming soon)</label>
-    </form>
-    <h2>Connection</h2>
-    <form action="">
-      <table>
-        <tr>
-          <td>Host:</td>
-          <td><input type="text" name="host" v-model="props.host"></td>
-        </tr>
-        <tr>
-          <td>Port:</td>
-          <td><input type="number" name="port" v-model="props.port"></td>
-        </tr>
-        <tr>
-          <td>User:</td>
-          <td><input type="text" name="user" v-model="props.user"></td>
-        </tr>
-        <tr>
-          <td>Password:</td>
-          <td><input type="password" name="password" v-model="props.password"></td>
-        </tr>
-        <tr>
-          <td>Database:</td>
-          <td><input type="text" name="database" v-model="props.database"></td>
-        </tr>
-      </table>
-    </form>
 
-    <button v-on:click="connect">Connect</button>
-
-    <div>
-      {{ message }}
+  <div class="header-page">
+    <div class="header-page-header">
+      <h1>Connect</h1>
     </div>
+    <div class="header-page-content-centered">
+      <h2>Client</h2>
+      <form action="">
+        <input type="radio" v-model="props.client" name="client" value="pg"><label>PostgreSQL</label><br>
+        <input type="radio" v-model="props.client" name="client" value="mysql" disabled><label>MySQL (coming soon)</label><br>
+        <input type="radio" v-model="props.client" name="client" value="oracle" disabled><label>Oracle (coming soon)</label><br>
+        <input type="radio" v-model="props.client" name="client" value="sqlite3" disabled><label>SQLite 3 (coming soon)</label><br>
+        <input type="radio" v-model="props.client" name="client" value="sqlite3" disabled><label>Maria DB (coming soon)</label>
+      </form>
+      <h2>Connection</h2>
+      <form action="">
+        <table>
+          <tr>
+            <td>Host:</td>
+            <td><input type="text" name="host" v-model="props.host"></td>
+          </tr>
+          <tr>
+            <td>Port:</td>
+            <td><input type="number" name="port" v-model="props.port"></td>
+          </tr>
+          <tr>
+            <td>User:</td>
+            <td><input type="text" name="user" v-model="props.user"></td>
+          </tr>
+          <tr>
+            <td>Password:</td>
+            <td><input type="password" name="password" v-model="props.password"></td>
+          </tr>
+          <tr>
+            <td>Database:</td>
+            <td><input type="text" name="database" v-model="props.database"></td>
+          </tr>
+        </table>
+      </form>
+
+      <button v-on:click="connect">Connect</button>
+
+      <div class="message-box">
+        <div class="error-message">
+          {{ message }}
+        </div>
+      </div>
+
+    </div>
+
 
   </div>
 </template>
@@ -116,9 +125,18 @@
 </script>
 
 <style>
-
-input[type="radio"]:disabled + label {
-  font-style: italic;
-}
-
+  input[type="radio"]:disabled + label {
+    font-style: italic;
+  }
+  
+  .message-box {
+    margin-top: 15px;
+    height: 30px;
+    width: 100%;
+  }
+  
+  .error-message {
+    background-color: red;
+    color: white;
+  }
 </style>

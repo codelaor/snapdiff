@@ -1,7 +1,11 @@
 <template>
-  <div class="tables">
-    <h1>Tables</h1>
-    <button v-on:click="disconnect">Disconnect</button>
+  <div class="header-page">
+    <div class="header-page-header">
+      <h1>Tables</h1>
+    </div>
+    <div class="header-page-content-top">
+      <button v-on:click="disconnect">Disconnect</button>
+    </div>
   </div>
 </template>
 
