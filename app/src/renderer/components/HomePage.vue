@@ -1,26 +1,24 @@
 <template>
 
-  <div class="header-page">
-    <page-header title="Connect"/>
-    <div class="header-page-content-centered">
-      <h2>Client</h2>
-      <form action="">
-        <div v-for="client in clients">
-          <table>
-            <tr>
-              <td>
-                <input type="radio" v-model="props.client" name="client" v-bind:value="client.id" v-bind:disabled="!client.supported">
-              </td>
-              <td>
-                <label v-bind:class="{ 'not-supported': !client.supported }">{{ client.name }}</label>
-                <label class="coming-soon" v-if="!client.supported">coming soon</label>
-              </td>
-            </tr>
-          </table>
-        </div>      
-      </form>
+  <div class="home-page">
+    <img class="home-page-group" src="./LandingPage/assets/logo.png" alt="electron-vue">
+    <form action="" class="home-page-group">
+      <div v-for="client in clients">
+        <table>
+          <tr>
+            <td>
+              <input type="radio" v-model="props.client" name="client" v-bind:value="client.id" v-bind:disabled="!client.supported">
+            </td>
+            <td>
+              <label v-bind:class="{ 'not-supported': !client.supported }">{{ client.name }}</label>
+              <label class="coming-soon" v-if="!client.supported">coming soon</label>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </form>
 
-      <h2>Connection Properties</h2>
+    <div class="home-page-group">
       <form action="">
         <table>
           <tr v-if="this.selectedClient.connectionProps.includes('filename')">
@@ -57,10 +55,7 @@
           {{ message }}
         </div>
       </div>
-
     </div>
-
-
   </div>
 </template>
 
@@ -68,7 +63,7 @@
   import PageHeader from './PageHeader';
 
   export default {
-    name: 'connect',
+    name: 'home',
     components: {
       PageHeader,
     },
@@ -111,14 +106,37 @@
 </script>
 
 <style>
+  img {
+    /*margin-top: -25px;*/
+    width: 450px;
+  }
+  
+  .home-page {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    background: radial-gradient( ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(229, 229, 229, .85) 100%);
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    font-family: Lato, Helvetica, sans-serif;
+    justify-content: center;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .home-page-group {
+    padding: 15px;
+  }
+  
   input {
     padding: 3px;
   }
-
+  
   input[type="radio"]:disabled + label {
     font-style: italic;
   }
-
+  
   .not-supported {
     font-style: italic;
   }
@@ -129,7 +147,7 @@
     font-size: .7em;
     font-weight: bold;
   }
-
+  
   .message-area {
     height: 60px;
     width: 100%;

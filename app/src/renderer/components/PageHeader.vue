@@ -1,10 +1,11 @@
 <template>
   <div class="header-page-header">
     <div class="header-page-header-left">
-      <h1>{{ title }}</h1>
+      <button v-if="showHome" v-on:click="goHome">Home</button>
+      <button v-if="showBack" v-on:click="$router.go(-1)">Back</button>
+      <span class="header-title">{{ title }}</span>
     </div>
     <div class="header-page-header-right">
-      <button v-if="connection" v-on:click="disconnect">Disconnect</button>
     </div>
   </div>
 </template>
@@ -12,7 +13,20 @@
 <script>
   export default {
     name: 'page-header',
-    props: ['title'],
+    props: {
+      showHome: {
+        type: Boolean,
+        default: true,
+      },
+      showBack: {
+        type: Boolean,
+        default: false,
+      },
+      title: {
+        type: String,
+        default: 100,
+      },
+    },
     data() {
       return {
         connection: this.$store.state.connection.knex,
@@ -21,9 +35,9 @@
     watch: {
     },
     methods: {
-      disconnect() {
+      goHome() {
         this.$store.dispatch('disconnect')
-          .then(() => this.$router.push({ name: 'connect' }));
+          .then(() => this.$router.push({ name: 'home' }));
       },
     },
   };

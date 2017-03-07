@@ -1,13 +1,14 @@
 export default [
   {
     path: '/',
-    name: 'landing',
-    component: require('components/LandingPage'),
+    name: 'home',
+    component: require('components/HomePage'),
   },
   {
-    path: '/connect',
-    name: 'connect',
-    component: require('components/ConnectPage'),
+    path: '/table/:name',
+    name: 'table',
+    component: require('components/TablePage'),
+    props: true,
   },
   {
     path: '/tables',

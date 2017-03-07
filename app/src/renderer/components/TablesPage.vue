@@ -10,7 +10,7 @@
         </tr>
         <tr v-for="table in tables">
           <td>
-            {{ table.name }}
+            <router-link v-bind:to="'/table/' + table.name">{{ table.name }}</router-link>
           </td>
         </tr>
       </table>
