@@ -14,6 +14,7 @@ const state = {
       user: 'postgres',
       password: '',
       database: 'postgres',
+      filename: '/home/peter/Downloads/chinook.db', // TODO remove default
     },
     knex: '',
     error: '',
@@ -53,20 +54,32 @@ const actions = {
         user: state.connection.props.user,
         password: state.connection.props.password,
         database: state.connection.props.database,
+        filename: state.connection.props.filename,
       },
-      searchPath: 'knex,public',
     });
     commit('setConnection', knexConnection);
 
     // Get database tables from connection.  We need these anyway and it has the benefit
     // of testing our connection was successful
-    return knexConnection('information_schema.tables')
-      .select('table_name')
-      .where('table_schema', 'public')
-      .where('table_type', 'BASE TABLE')
-      .then((result) => {
-        commit('setTables', result);
-      });
+    switch (state.connection.props.client) {
+      case 'sqlite3':
+        return knexConnection('sqlite_master')
+          .select('name')
+          .where('type', 'table')
+          .then((result) => {
+            commit('setTables', result);
+          });
+      case 'pg':
+        return knexConnection('information_schema.tables')
+          .select('table_name as name')
+          .where('table_schema', 'public')
+          .where('table_type', 'BASE TABLE')
+          .then((result) => {
+            commit('setTables', result);
+          });
+      default:
+        throw new Error('Unsupported client type - do not know how to read tables');
+    }
   },
   disconnect: ({ commit, state }) => {
     state.connection.knex.destroy();
@@ -81,22 +94,41 @@ const getters = {
       id: 'pg',
       name: 'PostgresQL',
       supported: true,
+      connectionProps: [
+        'host',
+        'port',
+        'user',
+        'password',
+        'database',
+      ],
+    }, {
+      id: 'sqlite3',
+      name: 'SQLite3',
+      supported: true,
+      connectionProps: [
+        'filename',
+      ],
     }, {
       id: 'mysql',
       name: 'MySQL',
       supported: false,
-    }, {
-      id: 'sqlite3',
-      name: 'SQLite3',
-      supported: false,
+      connectionProps: [
+        // TODO add these
+      ],
     }, {
       id: 'mariasql',
       name: 'MariaDB',
       supported: false,
+      connectionProps: [
+        // TODO add these
+      ],
     }, {
       id: 'oracle',
       name: 'Oracle',
       supported: false,
+      connectionProps: [
+        // TODO add these
+      ],
     }];
   },
 };

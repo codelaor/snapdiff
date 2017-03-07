@@ -5,7 +5,6 @@
       <h1>Connect</h1>
     </div>
     <div class="header-page-content-centered">
-      
       <h2>Client</h2>
       <form action="">
         <div v-for="client in clients">
@@ -23,26 +22,30 @@
         </div>      
       </form>
 
-      <h2>Connection</h2>
+      <h2>Connection Properties</h2>
       <form action="">
         <table>
-          <tr>
+          <tr v-if="this.selectedClient.connectionProps.includes('filename')">
+            <td>Filename:</td>
+            <td><input type="text" name="host" v-model="props.filename"></td>
+          </tr>
+          <tr v-if="this.selectedClient.connectionProps.includes('host')">
             <td>Host:</td>
             <td><input type="text" name="host" v-model="props.host"></td>
           </tr>
-          <tr>
+          <tr v-if="this.selectedClient.connectionProps.includes('port')">
             <td>Port:</td>
             <td><input type="number" name="port" v-model="props.port"></td>
           </tr>
-          <tr>
+          <tr v-if="this.selectedClient.connectionProps.includes('user')">
             <td>User:</td>
             <td><input type="text" name="user" v-model="props.user"></td>
           </tr>
-          <tr>
+          <tr v-if="this.selectedClient.connectionProps.includes('password')">
             <td>Password:</td>
             <td><input type="password" name="password" v-model="props.password"></td>
           </tr>
-          <tr>
+          <tr v-if="this.selectedClient.connectionProps.includes('database')">
             <td>Database:</td>
             <td><input type="text" name="database" v-model="props.database"></td>
           </tr>
@@ -73,6 +76,13 @@
         connection: '',
         message: '',
       };
+    },
+    computed: {
+      selectedClient() {
+        return this.$store.getters.connectionClients.find(
+          (client) => client.id === this.props.client
+        );
+      },
     },
     watch: {
       props: {
