@@ -5,8 +5,18 @@
     </div>
     <div class="header-page-content-top">
       <button v-on:click="disconnect">Disconnect</button>
-      <p>{{ props }}</p>
-      <p>{{ tables }}</p>
+      <table>
+        <tr>
+          <th>
+            Name
+          </th>
+        </tr>
+        <tr v-for="table in tables">
+          <td>
+            {{ table.name }}
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
@@ -17,7 +27,6 @@
     data() {
       return {
         tables: this.$store.state.tables,
-        props: this.$store.state.connection.props,
       };
     },
     watch: {

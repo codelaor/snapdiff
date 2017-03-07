@@ -66,6 +66,7 @@ const actions = {
         return knexConnection('sqlite_master')
           .select('name')
           .where('type', 'table')
+          .orderBy('name')
           .then((result) => {
             commit('setTables', result);
           });
@@ -74,6 +75,7 @@ const actions = {
           .select('table_name as name')
           .where('table_schema', 'public')
           .where('table_type', 'BASE TABLE')
+          .orderBy('name')
           .then((result) => {
             commit('setTables', result);
           });
