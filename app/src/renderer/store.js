@@ -56,6 +56,7 @@ const actions = {
         database: state.connection.props.database,
         filename: state.connection.props.filename,
       },
+      useNullAsDefault: true,
     });
     commit('setConnection', knexConnection);
 

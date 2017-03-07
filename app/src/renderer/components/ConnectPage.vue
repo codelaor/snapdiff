@@ -1,9 +1,7 @@
 <template>
 
   <div class="header-page">
-    <div class="header-page-header">
-      <h1>Connect</h1>
-    </div>
+    <page-header title="Connect"/>
     <div class="header-page-content-centered">
       <h2>Client</h2>
       <form action="">
@@ -67,8 +65,13 @@
 </template>
 
 <script>
+  import PageHeader from './PageHeader';
+
   export default {
     name: 'connect',
+    components: {
+      PageHeader,
+    },
     data() {
       return {
         clients: this.$store.getters.connectionClients,

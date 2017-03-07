@@ -1,10 +1,7 @@
 <template>
   <div class="header-page">
-    <div class="header-page-header">
-      <h1>Tables</h1>
-    </div>
+    <page-header title="Tables"/>
     <div class="header-page-content-top">
-      <button v-on:click="disconnect">Disconnect</button>
       <table>
         <tr>
           <th>
@@ -22,8 +19,13 @@
 </template>
 
 <script>
+  import PageHeader from './PageHeader';
+
   export default {
     name: 'tables',
+    components: {
+      PageHeader,
+    },
     data() {
       return {
         tables: this.$store.state.tables,
@@ -32,10 +34,6 @@
     watch: {
     },
     methods: {
-      disconnect() {
-        this.$store.dispatch('disconnect')
-          .then(() => this.$router.push({ name: 'connect' }));
-      },
     },
   };
 
