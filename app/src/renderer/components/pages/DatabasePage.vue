@@ -1,6 +1,6 @@
 <template>
   <div class="header-page">
-    <page-header title="Tables"/>
+    <page-header :title="`Database '${databaseTitle}'`"/>
     <div class="header-page-content-top">
       <table>
         <tr>
@@ -22,13 +22,15 @@
   import PageHeader from './PageHeader';
 
   export default {
-    name: 'tables-page',
+    name: 'database-page',
     components: {
       PageHeader,
     },
     data() {
       return {
         tables: this.$store.state.tables,
+        connection: this.$store.state.connection,
+        databaseTitle: this.$store.getters.databaseTitle,
       };
     },
     watch: {

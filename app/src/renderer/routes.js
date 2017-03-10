@@ -11,9 +11,9 @@ export default [
     props: true,
   },
   {
-    path: '/tables',
-    name: 'tables',
-    component: require('components/pages/TablesPage'),
+    path: '/database',
+    name: 'database',
+    component: require('components/pages/DatabasePage'),
   },
   {
     path: '*',

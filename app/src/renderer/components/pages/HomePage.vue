@@ -7,7 +7,7 @@
         <table>
           <tr>
             <td>
-              <input type="radio" v-model="props.client" name="client" v-bind:value="client.id" v-bind:disabled="!client.supported">
+              <input type="radio" v-model="connection.client" name="client" v-bind:value="client.id" v-bind:disabled="!client.supported">
             </td>
             <td>
               <label v-bind:class="{ 'not-supported': !client.supported }">{{ client.name }}</label>
@@ -21,29 +21,29 @@
     <div class="home-page-group">
       <form action="">
         <table>
-          <tr v-if="this.selectedClient.connectionProps.includes('filename')">
+          <tr v-if="this.selectedClient.parameters.includes('filename')">
             <td>Filename:</td>
-            <td><input type="text" name="host" v-model="props.filename"></td>
+            <td><input type="text" name="host" v-model="connection.filename"></td>
           </tr>
-          <tr v-if="this.selectedClient.connectionProps.includes('host')">
+          <tr v-if="this.selectedClient.parameters.includes('host')">
             <td>Host:</td>
-            <td><input type="text" name="host" v-model="props.host"></td>
+            <td><input type="text" name="host" v-model="connection.host"></td>
           </tr>
-          <tr v-if="this.selectedClient.connectionProps.includes('port')">
+          <tr v-if="this.selectedClient.parameters.includes('port')">
             <td>Port:</td>
-            <td><input type="number" name="port" v-model="props.port"></td>
+            <td><input type="number" name="port" v-model="connection.port"></td>
           </tr>
-          <tr v-if="this.selectedClient.connectionProps.includes('user')">
+          <tr v-if="this.selectedClient.parameters.includes('user')">
             <td>User:</td>
-            <td><input type="text" name="user" v-model="props.user"></td>
+            <td><input type="text" name="user" v-model="connection.user"></td>
           </tr>
-          <tr v-if="this.selectedClient.connectionProps.includes('password')">
+          <tr v-if="this.selectedClient.parameters.includes('password')">
             <td>Password:</td>
-            <td><input type="password" name="password" v-model="props.password"></td>
+            <td><input type="password" name="password" v-model="connection.password"></td>
           </tr>
-          <tr v-if="this.selectedClient.connectionProps.includes('database')">
+          <tr v-if="this.selectedClient.parameters.includes('database')">
             <td>Database:</td>
-            <td><input type="text" name="database" v-model="props.database"></td>
+            <td><input type="text" name="database" v-model="connection.database"></td>
           </tr>
         </table>
       </form>
@@ -65,21 +65,20 @@
     data() {
       return {
         clients: this.$store.getters.connectionClients,
-        props: this.$store.state.connection.props,
-        connection: '',
+        connection: this.$store.state.connection,
         message: '',
       };
     },
     computed: {
       selectedClient() {
         return this.$store.getters.connectionClients.find(
-          (client) => client.id === this.props.client
+          (client) => client.id === this.connection.client
         );
       },
     },
     watch: {
-      props: {
-        handler: function watchProps() {    // eslint-disable-line object-shorthand
+      connection: {
+        handler: function watchConnection() {    // eslint-disable-line object-shorthand
           this.message = '';
         },
         deep: true,
@@ -87,9 +86,9 @@
     },
     methods: {
       connect() {
-        this.$store.dispatch('connect', this.props)
+        this.$store.dispatch('connect', this.connection)
           .then(() => {
-            this.$router.push({ name: 'tables' });
+            this.$router.push({ name: 'database' });
           })
           .catch((err) => {
             this.message = err.message;

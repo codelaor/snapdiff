@@ -7,32 +7,24 @@ Vue.use(Vuex);
 // root state object.
 const state = {
   connection: {
-    props: {
-      client: 'pg',
-      host: 'localhost',
-      port: '5432',
-      user: 'postgres',
-      password: '',
-      database: 'postgres',
-      filename: '/home/peter/Downloads/chinook.db', // TODO remove default
-    },
-    knex: '',
-    error: '',
+    client: 'pg',
+    host: 'localhost',
+    port: '5432',
+    user: 'postgres',
+    password: '',
+    database: 'postgres',
+    filename: '/home/peter/Downloads/chinook.db', // TODO remove default
   },
+  knex: null,
   tables: [],
 };
 
 const mutations = {
-  setConnection(state, connection) {
-    // Kill any existing connection
-    if (state.connection.knex) {
-      state.connection.knex.destroy();
-    }
-
-    state.connection.knex = connection;
+  setKnex(state, newKnex) {
+    state.knex = newKnex;
   },
-  setConnectionProps(state, props) {
-    Object.assign(state.connection.props, props);
+  setConnection(state, connection) {
+    Object.assign(state.connection, connection);
   },
   setTables(state, tables) {
     state.tables = tables;
@@ -42,27 +34,25 @@ const mutations = {
 // actions are functions that causes side effects and can involve
 // asynchronous operations.
 const actions = {
-  connect: ({ commit, state }, connectionProps) => {
-    commit('setConnectionProps', connectionProps);
-
-    // Create connection object (does not attempt to connect until first query)
+  connect: ({ commit, state }, parameters) => {
+    // Create knex object (does not attempt to connect until first query)
     const knexConnection = knex({
-      client: state.connection.props.client,
+      client: parameters.client,
       connection: {
-        host: state.connection.props.host,
-        port: state.connection.props.port,
-        user: state.connection.props.user,
-        password: state.connection.props.password,
-        database: state.connection.props.database,
-        filename: state.connection.props.filename,
+        host: parameters.host,
+        port: parameters.port,
+        user: parameters.user,
+        password: parameters.password,
+        database: parameters.database,
+        filename: parameters.filename,
       },
       useNullAsDefault: true,
     });
-    commit('setConnection', knexConnection);
+    commit('setConnection', Object.assign({}, parameters, { knex }));
 
     // Get database tables from connection.  We need these anyway and it has the benefit
     // of testing our connection was successful
-    switch (state.connection.props.client) {
+    switch (state.connection.client) {
       case 'sqlite3':
         return knexConnection('sqlite_master')
           .select('name')
@@ -85,18 +75,40 @@ const actions = {
     }
   },
   disconnect: ({ commit }) => {
-    commit('setConnection', null);
+    // Kill any existing connection
+    if (state.knex) {
+      state.knex.destroy();
+    }
+
+    commit('setKnex', null);
   },
 };
 
 // getters are functions
 const getters = {
+  databaseTitle(state, getters) {
+    let title = '';
+    switch (state.connection.client) {
+      case 'pg':
+        title = state.connection.database;
+        break;
+      case 'sqlite3':
+        title = state.connection.filename;
+        break;
+      default:
+        title = getters
+          .connectionClients
+          .find(client => client.id === state.connection.client)
+          .name;
+    }
+    return title;
+  },
   connectionClients() {
     return [{
       id: 'pg',
       name: 'PostgresQL',
       supported: true,
-      connectionProps: [
+      parameters: [
         'host',
         'port',
         'user',
@@ -107,28 +119,28 @@ const getters = {
       id: 'sqlite3',
       name: 'SQLite3',
       supported: true,
-      connectionProps: [
+      parameters: [
         'filename',
       ],
     }, {
       id: 'mysql',
       name: 'MySQL',
       supported: false,
-      connectionProps: [
+      parameters: [
         // TODO add these
       ],
     }, {
       id: 'mariasql',
       name: 'MariaDB',
       supported: false,
-      connectionProps: [
+      parameters: [
         // TODO add these
       ],
     }, {
       id: 'oracle',
       name: 'Oracle',
       supported: false,
-      connectionProps: [
+      parameters: [
         // TODO add these
       ],
     }];
