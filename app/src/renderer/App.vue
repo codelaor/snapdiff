@@ -24,14 +24,14 @@
   #app {
     height: 100%;
   }
-  
   /* Page with header */
+  
   .header-page {
     height: 100%;
     position: relative;
   }
-  
   /* Header section */
+  
   .header-page-header {
     height: 50px;
     padding: 10px;
@@ -43,22 +43,27 @@
     top: 0;
     left: 0;
   }
-
-  .header-page-header, .header-page-content-top, .header-page-content-centered{
-    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
-    box-sizing: border-box;         /* Opera/IE 8+ */    
+  
+  .header-page-header,
+  .header-page-content-top,
+  .header-page-content-centered {
+    -webkit-box-sizing: border-box;
+    /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;
+    /* Firefox, other Gecko */
+    box-sizing: border-box;
+    /* Opera/IE 8+ */
     padding: 10px;
   }
-
+  
   .header-page-content-top {
     width: 100%;
     position: absolute;
     top: 50px;
-    left: 0;    
+    left: 0;
     z-index: 10;
   }
-
+  
   .header-page-content-centered {
     width: 100%;
     height: 100%;
@@ -68,6 +73,10 @@
     text-align: center;
     align-items: center;
   }
-
-
+  
+  .fa-icon {
+    width: auto;
+    height: 1em;
+    /* or any other relative font sizes */
+  }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div class="header-page-header">
     <div class="header-page-header-left">
-      <button v-if="showHome" v-on:click="goHome">Home</button>
-      <button v-if="showBack" v-on:click="$router.go(-1)">Back</button>
+      <button v-if="showHome" v-on:click="goHome"><icon name="home"></icon></button>
+      <button v-if="showBack" v-on:click="$router.go(-1)"><icon name="arrow-left"/></button>
       <span class="header-title">{{ title }}</span>
     </div>
     <div class="header-page-header-right">

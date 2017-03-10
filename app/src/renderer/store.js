@@ -84,8 +84,7 @@ const actions = {
         throw new Error('Unsupported client type - do not know how to read tables');
     }
   },
-  disconnect: ({ commit, state }) => {
-    state.connection.knex.destroy();
+  disconnect: ({ commit }) => {
     commit('setConnection', null);
   },
 };
