@@ -1,7 +1,7 @@
 <template>
 
   <div class="home-page">
-    <img class="home-page-group" src="./LandingPage/assets/logo.png" alt="electron-vue">
+    <img class="home-page-group" src="./Home/logo.png" alt="electron-vue">
     <form action="" class="home-page-group">
       <div v-for="client in clients">
         <table>
@@ -60,13 +60,8 @@
 </template>
 
 <script>
-  import PageHeader from './PageHeader';
-
   export default {
-    name: 'home',
-    components: {
-      PageHeader,
-    },
+    name: 'home-page',
     data() {
       return {
         clients: this.$store.getters.connectionClients,

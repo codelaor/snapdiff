@@ -2,18 +2,18 @@ export default [
   {
     path: '/',
     name: 'home',
-    component: require('components/HomePage'),
+    component: require('components/pages/HomePage'),
   },
   {
     path: '/table/:name',
     name: 'table',
-    component: require('components/TablePage'),
+    component: require('components/pages/TablePage'),
     props: true,
   },
   {
     path: '/tables',
     name: 'tables',
-    component: require('components/TablesPage'),
+    component: require('components/pages/TablesPage'),
   },
   {
     path: '*',

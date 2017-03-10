@@ -22,7 +22,7 @@
   import PageHeader from './PageHeader';
 
   export default {
-    name: 'tables',
+    name: 'tables-page',
     components: {
       PageHeader,
     },

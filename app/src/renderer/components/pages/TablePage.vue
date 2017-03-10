@@ -10,7 +10,7 @@
   import PageHeader from './PageHeader';
 
   export default {
-    name: 'table',
+    name: 'table-page',
     props: ['name'],
     components: {
       PageHeader,
