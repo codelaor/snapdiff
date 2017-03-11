@@ -78,7 +78,7 @@
     },
     watch: {
       connection: {
-        handler: function watchConnection() {    // eslint-disable-line object-shorthand
+        handler() {
           this.message = '';
         },
         deep: true,

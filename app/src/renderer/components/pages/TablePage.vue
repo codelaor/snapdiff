@@ -34,7 +34,6 @@
     },
     methods: {
       updateRows() {
-        console.log("updateRows called"); // eslint-disable-line
         this.$store
           .dispatch('getTableContents', {
             table: this.name,

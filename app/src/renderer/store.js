@@ -34,13 +34,7 @@ const mutations = {
 // actions are functions that causes side effects and can involve
 // asynchronous operations.
 const actions = {
-  getTableContents: ({ commit, state }, { table, limit, offset } = { limit: 50, offset: 0 }) => {
-    console.log('commit: ', commit); // eslint-disable-line
-    console.log('state: ', state); // eslint-disable-line
-    console.log('table: ', table); // eslint-disable-line
-    console.log('limit: ', limit); // eslint-disable-line
-    console.log('offset: ', offset); // eslint-disable-line
-    debugger; // eslint-disable-line
+  getTableContents({ commit, state }, { table, limit, offset } = { limit: 50, offset: 0 }) {
     return state.knex(table)
       .limit(limit)
       .offset(offset);
