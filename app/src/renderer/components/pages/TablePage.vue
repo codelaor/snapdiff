@@ -1,11 +1,16 @@
 <template>
   <div class="header-page">
-    <page-header v-bind:title="`Table '${ name}'`" v-bind:showBack="true"/>
+    <page-header v-bind:title="`Table '${ schema ? schema + '.' : ''}${ table}'`" v-bind:showBack="true"/>
     <div class="header-page-content-top">
       <table>
+        <tr>
+          <th v-for="column in columns">
+            {{ column.name }}
+          </th>
+        </tr>
         <tr v-for="row in rows">
-          <td>
-            {{ row }}
+          <td v-for="column in columns">
+            {{ row[column.name] }}
           </td>
         </tr>
       </table>
@@ -18,9 +23,10 @@
 
   export default {
     name: 'table-page',
-    props: ['name'],
+    props: ['schema', 'table'],
     created() {
-      this.updateRows();
+      this.getColumns();
+      this.getRows();
     },
     components: {
       PageHeader,
@@ -29,14 +35,26 @@
       return {
         limit: 25,
         offset: 0,
+        columns: [],
         rows: [],
       };
     },
     methods: {
-      updateRows() {
+      getColumns() {
+        this.$store
+          .dispatch('getTableColumns', {
+            schema: this.schema,
+            table: this.table,
+          })
+          .then(results => {
+            this.columns = results;
+          });
+      },
+      getRows() {
         this.$store
           .dispatch('getTableContents', {
-            table: this.name,
+            schema: this.schema,
+            table: this.table,
             limit: this.limit,
             offset: this.offset,
           })

@@ -5,12 +5,19 @@
       <table>
         <tr>
           <th>
+            Schema
+          </th>
+          <th>
             Name
           </th>
         </tr>
         <tr v-for="table in tables">
           <td>
-            <router-link v-bind:to="'/table/' + table.name">{{ table.name }}</router-link>
+            {{ table.schema }}
+          </td>
+          <td>
+            <router-link v-if="table.schema" v-bind:to="`/schema/${table.schema}/table/${table.name}`">{{ table.name }}</router-link>
+            <router-link v-if="!table.schema" v-bind:to="`/table/${table.name}`">{{ table.name }}</router-link>
           </td>
         </tr>
       </table>

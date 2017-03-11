@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import * as knex from 'knex';
+import knex from 'knex';
 
 Vue.use(Vuex);
 
@@ -34,8 +34,37 @@ const mutations = {
 // actions are functions that causes side effects and can involve
 // asynchronous operations.
 const actions = {
-  getTableContents({ commit, state }, { table, limit, offset } = { limit: 50, offset: 0 }) {
-    return state.knex(table)
+  getTableColumns: ({ commit, state }, { schema, table }) => {
+    let query;
+    switch (state.connection.client) {
+      case 'sqlite3':
+        query = state.knex.schema.raw(`PRAGMA table_info(${table})`)
+          // .orderBy('cid')
+          .map((row) => ({
+            name: row.name,
+          }));
+        break;
+      case 'pg':
+        query = state.knex('information_schema.columns')
+          .where('table_schema', schema)
+          .andWhere('table_name', table)
+          // .orderBy('ordinal_position')
+          .map((row) => ({
+            name: row.column_name,
+          }));
+        break;
+      default:
+        throw new Error('Unsupported client type - do not know how to get table columns');
+    }
+    return query;
+  },
+
+  getTableContents({ commit, state }, { schema, table, limit, offset } = { limit: 50, offset: 0 }) {
+    let query = state.knex(table); // eslint-disable-line
+    if (schema) {
+      query = query.withSchema(schema);
+    }
+    return query
       .limit(limit)
       .offset(offset);
   },
@@ -61,6 +90,7 @@ const actions = {
     // of testing our connection was successful
     switch (state.connection.client) {
       case 'sqlite3':
+        // Query tables now and return promise for caller to wait on
         return knexConnection('sqlite_master')
           .select('name')
           .where('type', 'table')
@@ -70,10 +100,9 @@ const actions = {
           });
       case 'pg':
         return knexConnection('information_schema.tables')
-          .select('table_name as name')
-          .where('table_schema', 'public')
+          .select(['table_schema as schema', 'table_name as name'])
           .where('table_type', 'BASE TABLE')
-          .orderBy('name')
+          .orderBy(['schema', 'name'])
           .then((result) => {
             commit('setTables', result);
           });
@@ -114,6 +143,7 @@ const getters = {
     return [{
       id: 'pg',
       name: 'PostgresQL',
+      hasSchemas: true,
       supported: true,
       parameters: [
         'host',
@@ -125,6 +155,7 @@ const getters = {
     }, {
       id: 'sqlite3',
       name: 'SQLite3',
+      hasSchemas: false,
       supported: true,
       parameters: [
         'filename',
@@ -132,6 +163,7 @@ const getters = {
     }, {
       id: 'mysql',
       name: 'MySQL',
+      hasSchemas: true, // TODO find out correct answer
       supported: false,
       parameters: [
         // TODO add these
@@ -139,6 +171,7 @@ const getters = {
     }, {
       id: 'mariasql',
       name: 'MariaDB',
+      hasSchemas: true, // TODO find out correct answer
       supported: false,
       parameters: [
         // TODO add these
@@ -146,6 +179,7 @@ const getters = {
     }, {
       id: 'oracle',
       name: 'Oracle',
+      hasSchemas: true, // TODO find out correct answer
       supported: false,
       parameters: [
         // TODO add these

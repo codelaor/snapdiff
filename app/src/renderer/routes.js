@@ -5,7 +5,13 @@ export default [
     component: require('components/pages/HomePage'),
   },
   {
-    path: '/table/:name',
+    path: '/schema/:schema/table/:table',
+    name: 'schemaTable',
+    component: require('components/pages/TablePage'),
+    props: true,
+  },
+  {
+    path: '/table/:table',
     name: 'table',
     component: require('components/pages/TablePage'),
     props: true,
@@ -16,7 +22,12 @@ export default [
     component: require('components/pages/DatabasePage'),
   },
   {
+    path: '/error',
+    name: 'error',
+    component: require('components/pages/ErrorPage'),
+  },
+  {
     path: '*',
-    redirect: '/',
+    redirect: '/error',
   },
 ];
