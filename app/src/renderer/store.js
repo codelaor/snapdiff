@@ -34,6 +34,18 @@ const mutations = {
 // actions are functions that causes side effects and can involve
 // asynchronous operations.
 const actions = {
+  getTableContents: ({ commit, state }, { table, limit, offset } = { limit: 50, offset: 0 }) => {
+    console.log('commit: ', commit); // eslint-disable-line
+    console.log('state: ', state); // eslint-disable-line
+    console.log('table: ', table); // eslint-disable-line
+    console.log('limit: ', limit); // eslint-disable-line
+    console.log('offset: ', offset); // eslint-disable-line
+    debugger; // eslint-disable-line
+    return state.knex(table)
+      .limit(limit)
+      .offset(offset);
+  },
+
   connect: ({ commit, state }, parameters) => {
     // Create knex object (does not attempt to connect until first query)
     const knexConnection = knex({
@@ -48,7 +60,8 @@ const actions = {
       },
       useNullAsDefault: true,
     });
-    commit('setConnection', Object.assign({}, parameters, { knex }));
+    commit('setConnection', Object.assign({}, parameters));
+    commit('setKnex', knexConnection);
 
     // Get database tables from connection.  We need these anyway and it has the benefit
     // of testing our connection was successful

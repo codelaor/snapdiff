@@ -2,6 +2,13 @@
   <div class="header-page">
     <page-header v-bind:title="`Table '${ name}'`" v-bind:showBack="true"/>
     <div class="header-page-content-top">
+      <table>
+        <tr v-for="row in rows">
+          <td>
+            {{ row }}
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
@@ -12,17 +19,32 @@
   export default {
     name: 'table-page',
     props: ['name'],
+    created() {
+      this.updateRows();
+    },
     components: {
       PageHeader,
     },
     data() {
       return {
-        // tables: this.$store.state.tables,
+        limit: 25,
+        offset: 0,
+        rows: [],
       };
     },
-    watch: {
-    },
     methods: {
+      updateRows() {
+        console.log("updateRows called"); // eslint-disable-line
+        this.$store
+          .dispatch('getTableContents', {
+            table: this.name,
+            limit: this.limit,
+            offset: this.offset,
+          })
+          .then(results => {
+            this.rows = results;
+          });
+      },
     },
   };
 
