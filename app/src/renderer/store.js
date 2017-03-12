@@ -102,6 +102,8 @@ const actions = {
         return knexConnection('information_schema.tables')
           .select(['table_schema as schema', 'table_name as name'])
           .where('table_type', 'BASE TABLE')
+          .andWhere('table_schema', '<>', 'information_schema')
+          .andWhere('table_schema', '<>', 'pg_catalog')
           .orderBy(['schema', 'name'])
           .then((result) => {
             commit('setTables', result);
