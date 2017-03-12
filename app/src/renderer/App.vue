@@ -78,4 +78,34 @@
     width: auto;
     height: auto;
   }
+
+
+	.snapdiff-data-table {
+		width:100%; 
+		border-collapse:collapse; 
+	}
+
+	.snapdiff-data-table th{ 
+		padding:7px; border:slategray 1px solid;
+    background-color: slategray;
+    color: antiquewhite;
+	}
+
+	.snapdiff-data-table td{ 
+		padding:7px; border:slategray 1px solid;
+	}
+
+	/*  Define the background color for all the ODD background rows  */
+	.snapdiff-data-table tr:nth-child(odd){ 
+		background: #fefefe;
+	}
+	/*  Define the background color for all the EVEN background rows  */
+	.snapdiff-data-table tr:nth-child(even){
+		background: #f5f5f5;
+	}
+
+  .snapdiff-data-table tr td:first-child{
+      width:1%;
+      white-space:nowrap;
+  }  
 </style>

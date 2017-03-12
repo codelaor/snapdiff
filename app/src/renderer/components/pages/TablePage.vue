@@ -2,7 +2,7 @@
   <div class="header-page">
     <page-header v-bind:title="`Table '${ schema ? schema + '.' : ''}${ table}'`" v-bind:showBack="true"/>
     <div class="header-page-content-top">
-      <table>
+      <table class="snapdiff-data-table">
         <tr>
           <th v-for="column in columns">
             {{ column.name }}

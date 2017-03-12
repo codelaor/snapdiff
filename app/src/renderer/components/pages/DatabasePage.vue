@@ -2,7 +2,7 @@
   <div class="header-page">
     <page-header :title="`Database '${databaseTitle}'`"/>
     <div class="header-page-content-top">
-      <table>
+      <table class="snapdiff-data-table">
         <tr>
           <th>
             Schema
