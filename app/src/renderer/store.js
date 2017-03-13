@@ -49,12 +49,24 @@ const mutations = {
     };
   },
 
+  setTableCurrentPage(state, currentPage) {
+    state.table.currentPage = currentPage;
+  },
+
   setTableColumns(state, columns) {
     state.table.columns = columns;
   },
 
   setTableRows(state, rows) {
     state.table.rows = rows;
+  },
+
+  setTableRowsPerPage(state, rowsPerPage) {
+    state.table.rowsPerPage = rowsPerPage;
+  },
+
+  setTableTotalRows(state, totalRows) {
+    state.table.totalRows = totalRows;
   },
 
   setTables(state, tables) {
@@ -144,6 +156,18 @@ const actions = {
     return query.then((columns) => commit('setTableColumns', columns));
   },
 
+  getTableTotalRows({ commit, state }) {
+    let query = state.knex(state.table.name); // eslint-disable-line
+    if (state.table.schema) {
+      query = query.withSchema(state.table.schema);
+    }
+    query
+      .count('* as count')
+      .then(results => {
+        commit('setTableTotalRows', results[0].count);
+      });
+  },
+
   getTableRows({ commit, state }) {
     let query = state.knex(state.table.name); // eslint-disable-line
     if (state.table.schema) {
@@ -158,10 +182,20 @@ const actions = {
   },
 
   setTable({ dispatch, commit, state }, { schemaName, tableName }) {
-    debugger; // eslint-disable-line
     commit('setTable', { schemaName, tableName });
-    return dispatch('getTableColumns')
-      .then(() => dispatch('getTableRows'));
+    dispatch('getTableRows'); // can fetch at same time
+    dispatch('getTableTotalRows'); // can fetch at same time
+    return dispatch('getTableColumns'); // minimum need info
+  },
+
+  setTableCurrentPage({ dispatch, commit, state }, currentPage) {
+    commit('setTableCurrentPage', currentPage);
+    return dispatch('getTableRows');
+  },
+
+  setTableRowsPerPage({ dispatch, commit, state }, rowsPerPage) {
+    commit('setTableRowsPerPage', rowsPerPage);
+    return dispatch('getTableRows');
   },
 };
 

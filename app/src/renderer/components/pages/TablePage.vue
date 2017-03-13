@@ -6,7 +6,7 @@
         <!--Table Pager-->
         <tr>
           <td v-bind:colspan="table.columns.length + 1">
-            <table-pager :totalRecords="totalRows" :recordsPerPage="limit" :currentPage="currentPage"/>
+            <table-pager/>
           </td>
         </tr>
         <!--Table Header-->
@@ -24,7 +24,7 @@
         <!--Repeat Pager-->
         <tr>
           <td v-bind:colspan="table.columns.length + 1">
-            <table-pager :totalRecords="totalRows" :recordsPerPage="limit" :currentPage="currentPage"/>
+            <table-pager/>
           </td>
         </tr>
       </table>
@@ -66,7 +66,6 @@
     },
     methods: {
       setTable() {
-        debugger; // eslint-disable-line
         this.$store
           .dispatch('setTable', {
             schemaName: this.schemaName,
