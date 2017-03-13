@@ -1,32 +1,30 @@
 <template>
   <div class="header-page">
-    <page-header v-bind:title="`Table '${ schema ? schema + '.' : ''}${ table}'`" v-bind:showBack="true"/>
+    <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true"/>
     <div class="header-page-content-top">
       <table class="snapdiff-data-table">
-        <!--Table Options-->
+        <!--Table Pager-->
         <tr>
-          <td v-bind:colspan="columns.length + 1">
-            <label>Rows per page: </label>
-            <input type="number" v-model.number="limit"/>
-            <snapdiff-pager :totalRecords="totalRows" :recordsPerPage="limit" :currentPage="currentPage"/>
+          <td v-bind:colspan="table.columns.length + 1">
+            <table-pager :totalRecords="totalRows" :recordsPerPage="limit" :currentPage="currentPage"/>
           </td>
         </tr>
         <!--Table Header-->
         <tr>
-          <th v-for="column in columns">
+          <th v-for="column in table.columns">
             {{ column.name }}
           </th>
         </tr>
         <!--Table Data-->
-        <tr v-for="row in rows">
-          <td v-for="column in columns">
+        <tr v-for="row in table.rows">
+          <td v-for="column in table.columns">
             {{ row[column.name] }}
           </td>
         </tr>
         <!--Repeat Pager-->
         <tr>
-          <td v-bind:colspan="columns.length + 1">
-            <snapdiff-pager :totalRecords="totalRows" :recordsPerPage="limit" :currentPage="currentPage"/>
+          <td v-bind:colspan="table.columns.length + 1">
+            <table-pager :totalRecords="totalRows" :recordsPerPage="limit" :currentPage="currentPage"/>
           </td>
         </tr>
       </table>
@@ -36,18 +34,22 @@
 
 <script>
   import PageHeader from './PageHeader';
-  import SnapdiffPager from '../shared/SnapdiffPager';
+  import TablePager from './Table/TablePager';
 
   export default {
     name: 'table-page',
-    props: ['schema', 'table'],
+    props: ['schemaName', 'tableName'],
     created() {
-      this.getColumns();
-      this.getData();
+      this.setTable();
     },
     components: {
       PageHeader,
-      SnapdiffPager,
+      TablePager,
+    },
+    computed: {
+      table() {
+        return this.$store.state.table;
+      },
     },
     data() {
       return {
@@ -55,8 +57,6 @@
         offset: 0,
         totalRows: 55,
         currentPage: 1,
-        columns: [],
-        rows: [],
       };
     },
     watch: {
@@ -65,33 +65,12 @@
       },
     },
     methods: {
-      getColumns() {
+      setTable() {
+        debugger; // eslint-disable-line
         this.$store
-          .dispatch('getTableColumns', {
-            schema: this.schema,
-            table: this.table,
-          })
-          .then(results => {
-            this.columns = results;
-          });
-      },
-      getCount() {
-
-      },
-      getData() {
-        this.getRows();
-        this.getCount();
-      },
-      getRows() {
-        this.$store
-          .dispatch('getTableContents', {
-            schema: this.schema,
-            table: this.table,
-            limit: this.limit,
-            offset: this.offset,
-          })
-          .then(results => {
-            this.rows = results;
+          .dispatch('setTable', {
+            schemaName: this.schemaName,
+            tableName: this.tableName,
           });
       },
     },

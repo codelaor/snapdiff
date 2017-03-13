@@ -5,13 +5,13 @@ export default [
     component: require('components/pages/HomePage'),
   },
   {
-    path: '/schema/:schema/table/:table',
+    path: '/schema/:schemaName/table/:tableName',
     name: 'schemaTable',
     component: require('components/pages/TablePage'),
     props: true,
   },
   {
-    path: '/table/:table',
+    path: '/table/:tableName',
     name: 'table',
     component: require('components/pages/TablePage'),
     props: true,

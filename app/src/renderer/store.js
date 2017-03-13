@@ -17,15 +17,46 @@ const state = {
   },
   knex: null,
   tables: [],
+  table: {
+    schema: '',
+    name: '',
+    totalRows: 0,
+    rowsPerPage: 10,
+    currentPage: 1,
+    columns: [],
+    rows: [],
+  },
 };
 
 const mutations = {
-  setKnex(state, newKnex) {
-    state.knex = newKnex;
-  },
   setConnection(state, connection) {
     Object.assign(state.connection, connection);
   },
+
+  setKnex(state, newKnex) {
+    state.knex = newKnex;
+  },
+
+  setTable(state, { schemaName, tableName }) {
+    state.table = {
+      name: tableName,
+      schema: schemaName,
+      totalRows: 0,
+      rowsPerPage: 10,
+      currentPage: 1,
+      rows: [],
+      columns: [],
+    };
+  },
+
+  setTableColumns(state, columns) {
+    state.table.columns = columns;
+  },
+
+  setTableRows(state, rows) {
+    state.table.rows = rows;
+  },
+
   setTables(state, tables) {
     state.tables = tables;
   },
@@ -34,41 +65,6 @@ const mutations = {
 // actions are functions that causes side effects and can involve
 // asynchronous operations.
 const actions = {
-  getTableColumns: ({ commit, state }, { schema, table }) => {
-    let query;
-    switch (state.connection.client) {
-      case 'sqlite3':
-        query = state.knex.schema.raw(`PRAGMA table_info(${table})`)
-          // .orderBy('cid')
-          .map((row) => ({
-            name: row.name,
-          }));
-        break;
-      case 'pg':
-        query = state.knex('information_schema.columns')
-          .where('table_schema', schema)
-          .andWhere('table_name', table)
-          // .orderBy('ordinal_position')
-          .map((row) => ({
-            name: row.column_name,
-          }));
-        break;
-      default:
-        throw new Error('Unsupported client type - do not know how to get table columns');
-    }
-    return query;
-  },
-
-  getTableContents({ commit, state }, { schema, table, limit, offset } = { limit: 50, offset: 0 }) {
-    let query = state.knex(table); // eslint-disable-line
-    if (schema) {
-      query = query.withSchema(schema);
-    }
-    return query
-      .limit(limit)
-      .offset(offset);
-  },
-
   connect: ({ commit, state }, parameters) => {
     // Create knex object (does not attempt to connect until first query)
     const knexConnection = knex({
@@ -112,6 +108,7 @@ const actions = {
         throw new Error('Unsupported client type - do not know how to read tables');
     }
   },
+
   disconnect: ({ commit }) => {
     // Kill any existing connection
     if (state.knex) {
@@ -119,6 +116,52 @@ const actions = {
     }
 
     commit('setKnex', null);
+  },
+
+  getTableColumns: ({ commit, state }) => {
+    let query;
+    switch (state.connection.client) {
+      case 'sqlite3':
+        query = state.knex.schema.raw(`PRAGMA table_info(${state.table.name})`)
+          // .orderBy('cid')
+          .map((row) => ({
+            name: row.name,
+          }));
+        break;
+      case 'pg':
+        query = state.knex('information_schema.columns')
+          .where('table_schema', state.table.schema)
+          .andWhere('table_name', state.table.name)
+          // .orderBy('ordinal_position')
+          .map((row) => ({
+            name: row.column_name,
+          }));
+        break;
+      default:
+        throw new Error('Unsupported client type - do not know how to get table columns');
+    }
+
+    return query.then((columns) => commit('setTableColumns', columns));
+  },
+
+  getTableRows({ commit, state }) {
+    let query = state.knex(state.table.name); // eslint-disable-line
+    if (state.table.schema) {
+      query = query.withSchema(state.table.schema);
+    }
+    query
+      .limit(state.table.rowsPerPage)
+      .offset((state.table.currentPage - 1) * state.table.rowsPerPage)
+      .then(results => {
+        commit('setTableRows', results);
+      });
+  },
+
+  setTable({ dispatch, commit, state }, { schemaName, tableName }) {
+    debugger; // eslint-disable-line
+    commit('setTable', { schemaName, tableName });
+    return dispatch('getTableColumns')
+      .then(() => dispatch('getTableRows'));
   },
 };
 
