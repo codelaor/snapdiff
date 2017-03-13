@@ -7,7 +7,7 @@
         <tr>
           <td v-bind:colspan="columns.length + 1">
             <label>Rows per page: </label>
-            <input type="number" v-model="limit"/>
+            <input type="number" v-model.number="limit"/>
             <snapdiff-pager :totalRecords="totalRows" :recordsPerPage="limit" :currentPage="currentPage"/>
           </td>
         </tr>

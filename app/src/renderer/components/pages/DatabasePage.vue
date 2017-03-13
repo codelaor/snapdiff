@@ -2,7 +2,10 @@
   <div class="header-page">
     <page-header :title="`Database '${databaseTitle}'`"/>
     <div class="header-page-content-top">
-      <table class="snapdiff-data-table">
+      <p v-if="!tables.length">
+        No tables found in 'database' {{ databaseTitle }} (system tables are excluded.)
+      </p>
+      <table class="snapdiff-data-table" v-if="tables.length">
         <tr>
           <th>
             Schema
