@@ -205,6 +205,10 @@ const actions = {
 
 // getters are functions
 const getters = {
+  connectionClient(state, getters) {
+    return getters.connectionClients.find(client =>
+      client.id === state.connection.client);
+  },
   connectionClients() {
     return [{
       id: 'pg',

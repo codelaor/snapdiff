@@ -7,7 +7,7 @@
       </p>
       <table class="snapdiff-data-table" v-if="tables.length">
         <tr>
-          <th>
+          <th v-if="client.hasSchemas">
             Schema
           </th>
           <th>
@@ -15,7 +15,7 @@
           </th>
         </tr>
         <tr v-for="table in tables">
-          <td>
+          <td v-if="client.hasSchemas">
             {{ table.schema }}
           </td>
           <td>
@@ -43,9 +43,10 @@
         databaseTitle: this.$store.getters.databaseTitle,
       };
     },
-    watch: {
-    },
-    methods: {
+    computed: {
+      client() {
+        return this.$store.getters.connectionClient;
+      },
     },
   };
 
