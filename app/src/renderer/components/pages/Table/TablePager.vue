@@ -2,13 +2,12 @@
 
   <span class="table-pager">
     <span />
-    <!--<span>Page {{ table.currentPage }} of {{ Math.ceil(table.totalRows / table.recordsPerPage) }}</span>-->
     <span>
-        <button @click="gotoPreviousPage">
+        <button @click="gotoPreviousPage" :disabled="table.currentPage < 2">
           <icon name="chevron-left"/>
         </button>
-        Page {{ table.currentPage }} of {{ Math.ceil(table.totalRows / table.rowsPerPage) }}
-        <button @click="gotoNextPage">
+        Page {{ table.currentPage }} of {{ pageCount }}
+        <button @click="gotoNextPage" :disabled="table.currentPage >= pageCount">
           <icon name="chevron-right"/>
         </button>
     </span>
@@ -26,6 +25,9 @@
     computed: {
       table() {
         return this.$store.state.table;
+      },
+      pageCount() {
+        return this.$store.getters.tablePageCount;
       },
     },
     methods: {

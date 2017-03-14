@@ -188,7 +188,11 @@ const actions = {
     return dispatch('getTableColumns'); // minimum need info
   },
 
-  setTableCurrentPage({ dispatch, commit, state }, currentPage) {
+  setTableCurrentPage({ dispatch, commit, state, getters }, currentPage) {
+    const totalPages = getters.tablePageCount;
+    if (currentPage > totalPages || currentPage < 1) {
+      throw new Error("Can't set current page to number outside range of pages.");
+    }
     commit('setTableCurrentPage', currentPage);
     return dispatch('getTableRows');
   },
@@ -201,23 +205,6 @@ const actions = {
 
 // getters are functions
 const getters = {
-  databaseTitle(state, getters) {
-    let title = '';
-    switch (state.connection.client) {
-      case 'pg':
-        title = state.connection.database;
-        break;
-      case 'sqlite3':
-        title = state.connection.filename;
-        break;
-      default:
-        title = getters
-          .connectionClients
-          .find(client => client.id === state.connection.client)
-          .name;
-    }
-    return title;
-  },
   connectionClients() {
     return [{
       id: 'pg',
@@ -264,6 +251,26 @@ const getters = {
         // TODO add these
       ],
     }];
+  },
+  databaseTitle(state, getters) {
+    let title = '';
+    switch (state.connection.client) {
+      case 'pg':
+        title = state.connection.database;
+        break;
+      case 'sqlite3':
+        title = state.connection.filename;
+        break;
+      default:
+        title = getters
+          .connectionClients
+          .find(client => client.id === state.connection.client)
+          .name;
+    }
+    return title;
+  },
+  tablePageCount(state) {
+    return Math.ceil(state.table.totalRows / state.table.rowsPerPage);
   },
 };
 
