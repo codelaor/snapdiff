@@ -91,6 +91,10 @@
     vertical-align: bottom;
   }
 
+  .snapdiff-data-table-container {
+    overflow-x: scroll;
+  }
+
 	.snapdiff-data-table {
 		width:100%; 
 		border-collapse:collapse; 
@@ -100,10 +104,13 @@
 		padding:7px; border:slategray 1px solid;
     background-color: slategray;
     color: antiquewhite;
+    white-space:nowrap;
 	}
 
 	.snapdiff-data-table td{ 
-		padding:7px; border:slategray 1px solid;
+		padding:7px; 
+    border:slategray 1px solid;
+    white-space:nowrap;
 	}
 
 	/*  Define the background color for all the ODD background rows  */

@@ -4,20 +4,22 @@
     <div class="header-page-content-top">
       <!--Table Pager-->
       <table-pager/>
-      <table class="snapdiff-data-table">
-        <!--Table Header-->
-        <tr>
-          <th v-for="column in table.columns">
-            {{ column.name }}
-          </th>
-        </tr>
-        <!--Table Data-->
-        <tr v-for="row in table.rows">
-          <td v-for="column in table.columns">
-            {{ row[column.name] }}
-          </td>
-        </tr>
-      </table>
+      <div class="snapdiff-data-table-container">
+        <table class="snapdiff-data-table">
+          <!--Table Header-->
+          <tr>
+            <th v-for="column in table.columns">
+              {{ column.name }}
+            </th>
+          </tr>
+          <!--Table Data-->
+          <tr v-for="row in table.rows">
+            <td v-for="column in table.columns">
+              {{ row[column.name] }}
+            </td>
+          </tr>
+        </table>
+      </div>
       <!--Repeat Pager-->
       <table-pager/>
     </div>
