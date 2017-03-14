@@ -197,8 +197,13 @@ const actions = {
     return dispatch('getTableRows');
   },
 
-  setTableRowsPerPage({ dispatch, commit, state }, rowsPerPage) {
+  setTableRowsPerPage({ dispatch, commit, state, getters }, rowsPerPage) {
     commit('setTableRowsPerPage', rowsPerPage);
+    const newPageCount = getters.tablePageCount;
+    if (state.table.currentPage > newPageCount) {
+      // Current page is now out of bounds - reset to last page
+      commit('setTableCurrentPage', newPageCount);
+    }
     return dispatch('getTableRows');
   },
 };
