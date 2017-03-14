@@ -37,22 +37,26 @@
     padding: 10px;
     display: flex;
     align-items: center;
-    position: absolute;
-    justify-content: space-between;
+    justify-content: flex-start;
     width: 100%;
     top: 0;
     left: 0;
+    font-size: 2em;
+  }
+
+  .header-page-header > * {
+    margin-right: 5px;
+  }
+
+  .header-page-header > button {
+    height: 2.2em;
+    width: 2.2em;
   }
   
   .header-page-header,
   .header-page-content-top,
   .header-page-content-centered {
-    -webkit-box-sizing: border-box;
-    /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;
-    /* Firefox, other Gecko */
     box-sizing: border-box;
-    /* Opera/IE 8+ */
     padding: 10px;
   }
   
@@ -74,11 +78,18 @@
     align-items: center;
   }
   
+  button {
+    box-sizing: border-box;
+  }
+
   .fa-icon {
     width: auto;
     height: auto;
   }
 
+  button > svg {
+    vertical-align: bottom;
+  }
 
 	.snapdiff-data-table {
 		width:100%; 
@@ -108,4 +119,5 @@
       width:1%;
       white-space:nowrap;
   }  
+
 </style>

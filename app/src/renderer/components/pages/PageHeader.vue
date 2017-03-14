@@ -1,14 +1,8 @@
 <template>
   <div class="header-page-header">
-    <div class="header-page-header-left">
-      <h2>
-        <button v-if="showHome" v-on:click="goHome"><icon name="home"></icon></button>
-        <button v-if="showBack" v-on:click="$router.go(-1)"><icon name="arrow-left"/></button>
-        {{ title }}
-      </h2>
-    </div>
-    <div class="header-page-header-right">
-    </div>
+    <button class="big-button" v-if="showHome" v-on:click="goHome"><icon name="home"></icon></button>
+    <button v-if="showBack" v-on:click="$router.go(-1)"><icon name="arrow-left"/></button>
+    {{ title }}
   </div>
 </template>
 
@@ -47,5 +41,5 @@
 </script>
 
 <style>
-
+  
 </style>

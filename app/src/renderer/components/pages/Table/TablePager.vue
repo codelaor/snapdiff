@@ -1,8 +1,10 @@
 <template>
 
-  <span class="table-pager">
-    <span />
-    <span>
+  <div class="table-pager">
+    <div class="table-pager-section table-pager-left">
+      {{ table.totalRows }} rows 
+    </div>
+    <div class="table-pager-section table-pager-center">
         <button @click="gotoPreviousPage" :disabled="table.currentPage < 2">
           <icon name="chevron-left"/>
         </button>
@@ -10,12 +12,12 @@
         <button @click="gotoNextPage" :disabled="table.currentPage >= pageCount">
           <icon name="chevron-right"/>
         </button>
-    </span>
-    <span>
+    </div>
+    <div class="table-pager-section table-pager-right">
       <label>Rows per page: </label>
       <input type="number" @change="onChangeRowsPerPage" v-model.number="table.rowsPerPage"/>
-    </span>
-  </span>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -48,9 +50,50 @@
 <style>
 
   .table-pager {
+		width:100%; 
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+    padding: 3px;
+  }
+
+  .table-pager-section {
+    width: 33%;
+  }
+
+  .table-pager-left {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .table-pager-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .table-pager-center > button {
+    height: 1.8em;
+    width: 1.8em;
+  }
+
+  .table-pager-center > * {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .table-pager-right {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 5px;
+  }
+
+  .table-pager-right > input {
+    margin-left: 5px;
+    width: 4em;
+    text-align: center;
+    box-sizing: border-box;
   }
 
 </style>

@@ -2,13 +2,9 @@
   <div class="header-page">
     <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true"/>
     <div class="header-page-content-top">
+      <!--Table Pager-->
+      <table-pager/>
       <table class="snapdiff-data-table">
-        <!--Table Pager-->
-        <tr>
-          <td v-bind:colspan="table.columns.length + 1">
-            <table-pager/>
-          </td>
-        </tr>
         <!--Table Header-->
         <tr>
           <th v-for="column in table.columns">
@@ -21,13 +17,9 @@
             {{ row[column.name] }}
           </td>
         </tr>
-        <!--Repeat Pager-->
-        <tr>
-          <td v-bind:colspan="table.columns.length + 1">
-            <table-pager/>
-          </td>
-        </tr>
       </table>
+      <!--Repeat Pager-->
+      <table-pager/>
     </div>
   </div>
 </template>
