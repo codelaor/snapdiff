@@ -29,6 +29,11 @@ const state = {
 };
 
 const mutations = {
+  addTableSnapshot(state, { tableName, snapshot }) {
+    const tableIndex = state.tables.findIndex(table => table.name === tableName);
+    state.tables[tableIndex].snapshots.push(snapshot);
+  },
+
   setConnection(state, connection) {
     Object.assign(state.connection, connection);
   },
@@ -104,7 +109,7 @@ const actions = {
           .where('type', 'table')
           .orderBy('name')
           .then((result) => {
-            commit('setTables', result);
+            commit('setTables', result.map(table => Object.assign(table, { snapshots: [] })));
           });
       case 'pg':
         return knexConnection('information_schema.tables')
@@ -114,7 +119,8 @@ const actions = {
           .andWhere('table_schema', '<>', 'pg_catalog')
           .orderBy(['schema', 'name'])
           .then((result) => {
-            commit('setTables', result);
+            // commit('setTables', result);
+            commit('setTables', result.map(table => Object.assign(table, { snapshots: [] })));
           });
       default:
         throw new Error('Unsupported client type - do not know how to read tables');
@@ -205,6 +211,15 @@ const actions = {
       commit('setTableCurrentPage', newPageCount);
     }
     return dispatch('getTableRows');
+  },
+
+  snapshotTables({ commit, state }) {
+    state.tables.forEach(table => {
+      commit('addTableSnapshot', {
+        tableName: table.name,
+        snapshot: {},
+      });
+    });
   },
 };
 

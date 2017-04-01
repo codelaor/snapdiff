@@ -13,6 +13,9 @@
           <th>
             Name
           </th>
+          <th>
+            Snapshots <button @click="createSnapshots">Create</button>
+          </th>
         </tr>
         <tr v-for="table in tables">
           <td v-if="client.hasSchemas">
@@ -21,6 +24,10 @@
           <td>
             <router-link v-if="table.schema" v-bind:to="`/schema/${table.schema}/table/${table.name}`">{{ table.name }}</router-link>
             <router-link v-if="!table.schema" v-bind:to="`/table/${table.name}`">{{ table.name }}</router-link>
+          </td>
+          <td>
+            <!--{{ table.snapshots ? table.snapshots.length : 0 }}-->
+            {{ table.snapshots.length }}
           </td>
         </tr>
       </table>
@@ -46,6 +53,17 @@
     computed: {
       client() {
         return this.$store.getters.connectionClient;
+      },
+    },
+    methods: {
+      createSnapshots() {
+        this.$store.dispatch('snapshotTables', this.connection)
+          .then(() => {
+            alert('Snapshots created'); // eslint-disable-line
+          })
+          .catch((err) => {
+            this.message = err.message;
+          });
       },
     },
   };
