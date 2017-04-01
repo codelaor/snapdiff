@@ -17,6 +17,18 @@ export default [
     props: true,
   },
   {
+    path: '/schema/:schemaName/table/:tableName/snapshots',
+    name: 'schemaSnapshots',
+    component: require('components/pages/SnapshotsPage'),
+    props: true,
+  },
+  {
+    path: '/table/:tableName/snapshots',
+    name: 'snapshots',
+    component: require('components/pages/SnapshotsPage'),
+    props: true,
+  },
+  {
     path: '/database',
     name: 'database',
     component: require('components/pages/DatabasePage'),

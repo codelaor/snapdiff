@@ -26,7 +26,8 @@
             <router-link v-if="!table.schema" v-bind:to="`/table/${table.name}`">{{ table.name }}</router-link>
           </td>
           <td>
-            {{ table.snapshots.length }}
+            <router-link v-if="table.schema" v-bind:to="`/schema/${table.schema}/table/${table.name}/snapshots`">{{ table.snapshots.length  }}</router-link>
+            <router-link v-if="!table.schema" v-bind:to="`/table/${table.name}/snapshots`">{{ table.snapshots.length }}</router-link>
           </td>
         </tr>
       </table>
