@@ -4,10 +4,10 @@
     <div class="header-page-content-top">
       <div class="header-page-toolbar-top">
         Snapshot:
-        <select>
+        <select v-model="snapshot">
           <option value="">Current data</option>
           <option value disabled>—————————————</option>
-          <option v-for="snapshot in table.snapshots" value="snapshot.created">{{ snapshot.created.toTimeString() }}</option>
+          <option v-for="snapshot in table.snapshots" :value="snapshot.created">{{ snapshot.created.toTimeString() }}</option>
         </select>
       </div>
       <!--Table Pager-->
@@ -21,7 +21,7 @@
             </th>
           </tr>
           <!--Table Data-->
-          <tr v-for="row in table.rows">
+          <tr v-for="row in tableRows">
             <td v-for="column in table.columns">
               {{ row[column.name] }}
             </td>
@@ -52,9 +52,16 @@
       table() {
         return this.$store.state.table;
       },
+      tableRows() {
+        return this.snapshot ?
+          this.$store.state.table.snapshots.find(snapshot =>
+            snapshot.created === this.snapshot).data :
+          this.$store.state.table.rows;
+      },
     },
     data() {
       return {
+        snapshot: '',
         limit: 2,
         offset: 0,
         totalRows: 55,
