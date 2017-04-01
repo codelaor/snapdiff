@@ -26,7 +26,6 @@
             <router-link v-if="!table.schema" v-bind:to="`/table/${table.name}`">{{ table.name }}</router-link>
           </td>
           <td>
-            <!--{{ table.snapshots ? table.snapshots.length : 0 }}-->
             {{ table.snapshots.length }}
           </td>
         </tr>
@@ -59,7 +58,9 @@
       createSnapshots() {
         this.$store.dispatch('snapshotTables', this.connection)
           .then(() => {
-            alert('Snapshots created'); // eslint-disable-line
+            // TODO do something when all snapshots are created - this
+            // process is currently asynchronous
+            // alert('Snapshots created'); // eslint-disable-line
           })
           .catch((err) => {
             this.message = err.message;
