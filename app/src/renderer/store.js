@@ -220,14 +220,14 @@ const actions = {
   },
 
   snapshotTables({ commit, state }) {
-    state.tables.forEach(table => {
+    return Promise.all(state.tables.map(table =>
       state.knex(table.name).then(results =>
         commit('addTableSnapshot', {
           tableName: table.name,
           data: results,
         })
-      );
-    });
+      )
+    ));
   },
 };
 

@@ -64,9 +64,10 @@
           .then(() => {
             // TODO do something when all snapshots are created - this
             // process is currently asynchronous
-            // alert('Snapshots created'); // eslint-disable-line
+            alert('Snapshots created'); // eslint-disable-line
           })
           .catch((err) => {
+            alert(err.message); // eslint-disable-line
             this.message = err.message;
           });
       },
