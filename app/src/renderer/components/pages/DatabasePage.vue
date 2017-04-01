@@ -14,7 +14,10 @@
             Name
           </th>
           <th>
-            Snapshots <button @click="createSnapshots">Create</button>
+            Snapshots 
+            <button @click="createSnapshots">
+              <icon name="plus"/>
+            </button>
           </th>
         </tr>
         <tr v-for="table in tables">

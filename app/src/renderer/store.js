@@ -25,13 +25,17 @@ const state = {
     currentPage: 1,
     columns: [],
     rows: [],
+    snapshots: [],
   },
 };
 
 const mutations = {
-  addTableSnapshot(state, { tableName, snapshot }) {
+  addTableSnapshot(state, { tableName, data }) {
     const tableIndex = state.tables.findIndex(table => table.name === tableName);
-    state.tables[tableIndex].snapshots.push(snapshot);
+    state.tables[tableIndex].snapshots.unshift({
+      created: new Date(),
+      data,
+    });
   },
 
   setConnection(state, connection) {
@@ -43,15 +47,15 @@ const mutations = {
   },
 
   setTable(state, { schemaName, tableName }) {
-    state.table = {
-      name: tableName,
-      schema: schemaName,
+    const table = state.tables.find(table =>
+      table.name === tableName && table.schema === schemaName);
+    const extras = {
       totalRows: 0,
       rowsPerPage: 10,
       currentPage: 1,
-      rows: [],
-      columns: [],
     };
+    // state.table = Object.assign(table, extras);
+    Vue.set(state, 'table', Object.assign(table, extras));
   },
 
   setTableCurrentPage(state, currentPage) {
@@ -59,11 +63,13 @@ const mutations = {
   },
 
   setTableColumns(state, columns) {
+    Vue.set(state.table, 'columns', columns);
     state.table.columns = columns;
   },
 
   setTableRows(state, rows) {
-    state.table.rows = rows;
+    Vue.set(state.table, 'rows', rows);
+    // state.table.rows = rows;
   },
 
   setTableRowsPerPage(state, rowsPerPage) {
@@ -187,10 +193,10 @@ const actions = {
       });
   },
 
-  setTable({ dispatch, commit, state }, { schemaName, tableName }) {
+  async setTable({ dispatch, commit, state }, { schemaName, tableName }) {
     commit('setTable', { schemaName, tableName });
-    dispatch('getTableRows'); // can fetch at same time
-    dispatch('getTableTotalRows'); // can fetch at same time
+    await dispatch('getTableRows'); // can fetch at same time
+    await dispatch('getTableTotalRows'); // can fetch at same time
     return dispatch('getTableColumns'); // minimum need info
   },
 
@@ -218,7 +224,7 @@ const actions = {
       state.knex(table.name).then(results =>
         commit('addTableSnapshot', {
           tableName: table.name,
-          snapshot: results,
+          data: results,
         })
       );
     });

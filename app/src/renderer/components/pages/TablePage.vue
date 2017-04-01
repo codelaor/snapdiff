@@ -2,6 +2,14 @@
   <div class="header-page">
     <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true"/>
     <div class="header-page-content-top">
+      <div class="header-page-toolbar-top">
+        Snapshot:
+        <select>
+          <option value="">Current data</option>
+          <option value disabled>—————————————</option>
+          <option v-for="snapshot in table.snapshots" value="snapshot.created">{{ snapshot.created.toTimeString() }}</option>
+        </select>
+      </div>
       <!--Table Pager-->
       <table-pager/>
       <div class="snapdiff-data-table-container">
