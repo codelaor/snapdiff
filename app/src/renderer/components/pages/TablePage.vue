@@ -1,14 +1,18 @@
 <template>
   <div class="header-page">
-    <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true"/>
+    <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true" />
     <div class="header-page-content-top">
-      <div class="header-page-toolbar-top">
+      <div class="header-page-toolbar-top-right">
         Snapshot:
         <select :value="table.snapshot" @input="handleSnapshotSelect">
           <option value="">Current data</option>
           <option value disabled>—————————————</option>
+          <option v-if="!table.snapshots.length" value disabled>No snapshots found</option>
           <option v-for="snapshot in table.snapshots" :value="snapshot.created">{{ snapshot.created.toTimeString() }}</option>
         </select>
+        <button @click="createSnapshot">
+          <icon name="plus"/>
+        </button>
       </div>
       <!--Table Pager-->
       <table-pager/>
@@ -63,6 +67,19 @@
       },
     },
     methods: {
+      createSnapshot() {
+        this.$store.dispatch('snapshotTable', {
+          schemaName: this.schemaName,
+          tableName: this.tableName,
+        })
+          .then(() => {
+            alert('Snapshot created'); // eslint-disable-line
+          })
+          .catch((err) => {
+            alert(err.message); // eslint-disable-line
+            this.message = err.message;
+          });
+      },
       setTable() {
         this.$store
           .dispatch('setTable', {
@@ -71,8 +88,6 @@
           });
       },
       handleSnapshotSelect(event) {
-        console.log(event.target.value)//eslint-disable-line
-        debugger;//eslint-disable-line
         this.$store
           .dispatch('setTableSnapshot', {
             snapshot: event.target.value,

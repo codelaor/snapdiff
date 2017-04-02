@@ -78,11 +78,9 @@
     align-items: center;
   }
 
-  .header-page-toolbar-top {
-    border-style: solid;
-    border-width: 2px;
-    height: 50px;
-
+  .header-page-toolbar-top-right {
+    display: flex;
+    justify-content: flex-end;
   }
 
   button {

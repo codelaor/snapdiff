@@ -29,8 +29,13 @@
             <router-link v-if="!table.schema" v-bind:to="`/table/${table.name}`">{{ table.name }}</router-link>
           </td>
           <td>
-            <router-link v-if="table.schema" v-bind:to="`/schema/${table.schema}/table/${table.name}/snapshots`">{{ table.snapshots.length  }}</router-link>
-            <router-link v-if="!table.schema" v-bind:to="`/table/${table.name}/snapshots`">{{ table.snapshots.length }}</router-link>
+            <span v-if="table.snapshots.length">
+              <router-link v-if="table.schema" v-bind:to="`/schema/${table.schema}/table/${table.name}/diff`">{{ table.snapshots.length  }}</router-link>
+              <router-link v-if="!table.schema" v-bind:to="`/table/${table.name}/diff`">{{ table.snapshots.length }}</router-link>
+            </span>
+            <span v-if="!table.snapshots.length">
+              {{ table.snapshots.length }}
+            </span>
           </td>
         </tr>
       </table>
@@ -60,10 +65,8 @@
     },
     methods: {
       createSnapshots() {
-        this.$store.dispatch('snapshotTables', this.connection)
+        this.$store.dispatch('snapshotTables')
           .then(() => {
-            // TODO do something when all snapshots are created - this
-            // process is currently asynchronous
             alert('Snapshots created'); // eslint-disable-line
           })
           .catch((err) => {

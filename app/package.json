@@ -4,6 +4,7 @@
   "description": "Quickly snapshot and diff database tables.",
   "main": "./dist/main.js",
   "dependencies": {
+    "deep-diff": "^0.3.4",
     "knex": "^0.12.7",
     "mariasql": "^0.2.6",
     "mssql": "^3.3.0",

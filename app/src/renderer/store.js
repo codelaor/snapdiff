@@ -59,7 +59,11 @@ const mutations = {
   },
 
   setTableSnapshot(state, { snapshot }) {
-    state.table.snapshot = new Date(snapshot);
+    if (snapshot) {
+      state.table.snapshot = new Date(snapshot);
+    } else {
+      state.table.snapshot = '';
+    }
   },
 
   setTableCurrentPage(state, currentPage) {
@@ -242,14 +246,23 @@ const actions = {
     return dispatch('getTableCurrentRows');
   },
 
-  snapshotTables({ commit, state }) {
+  snapshotTable({ commit, state }, { schemaName, tableName }) {
+    const knexTable = state.knex(tableName);
+    const withSchema = schemaName ? knexTable.withSchema(schemaName) : knexTable;
+    return withSchema.then(results =>
+      commit('addTableSnapshot', {
+        tableName,
+        data: results,
+      })
+    );
+  },
+
+  snapshotTables({ dispatch, state }) {
     return Promise.all(state.tables.map(table =>
-      state.knex(table.name).then(results =>
-        commit('addTableSnapshot', {
-          tableName: table.name,
-          data: results,
-        })
-      )
+      dispatch('snapshotTable', {
+        schemaName: table.schema,
+        tableName: table.name,
+      })
     ));
   },
 };

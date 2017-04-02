@@ -17,15 +17,15 @@ export default [
     props: true,
   },
   {
-    path: '/schema/:schemaName/table/:tableName/snapshots',
-    name: 'schemaSnapshots',
-    component: require('components/pages/SnapshotsPage'),
+    path: '/schema/:schemaName/table/:tableName/diff',
+    name: 'schemaDiff',
+    component: require('components/pages/DiffPage'),
     props: true,
   },
   {
-    path: '/table/:tableName/snapshots',
-    name: 'snapshots',
-    component: require('components/pages/SnapshotsPage'),
+    path: '/table/:tableName/diff',
+    name: 'diff',
+    component: require('components/pages/DiffPage'),
     props: true,
   },
   {
