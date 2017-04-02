@@ -23,8 +23,8 @@ const state = {
     totalRows: 0,
     rowsPerPage: 10,
     currentPage: 1,
+    currentRows: [],
     columns: [],
-    rows: [],
     snapshots: [],
   },
 };
@@ -59,7 +59,7 @@ const mutations = {
   },
 
   setTableSnapshot(state, { snapshot }) {
-    state.table.snapshot = snapshot;
+    state.table.snapshot = new Date(snapshot);
   },
 
   setTableCurrentPage(state, currentPage) {
@@ -71,9 +71,9 @@ const mutations = {
     state.table.columns = columns;
   },
 
-  setTableRows(state, rows) {
-    Vue.set(state.table, 'rows', rows);
-    // state.table.rows = rows;
+  setTableCurrentRows(state, currentRows) {
+    Vue.set(state.table, 'currentRows', currentRows);
+    // state.table.rows = currentRows;
   },
 
   setTableRowsPerPage(state, rowsPerPage) {
@@ -184,22 +184,36 @@ const actions = {
       });
   },
 
-  getTableRows({ commit, state }) {
-    let query = state.knex(state.table.name); // eslint-disable-line
-    if (state.table.schema) {
-      query = query.withSchema(state.table.schema);
+  getTableCurrentRows({ commit, state }) {
+    // Calculate limit and offset - ie the portion of data to display
+    // based on current paging values
+    const limit = state.table.rowsPerPage;
+    const offset = (state.table.currentPage - 1) * state.table.rowsPerPage;
+
+    // Get data
+    if (!state.table.snapshot) {
+      // No snapshot selected, get current data from database
+      let query = state.knex(state.table.name); // eslint-disable-line
+      if (state.table.schema) {
+        query = query.withSchema(state.table.schema);
+      }
+      query
+        .limit(limit)
+        .offset(offset)
+        .then(results => {
+          commit('setTableCurrentRows', results);
+        });
+    } else {
+      // Snapshot selected, get data from snapshot
+      const snapshot = state.table.snapshots.find(
+        snapshot => snapshot.created.toString() === state.table.snapshot.toString());
+      commit('setTableCurrentRows', snapshot.data.slice(offset, offset + limit));
     }
-    query
-      .limit(state.table.rowsPerPage)
-      .offset((state.table.currentPage - 1) * state.table.rowsPerPage)
-      .then(results => {
-        commit('setTableRows', results);
-      });
   },
 
   async setTable({ dispatch, commit, state }, { schemaName, tableName }) {
     commit('setTable', { schemaName, tableName });
-    await dispatch('getTableRows'); // can fetch at same time
+    await dispatch('getTableCurrentRows'); // can fetch at same time
     await dispatch('getTableTotalRows'); // can fetch at same time
     return dispatch('getTableColumns'); // minimum need info
   },
@@ -210,7 +224,7 @@ const actions = {
       throw new Error("Can't set current page to number outside range of pages.");
     }
     commit('setTableCurrentPage', currentPage);
-    return dispatch('getTableRows');
+    return dispatch('getTableCurrentRows');
   },
 
   setTableRowsPerPage({ dispatch, commit, state, getters }, rowsPerPage) {
@@ -220,11 +234,12 @@ const actions = {
       // Current page is now out of bounds - reset to last page
       commit('setTableCurrentPage', newPageCount);
     }
-    return dispatch('getTableRows');
+    return dispatch('getTableCurrentRows');
   },
 
   setTableSnapshot({ dispatch, commit, state, getters }, snapshot) {
     commit('setTableSnapshot', snapshot);
+    return dispatch('getTableCurrentRows');
   },
 
   snapshotTables({ commit, state }) {

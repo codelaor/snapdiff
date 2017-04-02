@@ -21,7 +21,7 @@
             </th>
           </tr>
           <!--Table Data-->
-          <tr v-for="row in tableRows">
+          <tr v-for="row in table.currentRows">
             <td v-for="column in table.columns">
               {{ row[column.name] }}
             </td>
@@ -51,12 +51,6 @@
     computed: {
       table() {
         return this.$store.state.table;
-      },
-      tableRows() {
-        return this.snapshot ?
-          this.$store.state.table.snapshots.find(snapshot =>
-            snapshot.created === this.snapshot).data :
-          this.$store.state.table.rows;
       },
     },
     data() {
