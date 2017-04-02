@@ -4,7 +4,7 @@
     <div class="header-page-content-top">
       <div class="header-page-toolbar-top">
         Snapshot:
-        <select v-model="snapshot">
+        <select :value="table.snapshot" @input="handleSnapshotSelect">
           <option value="">Current data</option>
           <option value disabled>—————————————</option>
           <option v-for="snapshot in table.snapshots" :value="snapshot.created">{{ snapshot.created.toTimeString() }}</option>
@@ -61,11 +61,6 @@
     },
     data() {
       return {
-        snapshot: '',
-        limit: 2,
-        offset: 0,
-        totalRows: 55,
-        currentPage: 1,
       };
     },
     watch: {
@@ -79,6 +74,14 @@
           .dispatch('setTable', {
             schemaName: this.schemaName,
             tableName: this.tableName,
+          });
+      },
+      handleSnapshotSelect(event) {
+        console.log(event.target.value)//eslint-disable-line
+        debugger;//eslint-disable-line
+        this.$store
+          .dispatch('setTableSnapshot', {
+            snapshot: event.target.value,
           });
       },
     },

@@ -49,17 +49,21 @@ const mutations = {
   setTable(state, { schemaName, tableName }) {
     const table = state.tables.find(table =>
       table.name === tableName && table.schema === schemaName);
-    const extras = {
+    const tableComplete = Object.assign({
       totalRows: 0,
       rowsPerPage: 10,
       currentPage: 1,
-    };
-    // state.table = Object.assign(table, extras);
-    Vue.set(state, 'table', Object.assign(table, extras));
+      snapshot: '',
+    }, table);
+    Vue.set(state, 'table', tableComplete);
+  },
+
+  setTableSnapshot(state, { snapshot }) {
+    state.table.snapshot = snapshot;
   },
 
   setTableCurrentPage(state, currentPage) {
-    state.table.currentPage = currentPage;
+    Vue.set(state.table, 'currentPage', currentPage);
   },
 
   setTableColumns(state, columns) {
@@ -217,6 +221,10 @@ const actions = {
       commit('setTableCurrentPage', newPageCount);
     }
     return dispatch('getTableRows');
+  },
+
+  setTableSnapshot({ dispatch, commit, state, getters }, snapshot) {
+    commit('setTableSnapshot', snapshot);
   },
 
   snapshotTables({ commit, state }) {
