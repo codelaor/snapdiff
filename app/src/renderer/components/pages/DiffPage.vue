@@ -2,7 +2,11 @@
   <div class="header-page">
     <page-header v-bind:title="`Diff snapshots for table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true"/>
     <div class="header-page-content-top">
-      <p>Diff results coming soon</p>
+      <snapshot-select @select="handleSnapshotSelectLeft"/>
+      <snapshot-select @select="handleSnapshotSelectRight"/>
+      Left: {{ leftSnapshot }}
+      Right: {{ rightSnapshot }}
+      <p>{{ diff }}</p>
     </div>
   </div>
 </template>
@@ -10,6 +14,8 @@
 <script>
   import PageHeader from './PageHeader';
   import TablePager from './Table/TablePager';
+  import SnapshotSelect from '../shared/SnapshotSelect';
+  import { diff as deepDiff } from 'deep-diff';
 
   export default {
     name: 'diff-page',
@@ -20,6 +26,7 @@
     components: {
       PageHeader,
       TablePager,
+      SnapshotSelect,
     },
     computed: {
       table() {
@@ -28,10 +35,9 @@
     },
     data() {
       return {
-        limit: 2,
-        offset: 0,
-        totalRows: 55,
-        currentPage: 1,
+        leftSnapshot: '',
+        rightSnapshot: '',
+        diff: '',
       };
     },
     watch: {
@@ -40,6 +46,24 @@
       },
     },
     methods: {
+      doDiff() {
+        this.diff = '';
+        const lhs = {
+          hello: 'World',
+        };
+        const rhs = {
+          hello: ', World!',
+        };
+        this.diff = deepDiff(lhs, rhs);
+      },
+      handleSnapshotSelectLeft(snapshot) {
+        this.leftSnapshot = snapshot;
+        this.doDiff();
+      },
+      handleSnapshotSelectRight(snapshot) {
+        this.rightSnapshot = snapshot;
+        this.doDiff();
+      },
       setTable() {
         this.$store
           .dispatch('setTable', {
