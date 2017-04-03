@@ -4,8 +4,6 @@
     <div class="header-page-content-top">
       <snapshot-select @select="handleSnapshotSelectLeft"/>
       <snapshot-select @select="handleSnapshotSelectRight"/>
-      Left: {{ leftSnapshot }}
-      Right: {{ rightSnapshot }}
       <p>{{ diff }}</p>
     </div>
   </div>
@@ -46,15 +44,18 @@
       },
     },
     methods: {
-      doDiff() {
+      async doDiff() {
         this.diff = '';
-        const lhs = {
-          hello: 'World',
-        };
-        const rhs = {
-          hello: ', World!',
-        };
+        const lhs = await this.$store.dispatch('getTableRows', {
+          snapshotId: this.leftSnapshot,
+        });
+        const rhs = await this.$store.dispatch('getTableRows', {
+          snapshotId: this.rightSnapshot,
+        });
         this.diff = deepDiff(lhs, rhs);
+      },
+      getSnapshotData(snapshot) { // eslint-disable-line
+
       },
       handleSnapshotSelectLeft(snapshot) {
         this.leftSnapshot = snapshot;

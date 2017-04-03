@@ -20,6 +20,7 @@ const state = {
   table: {
     schema: '',
     name: '',
+    snapshot: '',
     totalRows: 0,
     rowsPerPage: 10,
     currentPage: 1,
@@ -188,31 +189,39 @@ const actions = {
       });
   },
 
-  getTableCurrentRows({ commit, state }) {
-    // Calculate limit and offset - ie the portion of data to display
-    // based on current paging values
-    const limit = state.table.rowsPerPage;
-    const offset = (state.table.currentPage - 1) * state.table.rowsPerPage;
+  async getTableRows({ commit, state }, { snapshotId = '', limit = 99999, offset = 0 }) {
+    let results = [];
 
     // Get data
-    if (!state.table.snapshot) {
+    if (!snapshotId) {
       // No snapshot selected, get current data from database
       let query = state.knex(state.table.name); // eslint-disable-line
       if (state.table.schema) {
         query = query.withSchema(state.table.schema);
       }
-      query
+      results = await query
         .limit(limit)
-        .offset(offset)
-        .then(results => {
-          commit('setTableCurrentRows', results);
-        });
+        .offset(offset);
     } else {
       // Snapshot selected, get data from snapshot
       const snapshot = state.table.snapshots.find(
-        snapshot => snapshot.created.toString() === state.table.snapshot.toString());
-      commit('setTableCurrentRows', snapshot.data.slice(offset, offset + limit));
+        snapshot => snapshot.created.toString() === snapshotId.toString());
+      results = snapshot.data.slice(offset, offset + limit);
     }
+    return results;
+  },
+
+  async getTableCurrentRows({ dispatch, commit, state }) {
+    // Calculate limit and offset - ie the portion of data to display
+    // based on current paging values
+    const limit = state.table.rowsPerPage;
+    const offset = (state.table.currentPage - 1) * state.table.rowsPerPage;
+    const currentRows = await dispatch('getTableRows', {
+      snapshotId: state.table.snapshot,
+      limit,
+      offset,
+    });
+    commit('setTableCurrentRows', currentRows);
   },
 
   async setTable({ dispatch, commit, state }, { schemaName, tableName }) {
