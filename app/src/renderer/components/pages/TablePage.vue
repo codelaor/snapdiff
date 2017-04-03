@@ -13,6 +13,9 @@
         <button @click="createSnapshot">
           <icon name="plus"/>
         </button>
+        <button @click="diffSnapsots" :disabled="!table.snapshots.length">
+          <icon name="balance-scale"/>
+        </button>
       </div>
       <!--Table Pager-->
       <table-pager/>
@@ -79,6 +82,18 @@
             alert(err.message); // eslint-disable-line
             this.message = err.message;
           });
+      },
+      diffSnapsots() {
+        if (this.schemaName) {
+          this.$router.push({ name: 'schemaDiff', params: {
+            schemaName: this.schemaName,
+            tableName: this.tableName,
+          } });
+        } else {
+          this.$router.push({ name: 'diff', params: {
+            tableName: this.tableName,
+          } });
+        }
       },
       setTable() {
         this.$store
