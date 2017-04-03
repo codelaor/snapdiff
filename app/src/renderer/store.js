@@ -124,6 +124,8 @@ const actions = {
         return knexConnection('sqlite_master')
           .select('name')
           .where('type', 'table')
+          .andWhere('name', '<>', 'sqlite_sequence')
+          .andWhere('name', '<>', 'sqlite_stat1')
           .orderBy('name')
           .then((result) => {
             commit('setTables', result.map(table => Object.assign(table, { snapshots: [] })));
@@ -181,6 +183,8 @@ const actions = {
 
   async getTablePrimaryKeyFields({ state }, { schemaName, tableName }) {
     let query = '';
+    let results = [];
+    let fields = [];
     switch (state.connection.client) {
       case 'pg':
         query = state.knex.schema.raw(`
@@ -191,13 +195,22 @@ const actions = {
             WHERE  i.indrelid = '${schemaName}.${tableName}'::regclass
             AND    i.indisprimary;
         `);
+        results = await query;
+        fields = results.rows.map(row => row.name);
+        break;
+      case 'sqlite3':
+        query = state.knex.schema.raw(`PRAGMA table_info(${tableName})`);
+        results = await query;
+        fields = results
+          .filter(row => row.pk)
+          .sort((a, b) => a.pk - b.pk)
+          .map(row => row.name);
         break;
       default:
         throw new Error('Unsupported client type - do not know how to get primary key');
     }
 
-    const results = await query;
-    return results.rows.map(row => row.name);
+    return fields;
   },
 
   getTableTotalRows({ commit, state }) {
