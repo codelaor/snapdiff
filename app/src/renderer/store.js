@@ -20,6 +20,7 @@ const state = {
   table: {
     schema: '',
     name: '',
+    primaryKeyFields: [],
     snapshot: '',
     totalRows: 0,
     rowsPerPage: 10,
@@ -47,10 +48,11 @@ const mutations = {
     state.knex = newKnex;
   },
 
-  setTable(state, { schemaName, tableName }) {
+  setTable(state, { schemaName, tableName, primaryKeyFields }) {
     const table = state.tables.find(table =>
       table.name === tableName && table.schema === schemaName);
     const tableComplete = Object.assign({
+      primaryKeyFields,
       totalRows: 0,
       rowsPerPage: 10,
       currentPage: 1,
@@ -177,6 +179,27 @@ const actions = {
     return query.then((columns) => commit('setTableColumns', columns));
   },
 
+  async getTablePrimaryKeyFields({ state }, { schemaName, tableName }) {
+    let query = '';
+    switch (state.connection.client) {
+      case 'pg':
+        query = state.knex.schema.raw(`
+          SELECT a.attname as name
+            FROM   pg_index i
+            JOIN   pg_attribute a ON a.attrelid = i.indrelid
+                                AND a.attnum = ANY(i.indkey)
+            WHERE  i.indrelid = '${schemaName}.${tableName}'::regclass
+            AND    i.indisprimary;
+        `);
+        break;
+      default:
+        throw new Error('Unsupported client type - do not know how to get primary key');
+    }
+
+    const results = await query;
+    return results.rows.map(row => row.name);
+  },
+
   getTableTotalRows({ commit, state }) {
     let query = state.knex(state.table.name); // eslint-disable-line
     if (state.table.schema) {
@@ -200,6 +223,7 @@ const actions = {
         query = query.withSchema(state.table.schema);
       }
       results = await query
+        .orderByRaw(state.table.primaryKeyFields.join(','))
         .limit(limit)
         .offset(offset);
     } else {
@@ -225,7 +249,8 @@ const actions = {
   },
 
   async setTable({ dispatch, commit, state }, { schemaName, tableName }) {
-    commit('setTable', { schemaName, tableName });
+    const primaryKeyFields = await dispatch('getTablePrimaryKeyFields', { schemaName, tableName });
+    commit('setTable', { schemaName, tableName, primaryKeyFields });
     await dispatch('getTableCurrentRows'); // can fetch at same time
     await dispatch('getTableTotalRows'); // can fetch at same time
     return dispatch('getTableColumns'); // minimum need info

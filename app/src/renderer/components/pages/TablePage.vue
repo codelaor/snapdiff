@@ -17,10 +17,7 @@
         <table class="snapdiff-data-table">
           <!--Table Header-->
           <tr>
-            <th v-for="column in table.columns">
-              {{ column.name }}
-            </th>
-          </tr>
+            <th v-for="column in table.columns"><icon v-if="table.primaryKeyFields.includes(column.name)" name="key"/> {{ column.name }}</th></tr>
           <!--Table Data-->
           <tr v-for="row in table.currentRows">
             <td v-for="column in table.columns">
