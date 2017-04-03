@@ -83,8 +83,12 @@
     justify-content: flex-end;
   }
 
-  button {
+  select, button {
     box-sizing: border-box;
+    border:1px solid gray;
+    padding:.2em .6em;
+    margin:0;
+    height:26px;  
   }
 
   .fa-icon {

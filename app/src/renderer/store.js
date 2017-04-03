@@ -225,15 +225,16 @@ const actions = {
       });
   },
 
-  async getTableRows({ commit, state }, { snapshotId = '', limit = 99999, offset = 0 }) {
+  async getTableRows({ commit, state }, {
+    schemaName, tableName, snapshotId = '', limit = 99999, offset = 0 }) {
     let results = [];
 
     // Get data
     if (!snapshotId) {
       // No snapshot selected, get current data from database
-      let query = state.knex(state.table.name); // eslint-disable-line
-      if (state.table.schema) {
-        query = query.withSchema(state.table.schema);
+      let query = state.knex(tableName); // eslint-disable-line
+      if (schemaName) {
+        query = query.withSchema(schemaName);
       }
       results = await query
         .orderByRaw(state.table.primaryKeyFields.join(','))
@@ -254,6 +255,8 @@ const actions = {
     const limit = state.table.rowsPerPage;
     const offset = (state.table.currentPage - 1) * state.table.rowsPerPage;
     const currentRows = await dispatch('getTableRows', {
+      schemaName: state.table.schema,
+      tableName: state.table.name,
       snapshotId: state.table.snapshot,
       limit,
       offset,
@@ -288,20 +291,17 @@ const actions = {
     return dispatch('getTableCurrentRows');
   },
 
-  setTableSnapshot({ dispatch, commit, state, getters }, snapshot) {
-    commit('setTableSnapshot', snapshot);
+  setTableSnapshot({ dispatch, commit, state, getters }, snapshotId) {
+    commit('setTableSnapshot', snapshotId);
     return dispatch('getTableCurrentRows');
   },
 
-  snapshotTable({ commit, state }, { schemaName, tableName }) {
-    const knexTable = state.knex(tableName);
-    const withSchema = schemaName ? knexTable.withSchema(schemaName) : knexTable;
-    return withSchema.then(results =>
-      commit('addTableSnapshot', {
-        tableName,
-        data: results,
-      })
-    );
+  async snapshotTable({ commit, dispatch }, { schemaName, tableName }) {
+    const results = await dispatch('getTableRows', { schemaName, tableName });
+    commit('addTableSnapshot', {
+      tableName,
+      data: results,
+    });
   },
 
   snapshotTables({ dispatch, state }) {

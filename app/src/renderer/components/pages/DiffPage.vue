@@ -4,7 +4,20 @@
     <div class="header-page-content-top">
       <snapshot-select @select="handleSnapshotSelectLeft"/>
       <snapshot-select @select="handleSnapshotSelectRight"/>
-      <p>{{ diff }}</p>
+      <table>
+        <tr>
+          <th>
+            Diff row
+          </th>
+        </tr>
+
+        <tr v-for="diffRow in diff">
+          <td>
+            {{ diffRow }}
+          </td>
+        </tr>
+
+      </table>
     </div>
   </div>
 </template>
@@ -47,9 +60,13 @@
       async doDiff() {
         this.diff = '';
         const lhs = await this.$store.dispatch('getTableRows', {
+          schemaName: this.schemaName,
+          tableName: this.tableName,
           snapshotId: this.leftSnapshot,
         });
         const rhs = await this.$store.dispatch('getTableRows', {
+          schemaName: this.schemaName,
+          tableName: this.tableName,
           snapshotId: this.rightSnapshot,
         });
         this.diff = deepDiff(lhs, rhs);
