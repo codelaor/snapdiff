@@ -3,13 +3,7 @@
     <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true" />
     <div class="header-page-content-top">
       <div class="header-page-toolbar-top-right">
-        Snapshot:
-        <select :value="table.snapshot" @input="handleSnapshotSelect">
-          <option value="">Current data</option>
-          <option value disabled>—————————————</option>
-          <option v-if="!table.snapshots.length" value disabled>No snapshots found</option>
-          <option v-for="snapshot in table.snapshots" :value="snapshot.created">{{ snapshot.created.toTimeString() }}</option>
-        </select>
+        <snapshot-select @select="handleSnapshotSelect"/>
         <button @click="createSnapshot">
           <icon name="plus"/>
         </button>
@@ -44,6 +38,7 @@
 <script>
   import PageHeader from './PageHeader';
   import TablePager from './Table/TablePager';
+  import SnapshotSelect from '../shared/SnapshotSelect';
 
   export default {
     name: 'table-page',
@@ -54,6 +49,7 @@
     components: {
       PageHeader,
       TablePager,
+      SnapshotSelect,
     },
     computed: {
       table() {
@@ -102,10 +98,10 @@
             tableName: this.tableName,
           });
       },
-      handleSnapshotSelect(event) {
+      handleSnapshotSelect(snapshot) {
         this.$store
           .dispatch('setTableSnapshot', {
-            snapshot: event.target.value,
+            snapshot,
           });
       },
     },
