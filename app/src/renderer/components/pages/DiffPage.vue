@@ -26,7 +26,6 @@
   import PageHeader from './PageHeader';
   import TablePager from './Table/TablePager';
   import SnapshotSelect from '../shared/SnapshotSelect';
-  import { diff as deepDiff } from 'deep-diff';
 
   export default {
     name: 'diff-page',
@@ -59,17 +58,35 @@
     methods: {
       async doDiff() {
         this.diff = '';
-        const lhs = await this.$store.dispatch('getTableRows', {
+        const left = await this.$store.dispatch('getTableRows', {
           schemaName: this.schemaName,
           tableName: this.tableName,
           snapshotId: this.leftSnapshot,
         });
-        const rhs = await this.$store.dispatch('getTableRows', {
+        const right = await this.$store.dispatch('getTableRows', {
           schemaName: this.schemaName,
           tableName: this.tableName,
           snapshotId: this.rightSnapshot,
         });
-        this.diff = deepDiff(lhs, rhs);
+        let newer = [];
+        let older = [];
+        if (!this.leftSnapshot || this.leftSnapshot > this.rightSnapshot) {
+          newer = left;
+          older = right;
+        } else {
+          newer = right;
+          older = left;
+        }
+
+        // TODO replace with primary key fields check
+        const removed = older.filter(olderRow => !newer.find(
+          newerRow => (newerRow.id === olderRow.id)))
+          .map(removedRow => {
+            removedRow.snapdiffChange = 'Removed';
+            return removedRow;
+          });
+        // const removed = older.filter(old => !newer.find());
+        this.diff = removed;
       },
       getSnapshotData(snapshot) { // eslint-disable-line
 
