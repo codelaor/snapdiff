@@ -78,15 +78,23 @@
           older = left;
         }
 
-        // TODO replace with primary key fields check
+        // TODO replace .id == .id with primary key fields check
         const removed = older.filter(olderRow => !newer.find(
           newerRow => (newerRow.id === olderRow.id)))
           .map(removedRow => {
             removedRow.snapdiffChange = 'Removed';
             return removedRow;
           });
+
+        // TODO replace .id == .id with primary key fields check
+        const added = newer.filter(newerRow => !older.find(
+          olderRow => (olderRow.id === newerRow.id)))
+          .map(addedRow => {
+            addedRow.snapdiffChange = 'Added';
+            return addedRow;
+          });
         // const removed = older.filter(old => !newer.find());
-        this.diff = removed;
+        this.diff = removed.concat(added);
       },
       getSnapshotData(snapshot) { // eslint-disable-line
 
