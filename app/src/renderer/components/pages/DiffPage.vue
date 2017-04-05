@@ -8,11 +8,17 @@
       <table>
         <tr>
           <th>
+            Diff
+          </th>
+          <th>
             Diff row
           </th>
         </tr>
 
-        <tr v-for="diffRow in diff">
+        <tr v-for="diffRow in diff" :class="getDiffStyleClass(diffRow.snapdiffChange)">
+          <td class="diff-icon-cell">
+            <icon :name="getDiffIcon(diffRow.snapdiffChange) "/>
+          </td>
           <td>
             {{ diffRow }}
           </td>
@@ -57,6 +63,39 @@
       },
     },
     methods: {
+      getDiffStyleClass(snapdiffChange) {
+        const styles = [];
+        switch (snapdiffChange) {
+          case 'Added':
+            styles.push('diff-added');
+            break;
+          case 'Edited':
+            styles.push('diff-edited');
+            break;
+          case 'Removed':
+            styles.push('diff-removed');
+            break;
+          default:
+        }
+        return styles;
+      },
+      getDiffIcon(snapdiffChange) {
+        let icon;
+        switch (snapdiffChange) {
+          case 'Added':
+            icon = 'plus-square-o';
+            break;
+          case 'Edited':
+            icon = 'pencil-square-o';
+            break;
+          case 'Removed':
+            icon = 'minus-square-o';
+            break;
+          default:
+            icon = 'question-circle-o';
+        }
+        return icon;
+      },
       async doDiff() {
         this.diff = '';
         const left = await this.$store.dispatch('getTableRows', {
@@ -140,5 +179,19 @@
 </script>
 
 <style>
+  .diff-icon-cell {
+    text-align: center;
+  }
 
+  .diff-added {
+    background-color: lightgreen;
+  }
+
+  .diff-edited {
+    background-color: lightyellow;
+  }
+
+  .diff-removed {
+    background-color: lightsalmon;
+  }
 </style>
