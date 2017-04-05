@@ -1,9 +1,10 @@
 <template>
   <div class="header-page">
-    <page-header v-bind:title="`Diff snapshots for table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true"/>
+    <page-header v-bind:title="`Diff snapshots for table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true"
+    />
     <div class="header-page-content-top">
-      <snapshot-select @select="handleSnapshotSelectLeft"/>
-      <snapshot-select @select="handleSnapshotSelectRight"/>
+      <snapshot-select @select="handleSnapshotSelectLeft" />
+      <snapshot-select @select="handleSnapshotSelectRight" />
       <table>
         <tr>
           <th>
@@ -68,8 +69,8 @@
           tableName: this.tableName,
           snapshotId: this.rightSnapshot,
         });
-        let newer = [];
-        let older = [];
+        let newer;
+        let older;
         if (!this.leftSnapshot || this.leftSnapshot > this.rightSnapshot) {
           newer = left;
           older = right;
@@ -87,6 +88,25 @@
           });
 
         // TODO replace .id == .id with primary key fields check
+        const edited = newer.filter(newerRow => {
+          const olderRow = older.find(row => (row.id === newerRow.id)); // eslint-disable-line
+          if (!olderRow) {
+            return false;
+          }
+          let diff = false;
+          for (var prop in newerRow) { // eslint-disable-line
+            if (olderRow[prop].valueOf() !== newerRow[prop].valueOf()) {
+              diff = true;
+              break;
+            }
+          }
+          return diff;
+        }).map(editedRow => {
+          editedRow.snapdiffChange = 'Edited';
+          return editedRow;
+        });
+
+        // TODO replace .id == .id with primary key fields check
         const added = newer.filter(newerRow => !older.find(
           olderRow => (olderRow.id === newerRow.id)))
           .map(addedRow => {
@@ -94,7 +114,7 @@
             return addedRow;
           });
         // const removed = older.filter(old => !newer.find());
-        this.diff = removed.concat(added);
+        this.diff = removed.concat(added).concat(edited);
       },
       getSnapshotData(snapshot) { // eslint-disable-line
 

@@ -36,8 +36,10 @@ const mutations = {
     const tableIndex = state.tables.findIndex(table => table.name === tableName);
     state.tables[tableIndex].snapshots.unshift({
       created: new Date(),
-      data,
     });
+
+    // Add data now as non-observable
+    state.tables[tableIndex].snapshots[0].data = data;
   },
 
   setConnection(state, connection) {
