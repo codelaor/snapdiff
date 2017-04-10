@@ -5,7 +5,7 @@
     <div class="header-page-content-top">
       <snapshot-select @select="handleSnapshotSelectLeft" />
       <snapshot-select @select="handleSnapshotSelectRight" />
-      <table>
+      <table class="snapdiff-data-table">
         <tr>
           <th>
             Diff
@@ -21,6 +21,12 @@
           </td>
           <td>
             {{ diffRow }}
+          </td>
+        </tr>
+
+        <tr v-if="!diff.length">
+          <td colspan="100%">
+            No difference between selected snapshots.
           </td>
         </tr>
 
