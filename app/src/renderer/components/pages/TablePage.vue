@@ -67,6 +67,7 @@
         this.$store.dispatch('snapshotTable', {
           schemaName: this.schemaName,
           tableName: this.tableName,
+          primaryKeyFields: this.table.primaryKeyFields,
         })
           .then(() => {
             alert('Snapshot created'); // eslint-disable-line

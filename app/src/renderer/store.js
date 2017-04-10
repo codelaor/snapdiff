@@ -50,11 +50,10 @@ const mutations = {
     state.knex = newKnex;
   },
 
-  setTable(state, { schemaName, tableName, primaryKeyFields }) {
+  setTable(state, { schemaName, tableName }) {
     const table = state.tables.find(table =>
       table.name === tableName && table.schema === schemaName);
     const tableComplete = Object.assign({
-      primaryKeyFields,
       totalRows: 0,
       rowsPerPage: 10,
       currentPage: 1,
@@ -95,13 +94,14 @@ const mutations = {
 
   setTables(state, tables) {
     state.tables = tables;
+    // Vue.set(state, 'tables', tables);
   },
 };
 
 // actions are functions that causes side effects and can involve
 // asynchronous operations.
 const actions = {
-  connect: ({ commit, state }, parameters) => {
+  async connect({ commit, state, dispatch }, parameters) {
     // Create knex object (does not attempt to connect until first query)
     const knexConnection = knex({
       client: parameters.client,
@@ -120,32 +120,42 @@ const actions = {
 
     // Get database tables from connection.  We need these anyway and it has the benefit
     // of testing our connection was successful
+    let queryTables;
     switch (state.connection.client) {
       case 'sqlite3':
         // Query tables now and return promise for caller to wait on
-        return knexConnection('sqlite_master')
+        queryTables = knexConnection('sqlite_master')
           .select('name')
           .where('type', 'table')
           .andWhere('name', '<>', 'sqlite_sequence')
           .andWhere('name', '<>', 'sqlite_stat1')
-          .orderBy('name')
-          .then((result) => {
-            commit('setTables', result.map(table => Object.assign(table, { snapshots: [] })));
-          });
+          .orderBy('name');
+        break;
       case 'pg':
-        return knexConnection('information_schema.tables')
+        queryTables = knexConnection('information_schema.tables')
           .select(['table_schema as schema', 'table_name as name'])
           .where('table_type', 'BASE TABLE')
           .andWhere('table_schema', '<>', 'information_schema')
           .andWhere('table_schema', '<>', 'pg_catalog')
-          .orderBy(['schema', 'name'])
-          .then((result) => {
-            // commit('setTables', result);
-            commit('setTables', result.map(table => Object.assign(table, { snapshots: [] })));
-          });
+          .orderBy(['schema', 'name']);
+        break;
       default:
         throw new Error('Unsupported client type - do not know how to read tables');
     }
+    await queryTables
+      .then(async (results) => {
+        const resultsWithPrimaryKeyFields = await Promise.all(results.map(async table => {
+          const primaryKeyFields = await dispatch('getTablePrimaryKeyFields', {
+            schemaName: table.schema,
+            tableName: table.name,
+          });
+          return Object.assign(table, {
+            snapshots: [],
+            primaryKeyFields,
+          });
+        }));
+        commit('setTables', resultsWithPrimaryKeyFields);
+      });
   },
 
   disconnect: ({ commit }) => {
@@ -228,7 +238,7 @@ const actions = {
   },
 
   async getTableRows({ commit, state }, {
-    schemaName, tableName, snapshotId = '', limit = 99999, offset = 0 }) {
+    schemaName, tableName, snapshotId = '', primaryKeyFields, limit = 99999, offset = 0 }) {
     let results = [];
 
     // Get data
@@ -239,7 +249,7 @@ const actions = {
         query = query.withSchema(schemaName);
       }
       results = await query
-        .orderByRaw(state.table.primaryKeyFields.join(','))
+        .orderByRaw(primaryKeyFields.join(','))
         .limit(limit)
         .offset(offset);
     } else {
@@ -260,6 +270,7 @@ const actions = {
       schemaName: state.table.schema,
       tableName: state.table.name,
       snapshotId: state.table.snapshot,
+      primaryKeyFields: state.table.primaryKeyFields,
       limit,
       offset,
     });
@@ -267,8 +278,7 @@ const actions = {
   },
 
   async setTable({ dispatch, commit, state }, { schemaName, tableName }) {
-    const primaryKeyFields = await dispatch('getTablePrimaryKeyFields', { schemaName, tableName });
-    commit('setTable', { schemaName, tableName, primaryKeyFields });
+    commit('setTable', { schemaName, tableName });
     await dispatch('getTableCurrentRows'); // can fetch at same time
     await dispatch('getTableTotalRows'); // can fetch at same time
     return dispatch('getTableColumns'); // minimum need info
@@ -298,8 +308,8 @@ const actions = {
     return dispatch('getTableCurrentRows');
   },
 
-  async snapshotTable({ commit, dispatch }, { schemaName, tableName }) {
-    const results = await dispatch('getTableRows', { schemaName, tableName });
+  async snapshotTable({ commit, dispatch }, { schemaName, tableName, primaryKeyFields }) {
+    const results = await dispatch('getTableRows', { schemaName, tableName, primaryKeyFields });
     commit('addTableSnapshot', {
       tableName,
       data: results,
@@ -311,6 +321,7 @@ const actions = {
       dispatch('snapshotTable', {
         schemaName: table.schema,
         tableName: table.name,
+        primaryKeyFields: table.primaryKeyFields,
       })
     ));
   },

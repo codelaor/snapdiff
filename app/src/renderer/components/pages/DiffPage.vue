@@ -34,6 +34,19 @@
   import TablePager from './Table/TablePager';
   import SnapshotSelect from '../shared/SnapshotSelect';
 
+  function doesKeyMatch(rec1, rec2, keyFields) {
+    const differences = keyFields.filter((keyField) => {
+      let bHasDifferences = false;
+      if (rec1[keyField] !== rec2[keyField]) {
+        if (rec1[keyField].valueOf() !== rec2[keyField].valueOf()) {
+          bHasDifferences = true;
+        }
+      }
+      return bHasDifferences;
+    });
+    return differences.length < 1;
+  }
+
   export default {
     name: 'diff-page',
     props: ['schemaName', 'tableName'],
@@ -50,6 +63,7 @@
         return this.$store.state.table;
       },
     },
+
     data() {
       return {
         leftSnapshot: '',
@@ -102,11 +116,13 @@
           schemaName: this.schemaName,
           tableName: this.tableName,
           snapshotId: this.leftSnapshot,
+          primaryKeyFields: this.table.primaryKeyFields,
         });
         const right = await this.$store.dispatch('getTableRows', {
           schemaName: this.schemaName,
           tableName: this.tableName,
           snapshotId: this.rightSnapshot,
+          primaryKeyFields: this.table.primaryKeyFields,
         });
         let newer;
         let older;
@@ -118,25 +134,29 @@
           older = left;
         }
 
-        // TODO replace .id == .id with primary key fields check
+        // Find removed records
         const removed = older.filter(olderRow => !newer.find(
-          newerRow => (newerRow.id === olderRow.id)))
+          newerRow => doesKeyMatch(newerRow, olderRow, this.table.primaryKeyFields)))
           .map(removedRow => {
             removedRow.snapdiffChange = 'Removed';
             return removedRow;
           });
 
-        // TODO replace .id == .id with primary key fields check
+        // Find edited records
         const edited = newer.filter(newerRow => {
-          const olderRow = older.find(row => (row.id === newerRow.id)); // eslint-disable-line
+          const olderRow = older.find(
+            row => doesKeyMatch(newerRow, row, this.table.primaryKeyFields)
+          );
           if (!olderRow) {
             return false;
           }
           let diff = false;
           for (var prop in newerRow) { // eslint-disable-line
-            if (olderRow[prop].valueOf() !== newerRow[prop].valueOf()) {
-              diff = true;
-              break;
+            if (olderRow[prop] !== newerRow[prop]) {
+              if (olderRow[prop].valueOf() !== newerRow[prop].valueOf()) {
+                diff = true;
+                break;
+              }
             }
           }
           return diff;
@@ -145,14 +165,13 @@
           return editedRow;
         });
 
-        // TODO replace .id == .id with primary key fields check
+        // Find added/new records
         const added = newer.filter(newerRow => !older.find(
-          olderRow => (olderRow.id === newerRow.id)))
+          olderRow => doesKeyMatch(newerRow, olderRow, this.table.primaryKeyFields)))
           .map(addedRow => {
             addedRow.snapdiffChange = 'Added';
             return addedRow;
           });
-        // const removed = older.filter(old => !newer.find());
         this.diff = removed.concat(added).concat(edited);
       },
       getSnapshotData(snapshot) { // eslint-disable-line
@@ -175,6 +194,7 @@
       },
     },
   };
+
 
 </script>
 
