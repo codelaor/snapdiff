@@ -6,6 +6,12 @@
         No tables found in 'database' {{ databaseTitle }} (system tables are excluded.)
       </p>
       <table class="snapdiff-data-table" v-if="tables.length">
+        <colgroup>
+          <col span="1" v-if="client.hasSchemas" style="width: 15%;">
+          <col span="1">
+          <col span="1" style="width: 15%;">
+          <col span="1" style="width: 15%;">
+        </colgroup>
         <tr>
           <th v-if="client.hasSchemas">
             Schema
@@ -15,8 +21,14 @@
           </th>
           <th>
             Snapshots 
-            <button @click="createSnapshots">
+            <button @click="createSnapshots" title="Create new snapshot for all tables">
               <icon name="plus"/>
+            </button>
+          </th>
+          <th>
+            Diff 
+            <button @click="diffLatestSnapshots" title="Diff current data against latest snapshot">
+              <icon name="balance-scale"/>
             </button>
           </th>
         </tr>
@@ -37,9 +49,18 @@
               {{ table.snapshots.length }}
             </span>
           </td>
+          <td>
+          </td>
         </tr>
       </table>
     </div>
+    <dialog id="SnapshottingDialog">
+      <p>Creating snapshots {{ processing.tableIndex }} of {{ processing.tableCount }}</p>
+      <div class="progress-bar">
+        <div class="progress-bar-progress" :style="{ width: processing.progressPercent + '%'}">
+        </div>
+      </div>
+    </dialog>
   </div>
 </template>
 
@@ -56,6 +77,11 @@
         tables: this.$store.state.tables,
         connection: this.$store.state.connection,
         databaseTitle: this.$store.getters.databaseTitle,
+        processing: {
+          tableCount: 0,
+          tableIndex: 0,
+          progressPercent: 50,
+        },
       };
     },
     computed: {
@@ -64,15 +90,38 @@
       },
     },
     methods: {
-      createSnapshots() {
-        this.$store.dispatch('snapshotTables')
-          .then(() => {
-            alert('Snapshots created'); // eslint-disable-line
+      async createSnapshots() {
+        this.processing.tableIndex = 1;
+        this.processing.tableCount = this.$store.state.tables.length;
+        this.processing.progressPercent = 0;
+        const dialog = document.getElementById('SnapshottingDialog');
+        dialog.showModal();
+
+        await Promise.all(this.$store.state.tables.map(async (table, index) => {
+          const promise = this.$store.dispatch('snapshotTable', {
+            schemaName: table.schema,
+            tableName: table.name,
+            primaryKeyFields: table.primaryKeyFields,
           })
-          .catch((err) => {
-            alert(err.message); // eslint-disable-line
-            this.message = err.message;
+          .then(async () => {
+            // Force refresh of showing which table we are up to
+            console.log(index); // eslint-disable-line
+            this.processing.tableIndex++;
+            this.processing.progressPercent = this.processing.tableIndex /
+              this.processing.tableCount * 100;
+            await this.$forceUpdate();
           });
+          return promise;
+        }))
+        .catch((err) => {
+          dialog.close();
+          alert(err.message); // eslint-disable-line
+          this.message = err.message;
+        });
+
+        dialog.close();
+      },
+      diffLatestSnapshots() {
       },
     },
   };
@@ -80,5 +129,16 @@
 </script>
 
 <style>
+  .progress-bar {
+    display: flex;
+    border-style: solid;
+    border-width: 1px;
+  }
+
+  .progress-bar-progress {
+    background-color: blue;
+    height: 10px;
+  }
+
 
 </style>

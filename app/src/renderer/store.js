@@ -308,23 +308,17 @@ const actions = {
     return dispatch('getTableCurrentRows');
   },
 
-  async snapshotTable({ commit, dispatch }, { schemaName, tableName, primaryKeyFields }) {
-    const results = await dispatch('getTableRows', { schemaName, tableName, primaryKeyFields });
-    commit('addTableSnapshot', {
-      tableName,
-      data: results,
-    });
+  snapshotTable({ commit, dispatch }, { schemaName, tableName, primaryKeyFields }) {
+    return dispatch('getTableRows', { schemaName, tableName, primaryKeyFields })
+      .then(results => {
+        console.log("snapshot done!");// eslint-disable-line
+        commit('addTableSnapshot', {
+          tableName,
+          data: results,
+        });
+      });
   },
 
-  snapshotTables({ dispatch, state }) {
-    return Promise.all(state.tables.map(table =>
-      dispatch('snapshotTable', {
-        schemaName: table.schema,
-        tableName: table.name,
-        primaryKeyFields: table.primaryKeyFields,
-      })
-    ));
-  },
 };
 
 // getters are functions
