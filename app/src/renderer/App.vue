@@ -105,7 +105,6 @@
   }
 
 	.snapdiff-data-table {
-		width:100%; 
 		border-collapse:collapse; 
 	}
 
@@ -131,7 +130,7 @@
 		background: #f5f5f5;
 	}
 
-  .snapdiff-data-table tr td:first-child{
+  .snapdiff-data-table tr td:last-child{
       width:1%;
       white-space:nowrap;
   }  
