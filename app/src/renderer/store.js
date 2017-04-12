@@ -13,7 +13,7 @@ const state = {
     user: 'postgres',
     password: '',
     database: 'postgres',
-    filename: '/home/peter/Downloads/chinook.db', // TODO remove default
+    filename: '',
   },
   knex: null,
   tables: [],
@@ -81,7 +81,6 @@ const mutations = {
 
   setTableCurrentRows(state, currentRows) {
     Vue.set(state.table, 'currentRows', currentRows);
-    // state.table.rows = currentRows;
   },
 
   setTableRowsPerPage(state, rowsPerPage) {
@@ -94,7 +93,6 @@ const mutations = {
 
   setTables(state, tables) {
     state.tables = tables;
-    // Vue.set(state, 'tables', tables);
   },
 };
 

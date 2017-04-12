@@ -23,16 +23,22 @@
     </div>
     <div class="column is-8 is-offset-2">
       <form>
-        <div class="field"
-             v-if="this.selectedClient.parameters.includes('filename')">
+        <span v-if="this.selectedClient.parameters.includes('filename')"> 
           <label class="label">Filename</label>
-          <p class="control">
-            <input class="input"
-                   type="text"
-                   name="host"
-                   v-model="connection.filename">
-          </p>
-        </div>
+          <b-field>
+            <input class="input expanded"
+                  type="text"
+                  name="host"
+                  v-model="connection.filename">
+            <p class="control">
+              <a class="button" v-on:click="openFileDialog">
+                <span class="icon">
+                  <i class="fa fa-folder-open-o"></i>
+                </span>
+              </a>
+            </p>
+          </b-field>
+        </span>
         <div class="field"
              v-if="this.selectedClient.parameters.includes('host')">
           <label class="label">Host</label>
@@ -92,6 +98,8 @@
 </template>
 
 <script>
+import { remote } from 'electron';
+
 export default {
   name: 'home-page',
   data() {
@@ -108,6 +116,15 @@ export default {
     },
   },
   methods: {
+    openFileDialog() {
+      [this.connection.filename] = remote.dialog.showOpenDialog({
+        properties: ['openFile'],
+        filters: [
+          { name: 'Database files', extensions: ['db'] },
+          { name: 'All files', extensions: ['*'] },
+        ],
+      });
+    },
     connect() {
       this.$store.dispatch('connect', this.connection)
         .then(() => {
