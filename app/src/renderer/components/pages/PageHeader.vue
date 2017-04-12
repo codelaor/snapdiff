@@ -2,22 +2,24 @@
   <nav class="nav has-shadow">
     <div class="container">
       <div class="nav-left">
-        <a class="nav-item"
-                v-if="showHome"
-                v-on:click="goHome">
-          <span class="icon">
-            <i class="fa fa-home"></i>
-          </span>
-        </a>
-        <a class="nav-item" v-if="showBack"
-                v-on:click="$router.go(-1)">
-          <span class="icon">
-            <i class="fa fa-arrow-left"></i>
-          </span>
-        </a>
+        <div class="nav-item field is-grouped">
+          <a 
+                  v-if="showHome"
+                  v-on:click="goHome">
+            <span class="icon">
+              <i class="fa fa-home"></i>
+            </span>
+          </a>
+          <a v-if="showBack"
+                  v-on:click="$router.go(-1)">
+            <span class="icon">
+              <i class="fa fa-arrow-left"></i>
+            </span>
+          </a>
+        </div>
       </div>
       
-      {{ title }}
+      <span class="nav-item">{{ title }}</span>
     </div>
   </nav>
 </template>
