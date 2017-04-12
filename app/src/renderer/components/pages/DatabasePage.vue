@@ -1,7 +1,7 @@
 <template>
-  <div class="header-page">
+  <div class="container">
     <page-header :title="`Database '${databaseTitle}'`"/>
-    <div class="header-page-content-top">
+    <div class="column">
       <p v-if="!tables.length">
         No tables found in 'database' {{ databaseTitle }} (system tables are excluded.)
       </p>

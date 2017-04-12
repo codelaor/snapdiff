@@ -1,8 +1,7 @@
 <template>
-  <div class="header-page">
+  <div class="container">
     <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true" />
-    <div class="header-page-content-top">
-      <div class="header-page-toolbar-top-right">
+      <div class="column">
         <snapshot-select @select="handleSnapshotSelect"/>
         <button @click="createSnapshot">
           <icon name="plus"/>
@@ -11,24 +10,25 @@
           <icon name="balance-scale"/>
         </button>
       </div>
-      <!--Table Pager-->
-      <table-pager/>
-      <div class="snapdiff-data-table-container">
-        <table class="snapdiff-data-table">
-          <!--Table Header-->
-          <tr>
-            <th v-for="column in table.columns"><icon v-if="table.primaryKeyFields.includes(column.name)" name="key"/> {{ column.name }}</th></tr>
-          <!--Table Data-->
-          <tr v-for="row in table.currentRows">
-            <td v-for="column in table.columns">
-              {{ row[column.name] }}
-            </td>
-          </tr>
-        </table>
+      <div class="column">
+        <!--Table Pager-->
+        <table-pager/>
+        <div class="snapdiff-data-table-container">
+          <table class="snapdiff-data-table">
+            <!--Table Header-->
+            <tr>
+              <th v-for="column in table.columns"><icon v-if="table.primaryKeyFields.includes(column.name)" name="key"/> {{ column.name }}</th></tr>
+            <!--Table Data-->
+            <tr v-for="row in table.currentRows">
+              <td v-for="column in table.columns">
+                {{ row[column.name] }}
+              </td>
+            </tr>
+          </table>
+        </div>
+        <!--Repeat Pager-->
+        <table-pager/>
       </div>
-      <!--Repeat Pager-->
-      <table-pager/>
-    </div>
   </div>
 </template>
 

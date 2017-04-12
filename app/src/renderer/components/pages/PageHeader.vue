@@ -1,20 +1,25 @@
 <template>
-  <div class="header-page-header">
-    <a class="button"
-            v-if="showHome"
-            v-on:click="goHome">
-      <span class="icon">
-        <i class="fa fa-home"></i>
-      </span>
-    </a>
-    <a class="button" v-if="showBack"
-            v-on:click="$router.go(-1)">
-      <span class="icon">
-        <i class="fa fa-arrow-left"></i>
-      </span>
-    </a>
-    {{ title }}
-  </div>
+  <nav class="nav has-shadow">
+    <div class="container">
+      <div class="nav-left">
+        <a class="nav-item"
+                v-if="showHome"
+                v-on:click="goHome">
+          <span class="icon">
+            <i class="fa fa-home"></i>
+          </span>
+        </a>
+        <a class="nav-item" v-if="showBack"
+                v-on:click="$router.go(-1)">
+          <span class="icon">
+            <i class="fa fa-arrow-left"></i>
+          </span>
+        </a>
+      </div>
+      
+      {{ title }}
+    </div>
+  </nav>
 </template>
 
 <script>
