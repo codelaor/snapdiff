@@ -22,7 +22,7 @@
           <th>
             Snapshots 
             <button @click="createSnapshots" title="Create new snapshot for all tables">
-              <icon name="plus"/>
+              <icon name="clone"/>
             </button>
           </th>
           <th>
