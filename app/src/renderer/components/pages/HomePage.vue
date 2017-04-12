@@ -89,10 +89,13 @@
                    v-model="connection.database">
           </p>
         </div>
+
       </form>
-  
-      <a class="button is-primary"
-         v-on:click="connect">Connect</a>
+    </div>
+    <div class="column is-8 is-offset-2">
+      <div class="block">
+        <a class="button is-primary" v-on:click="connect">Connect</a>
+      </div>
     </div>
   </div>
 </template>
