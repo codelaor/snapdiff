@@ -5,10 +5,15 @@ import Router from 'vue-router';
 
 import App from './App';
 import routes from './routes';
-import 'vue-awesome/icons';
-import Icon from 'vue-awesome/components/Icon.vue';
 
-Vue.component('icon', Icon);
+import Buefy from 'buefy';
+import 'buefy/lib/buefy.css';
+
+Vue.use(Buefy, {
+  defaultIconPack: 'fa',
+});
+
+
 Vue.use(Electron);
 Vue.use(Resource);
 Vue.use(Router);

@@ -129,16 +129,6 @@
 </script>
 
 <style>
-  .progress-bar {
-    display: flex;
-    border-style: solid;
-    border-width: 1px;
-  }
-
-  .progress-bar-progress {
-    background-color: blue;
-    height: 10px;
-  }
 
 
 </style>

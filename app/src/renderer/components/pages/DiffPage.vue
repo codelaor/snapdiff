@@ -205,19 +205,4 @@
 </script>
 
 <style>
-  .diff-icon-cell {
-    text-align: center;
-  }
-
-  .diff-added {
-    background-color: lightgreen;
-  }
-
-  .diff-edited {
-    background-color: lightyellow;
-  }
-
-  .diff-removed {
-    background-color: lightsalmon;
-  }
 </style>
