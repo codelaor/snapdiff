@@ -1,25 +1,31 @@
 <template>
 
-  <div class="table-pager">
-    <div class="table-pager-section table-pager-left">
-      {{ table.totalRows }} rows 
+  <div class="nav">
+    <div class="nav-left">
+      <div class="nav-item">
+        {{ table.totalRows }} rows 
+      </div>
     </div>
-    <div class="table-pager-section table-pager-center">
-        <a class="button" @click="gotoPreviousPage" :disabled="table.currentPage < 2">
-          <span class="icon">
+    <div class="nav-center">
+      <div class="nav-item">
+        <a class="button is-small" @click="gotoPreviousPage" :disabled="table.currentPage < 2">
+          <span class="icon is-small">
             <i class="fa fa-chevron-left"/>
           </span>
         </a>
         Page {{ table.currentPage }} of {{ pageCount }}
-        <a class="button" @click="gotoNextPage" :disabled="table.currentPage >= pageCount">
-          <span class="icon">
+        <a class="button is-small" @click="gotoNextPage" :disabled="table.currentPage >= pageCount">
+          <span class="icon is-small">
             <i class="fa fa-chevron-right"/>
           </span>
         </a>
+      </div>
     </div>
-    <div class="table-pager-section table-pager-right">
-      <label>Rows per page: </label>
-      <input type="number" @change="onChangeRowsPerPage" v-model.number="table.rowsPerPage"/>
+    <div class="nav-right">
+      <div class="nav-item">
+        <label>Rows per page: </label>
+        <input type="number" @change="onChangeRowsPerPage" v-model.number="table.rowsPerPage"/>
+      </div>
     </div>
   </div>
 </template>

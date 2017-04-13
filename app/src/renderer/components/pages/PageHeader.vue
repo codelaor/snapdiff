@@ -1,14 +1,10 @@
 <template>
-  <nav class="nav has-border">
+  <nav class="nav has-shadow">
     <div class="container">
       <div class="nav-left">
         <div class="nav-item field is-grouped">
-          <a 
-                  v-if="showHome"
-                  v-on:click="goHome">
-            <span class="icon">
-              <i class="fa fa-home"></i>
-            </span>
+          <a v-if="showHome" v-on:click="goHome">
+              <img src="../../../../../art/banner_logo.svg"/>
           </a>
           <a v-if="showBack"
                   v-on:click="$router.go(-1)">
