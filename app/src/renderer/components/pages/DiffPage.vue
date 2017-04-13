@@ -9,10 +9,9 @@
         <snapshot-select @select="handleSnapshotSelectRight" />
       </div>
     </div>
-    <b-table :data="this.diff">
-      <b-table-column id="diff" label="Diff"/>
-      <b-table-column id="row" label="Row"/>
-
+    <b-table :data="this.diff" :striped="true">
+      <b-table-column field="snapdiffChange" label="Change"/>
+      <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name"/>
       <!--< v-for="diffRow in diff" :class="getDiffStyleClass(diffRow.snapdiffChange)">-->
         <!--<td class="diff-icon-cell">-->
           <!--<i :class="'fa fa-' + getDiffIcon(diffRow.snapdiffChange) "/>-->
