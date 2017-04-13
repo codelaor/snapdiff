@@ -14,5 +14,10 @@
 
 <style>
   @import '../../icons/font-awesome/css/font-awesome.min.css';
-
+td {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 </style>
