@@ -2,18 +2,18 @@
   <div class="container">
     <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true" />
       <div class="column">
-        <div class="nav">
-          <div class="nav-item">
+        <div class="field is-grouped">
+          <div class="control">
             <snapshot-select @select="handleSnapshotSelect"/>
           </div>
-          <div class="nav-item">
+          <div class="control">
             <a class="button is-small" @click="createSnapshot">
               <span class="icon is-small">
                 <i class="fa fa-plus"></i>
               </span>
             </a>
           </div>
-          <div class="nav-item">
+          <div class="control">
             <a class="button is-small" @click="diffSnapsots" :disabled="!table.snapshots.length">
               <span class="icon is-small">
                 <i class="fa fa-balance-scale"></i>
@@ -26,9 +26,7 @@
         <table-pager/>
         <b-table :data="table.currentRows">
           <!--Table Header-->
-          <span v-for="column in table.columns">
-            <b-table-column :field="column.name" :label="column.name" width="5"/>
-          </span>
+            <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name" width="5"/>
               <!--<i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}-->
 
           <!--Table Data-->
