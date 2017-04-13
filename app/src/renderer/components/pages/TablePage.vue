@@ -9,7 +9,7 @@
           <div class="control">
             <a class="button is-small" @click="createSnapshot">
               <span class="icon is-small">
-                <i class="fa fa-plus"></i>
+                <i class="fa fa-clone"></i>
               </span>
             </a>
           </div>
@@ -24,7 +24,7 @@
       </div>
         <!--Table Pager-->
         <table-pager/>
-        <b-table :data="table.currentRows">
+        <b-table :data="table.currentRows" :striped="true">
           <!--Table Header-->
             <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name" width="5"/>
               <!--<i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}-->
