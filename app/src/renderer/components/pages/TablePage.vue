@@ -1,34 +1,43 @@
 <template>
-  <div class="header-page">
+  <div class="container">
     <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true" />
-    <div class="header-page-content-top">
-      <div class="header-page-toolbar-top-right">
-        <snapshot-select @select="handleSnapshotSelect"/>
-        <button @click="createSnapshot">
-          <icon name="plus"/>
-        </button>
-        <button @click="diffSnapsots" :disabled="!table.snapshots.length">
-          <icon name="balance-scale"/>
-        </button>
+      <div class="column">
+        <div class="field is-grouped">
+          <div class="control">
+            <snapshot-select @select="handleSnapshotSelect"/>
+          </div>
+          <div class="control">
+            <a class="button is-small" @click="createSnapshot">
+              <span class="icon is-small">
+                <i class="fa fa-plus"></i>
+              </span>
+            </a>
+          </div>
+          <div class="control">
+            <a class="button is-small" @click="diffSnapsots" :disabled="!table.snapshots.length">
+              <span class="icon is-small">
+                <i class="fa fa-balance-scale"></i>
+              </span>
+            </a>
+          </div>
+        </div>
       </div>
-      <!--Table Pager-->
-      <table-pager/>
-      <div class="snapdiff-data-table-container">
-        <table class="snapdiff-data-table">
+        <!--Table Pager-->
+        <table-pager/>
+        <b-table :data="table.currentRows">
           <!--Table Header-->
-          <tr>
-            <th v-for="column in table.columns"><icon v-if="table.primaryKeyFields.includes(column.name)" name="key"/> {{ column.name }}</th></tr>
+            <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name" width="5"/>
+              <!--<i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}-->
+
           <!--Table Data-->
-          <tr v-for="row in table.currentRows">
-            <td v-for="column in table.columns">
-              {{ row[column.name] }}
-            </td>
-          </tr>
-        </table>
-      </div>
-      <!--Repeat Pager-->
-      <table-pager/>
-    </div>
+          <!--<tr v-for="row in table.currentRows">-->
+            <!--<td v-for="column in table.columns">-->
+              <!--{{ row[column.name] }}-->
+            <!--</td>-->
+          <!--</tr>-->
+        </b-table>
+        <!--Repeat Pager-->
+        <table-pager/>
   </div>
 </template>
 
@@ -52,10 +61,6 @@
       table() {
         return this.$store.state.table;
       },
-    },
-    data() {
-      return {
-      };
     },
     watch: {
       limit() {

@@ -1,37 +1,40 @@
 <template>
-  <div class="header-page">
-    <page-header v-bind:title="`Diff snapshots for table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true"
-    />
-    <div class="header-page-content-top">
-      <snapshot-select @select="handleSnapshotSelectLeft" />
-      <snapshot-select @select="handleSnapshotSelectRight" />
-      <table class="snapdiff-data-table">
-        <tr>
-          <th>
-            Diff
-          </th>
-          <th>
-            Diff row
-          </th>
-        </tr>
-
-        <tr v-for="diffRow in diff" :class="getDiffStyleClass(diffRow.snapdiffChange)">
-          <td class="diff-icon-cell">
-            <icon :name="getDiffIcon(diffRow.snapdiffChange) "/>
-          </td>
-          <td>
-            {{ diffRow }}
-          </td>
-        </tr>
-
-        <tr v-if="!diff.length">
-          <td colspan="100%">
-            No difference between selected snapshots.
-          </td>
-        </tr>
-
-      </table>
+  <div class="container">
+    <page-header v-bind:title="`Diff snapshots for table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true"/>
+    <div class="field is-grouped">
+      <div class="control">
+        <snapshot-select @select="handleSnapshotSelectLeft" />
+      </div>
+      <div class="control">
+        <snapshot-select @select="handleSnapshotSelectRight" />
+      </div>
     </div>
+    <table class="snapdiff-data-table">
+      <tr>
+        <th>
+          Diff
+        </th>
+        <th>
+          Diff row
+        </th>
+      </tr>
+
+      <tr v-for="diffRow in diff" :class="getDiffStyleClass(diffRow.snapdiffChange)">
+        <td class="diff-icon-cell">
+          <i :class="'fa fa-' + getDiffIcon(diffRow.snapdiffChange) "/>
+        </td>
+        <td>
+          {{ diffRow }}
+        </td>
+      </tr>
+
+      <tr v-if="!diff.length">
+        <td colspan="100%">
+          No difference between selected snapshots.
+        </td>
+      </tr>
+
+    </table>
   </div>
 </template>
 
@@ -205,19 +208,4 @@
 </script>
 
 <style>
-  .diff-icon-cell {
-    text-align: center;
-  }
-
-  .diff-added {
-    background-color: lightgreen;
-  }
-
-  .diff-edited {
-    background-color: lightyellow;
-  }
-
-  .diff-removed {
-    background-color: lightsalmon;
-  }
 </style>

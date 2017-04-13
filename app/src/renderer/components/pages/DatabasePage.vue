@@ -1,38 +1,26 @@
 <template>
-  <div class="header-page">
+  <div class="container">
     <page-header :title="`Database '${databaseTitle}'`"/>
-    <div class="header-page-content-top">
+    <div class="column">
       <p v-if="!tables.length">
         No tables found in 'database' {{ databaseTitle }} (system tables are excluded.)
       </p>
-      <table class="snapdiff-data-table" v-if="tables.length">
-        <colgroup>
-          <col span="1" v-if="client.hasSchemas" style="width: 15%;">
-          <col span="1">
-          <col span="1" style="width: 15%;">
-          <col span="1" style="width: 15%;">
-        </colgroup>
-        <tr>
-          <th v-if="client.hasSchemas">
-            Schema
-          </th>
-          <th>
-            Name
-          </th>
-          <th>
-            Snapshots 
-            <button @click="createSnapshots" title="Create new snapshot for all tables">
-              <icon name="clone"/>
-            </button>
-          </th>
-          <th>
-            Diff 
-            <button @click="diffLatestSnapshots" title="Diff current data against latest snapshot">
-              <icon name="balance-scale"/>
-            </button>
-          </th>
-        </tr>
-        <tr v-for="table in tables">
+      <a class="button is-small" @click="createSnapshots" title="Create new snapshot for all tables">
+        <span class="icon is-small">
+          <i class="fa fa-clone"/>
+        </span>
+      </a>
+      <a class="button is-small" @click="diffLatestSnapshots" title="Diff current data against latest snapshot">
+        <span class="icon is-small">
+          <i class="fa fa-balance-scale"/>
+        </span>
+      </a>
+      <b-table :data="tables" v-if="tables.length" :selectable="true" :striped="true" @select="tableSelected">
+          <b-table-column field="schema" label="Schema" v-if="client.hasSchemas"/>
+          <b-table-column field="name" label="Name" v-if="client.hasSchemas"/>
+          <b-table-column field="snapshotCount" label="Snapshots" v-if="client.hasSchemas"/>
+          <b-table-column field="diff" label="Diff" v-if="client.hasSchemas"/>
+        <!--<tr v-for="table in tables">
           <td v-if="client.hasSchemas">
             {{ table.schema }}
           </td>
@@ -51,8 +39,8 @@
           </td>
           <td>
           </td>
-        </tr>
-      </table>
+        </tr>-->
+      </b-table>
     </div>
     <dialog id="SnapshottingDialog">
       <p>Creating snapshots {{ processing.tableIndex }} of {{ processing.tableCount }}</p>
@@ -74,7 +62,6 @@
     },
     data() {
       return {
-        tables: this.$store.state.tables,
         connection: this.$store.state.connection,
         databaseTitle: this.$store.getters.databaseTitle,
         processing: {
@@ -88,8 +75,19 @@
       client() {
         return this.$store.getters.connectionClient;
       },
+      tables() {
+        return this.$store.state.tables.map(
+           table => Object.assign(table, { snapshotCount: table.snapshots.length }
+        ));
+      },
     },
     methods: {
+      tableSelected(selectedTable) {
+        this.$router.push({ name: 'schemaTable', params: {
+          schemaName: selectedTable.schema,
+          tableName: selectedTable.name,
+        } });
+      },
       async createSnapshots() {
         this.processing.tableIndex = 1;
         this.processing.tableCount = this.$store.state.tables.length;
@@ -129,16 +127,6 @@
 </script>
 
 <style>
-  .progress-bar {
-    display: flex;
-    border-style: solid;
-    border-width: 1px;
-  }
-
-  .progress-bar-progress {
-    background-color: blue;
-    height: 10px;
-  }
 
 
 </style>

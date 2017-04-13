@@ -1,21 +1,31 @@
 <template>
 
-  <div class="table-pager">
-    <div class="table-pager-section table-pager-left">
-      {{ table.totalRows }} rows 
+  <div class="nav">
+    <div class="nav-left">
+      <div class="nav-item">
+        {{ table.totalRows }} rows 
+      </div>
     </div>
-    <div class="table-pager-section table-pager-center">
-        <button @click="gotoPreviousPage" :disabled="table.currentPage < 2">
-          <icon name="chevron-left"/>
-        </button>
+    <div class="nav-center">
+      <div class="nav-item">
+        <a class="button is-small" @click="gotoPreviousPage" :disabled="table.currentPage < 2">
+          <span class="icon is-small">
+            <i class="fa fa-chevron-left"/>
+          </span>
+        </a>
         Page {{ table.currentPage }} of {{ pageCount }}
-        <button @click="gotoNextPage" :disabled="table.currentPage >= pageCount">
-          <icon name="chevron-right"/>
-        </button>
+        <a class="button is-small" @click="gotoNextPage" :disabled="table.currentPage >= pageCount">
+          <span class="icon is-small">
+            <i class="fa fa-chevron-right"/>
+          </span>
+        </a>
+      </div>
     </div>
-    <div class="table-pager-section table-pager-right">
-      <label>Rows per page: </label>
-      <input type="number" @change="onChangeRowsPerPage" v-model.number="table.rowsPerPage"/>
+    <div class="nav-right">
+      <div class="nav-item">
+        <label>Rows per page: </label>
+        <input type="number" @change="onChangeRowsPerPage" v-model.number="table.rowsPerPage"/>
+      </div>
     </div>
   </div>
 </template>
@@ -48,52 +58,5 @@
 </script>
 
 <style>
-
-  .table-pager {
-		width:100%; 
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 3px;
-  }
-
-  .table-pager-section {
-    width: 33%;
-  }
-
-  .table-pager-left {
-    display: flex;
-    justify-content: flex-start;
-  }
-
-  .table-pager-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .table-pager-center > button {
-    height: 1.8em;
-    width: 1.8em;
-  }
-
-  .table-pager-center > * {
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-
-  .table-pager-right {
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 5px;
-  }
-
-  .table-pager-right > input {
-    margin-left: 5px;
-    width: 4em;
-    text-align: center;
-    box-sizing: border-box;
-  }
 
 </style>
