@@ -112,13 +112,13 @@
         const left = await this.$store.dispatch('getTableRows', {
           schemaName: this.schemaName,
           tableName: this.tableName,
-          snapshotId: this.leftSnapshot,
+          fromSnapshot: (this.leftSnapshot !== ''),
           primaryKeyFields: this.table.primaryKeyFields,
         });
         const right = await this.$store.dispatch('getTableRows', {
           schemaName: this.schemaName,
           tableName: this.tableName,
-          snapshotId: this.rightSnapshot,
+          fromSnapshot: (this.rightSnapshot !== ''),
           primaryKeyFields: this.table.primaryKeyFields,
         });
         let newer;

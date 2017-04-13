@@ -21,11 +21,11 @@ const state = {
     schema: '',
     name: '',
     primaryKeyFields: [],
-    snapshot: '',
     totalRows: 0,
     rowsPerPage: 10,
     currentPage: 1,
     currentRows: [],
+    showSnapshot: false,
     columns: [],
     snapshots: [],
   },
@@ -57,17 +57,13 @@ const mutations = {
       totalRows: 0,
       rowsPerPage: 10,
       currentPage: 1,
-      snapshot: '',
+      showSnapshot: false,
     }, table);
     Vue.set(state, 'table', tableComplete);
   },
 
-  setTableSnapshot(state, { snapshot }) {
-    if (snapshot) {
-      state.table.snapshot = new Date(snapshot);
-    } else {
-      state.table.snapshot = '';
-    }
+  setTableShowSnapshot(state, { showSnapshot }) {
+    state.table.showSnapshot = showSnapshot;
   },
 
   setTableCurrentPage(state, currentPage) {
@@ -236,11 +232,11 @@ const actions = {
   },
 
   async getTableRows({ commit, state }, {
-    schemaName, tableName, snapshotId = '', primaryKeyFields, limit = 99999, offset = 0 }) {
+    schemaName, tableName, fromSnapshot = false, primaryKeyFields, limit = 99999, offset = 0 }) {
     let results = [];
 
     // Get data
-    if (!snapshotId) {
+    if (!fromSnapshot) {
       // No snapshot selected, get current data from database
       let query = state.knex(tableName); // eslint-disable-line
       if (schemaName) {
@@ -252,8 +248,7 @@ const actions = {
         .offset(offset);
     } else {
       // Snapshot selected, get data from snapshot
-      const snapshot = state.table.snapshots.find(
-        snapshot => snapshot.created.toString() === snapshotId.toString());
+      const snapshot = state.table.snapshots[0];
       results = snapshot.data.slice(offset, offset + limit);
     }
     return results;
@@ -267,7 +262,7 @@ const actions = {
     const currentRows = await dispatch('getTableRows', {
       schemaName: state.table.schema,
       tableName: state.table.name,
-      snapshotId: state.table.snapshot,
+      fromSnapshot: state.table.showSnapshot,
       primaryKeyFields: state.table.primaryKeyFields,
       limit,
       offset,
@@ -301,8 +296,8 @@ const actions = {
     return dispatch('getTableCurrentRows');
   },
 
-  setTableSnapshot({ dispatch, commit, state, getters }, snapshotId) {
-    commit('setTableSnapshot', snapshotId);
+  setTableShowSnapshot({ dispatch, commit, state, getters }, showSnapshot) {
+    commit('setTableShowSnapshot', showSnapshot);
     return dispatch('getTableCurrentRows');
   },
 

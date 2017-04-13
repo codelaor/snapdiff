@@ -96,9 +96,10 @@
           });
       },
       handleSnapshotSelect(snapshot) {
+        console.log('show snapshot', (snapshot !== '')); // eslint-disable-line
         this.$store
-          .dispatch('setTableSnapshot', {
-            snapshot,
+          .dispatch('setTableShowSnapshot', {
+            showSnapshot: (snapshot !== ''),
           });
       },
     },
