@@ -2,40 +2,44 @@
   <div class="container">
     <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true" />
       <div class="column">
-        <snapshot-select @select="handleSnapshotSelect"/>
-        <a class="button" @click="createSnapshot">
-          <span class="icon">
-            <i class="fa fa-plus"></i>
-          </span>
-        </a>
-        <a class="button" @click="diffSnapsots" :disabled="!table.snapshots.length">
-          <span class="icon">
-            <i class="fa fa-balance-scale"></i>
-          </span>
-        </a>
+        <div class="nav">
+          <div class="nav-item">
+            <snapshot-select @select="handleSnapshotSelect"/>
+          </div>
+          <div class="nav-item">
+            <a class="button is-small" @click="createSnapshot">
+              <span class="icon is-small">
+                <i class="fa fa-plus"></i>
+              </span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a class="button is-small" @click="diffSnapsots" :disabled="!table.snapshots.length">
+              <span class="icon is-small">
+                <i class="fa fa-balance-scale"></i>
+              </span>
+            </a>
+          </div>
+        </div>
       </div>
-      <div class="column">
         <!--Table Pager-->
         <table-pager/>
-        <div class="snapdiff-data-table-container">
-          <table class="snapdiff-data-table">
-            <!--Table Header-->
-            <tr>
-              <th v-for="column in table.columns">
-                <i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}
-              </th>
-            </tr>
-            <!--Table Data-->
-            <tr v-for="row in table.currentRows">
-              <td v-for="column in table.columns">
-                {{ row[column.name] }}
-              </td>
-            </tr>
-          </table>
-        </div>
+        <b-table :data="table.currentRows">
+          <!--Table Header-->
+          <span v-for="column in table.columns">
+            <b-table-column :field="column.name" :label="column.name" width="5"/>
+          </span>
+              <!--<i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}-->
+
+          <!--Table Data-->
+          <!--<tr v-for="row in table.currentRows">-->
+            <!--<td v-for="column in table.columns">-->
+              <!--{{ row[column.name] }}-->
+            <!--</td>-->
+          <!--</tr>-->
+        </b-table>
         <!--Repeat Pager-->
         <table-pager/>
-      </div>
   </div>
 </template>
 
@@ -59,10 +63,6 @@
       table() {
         return this.$store.state.table;
       },
-    },
-    data() {
-      return {
-      };
     },
     watch: {
       limit() {
