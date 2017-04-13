@@ -2,7 +2,7 @@
   <div class="container">
     <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true" />
       <div class="column">
-        <div class="field is-grouped">
+        <div class="field has-addons">
           <div class="control">
             <snapshot-select @select="handleSnapshotSelect"/>
           </div>
@@ -26,15 +26,9 @@
         <table-pager/>
         <b-table :data="table.currentRows" :striped="true">
           <!--Table Header-->
-            <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name" width="5"/>
+            <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name"/>
               <!--<i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}-->
 
-          <!--Table Data-->
-          <!--<tr v-for="row in table.currentRows">-->
-            <!--<td v-for="column in table.columns">-->
-              <!--{{ row[column.name] }}-->
-            <!--</td>-->
-          <!--</tr>-->
         </b-table>
         <!--Repeat Pager-->
         <table-pager/>

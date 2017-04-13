@@ -9,32 +9,26 @@
         <snapshot-select @select="handleSnapshotSelectRight" />
       </div>
     </div>
-    <table class="snapdiff-data-table">
-      <tr>
-        <th>
-          Diff
-        </th>
-        <th>
-          Diff row
-        </th>
-      </tr>
+    <b-table :data="this.diff">
+      <b-table-column id="diff" label="Diff"/>
+      <b-table-column id="row" label="Row"/>
 
-      <tr v-for="diffRow in diff" :class="getDiffStyleClass(diffRow.snapdiffChange)">
-        <td class="diff-icon-cell">
-          <i :class="'fa fa-' + getDiffIcon(diffRow.snapdiffChange) "/>
-        </td>
-        <td>
-          {{ diffRow }}
-        </td>
-      </tr>
+      <!--< v-for="diffRow in diff" :class="getDiffStyleClass(diffRow.snapdiffChange)">-->
+        <!--<td class="diff-icon-cell">-->
+          <!--<i :class="'fa fa-' + getDiffIcon(diffRow.snapdiffChange) "/>-->
+        <!--</td>-->
+        <!--<td>-->
+          <!--{{ diffRow }}-->
+        <!--</td>-->
+      <!--</tr>-->
 
-      <tr v-if="!diff.length">
-        <td colspan="100%">
-          No difference between selected snapshots.
-        </td>
-      </tr>
+      <!--<tr v-if="!diff.length">-->
+        <!--<td colspan="100%">-->
+          <!--No difference between selected snapshots.-->
+        <!--</td>-->
+      <!--</tr>-->
 
-    </table>
+    </b-table>
   </div>
 </template>
 
@@ -77,13 +71,8 @@
       return {
         leftSnapshot: '',
         rightSnapshot: '',
-        diff: '',
+        diff: [],
       };
-    },
-    watch: {
-      limit() {
-        this.getData();
-      },
     },
     methods: {
       getDiffStyleClass(snapdiffChange) {
@@ -120,7 +109,7 @@
         return icon;
       },
       async doDiff() {
-        this.diff = '';
+        this.diff = [];
         const left = await this.$store.dispatch('getTableRows', {
           schemaName: this.schemaName,
           tableName: this.tableName,
