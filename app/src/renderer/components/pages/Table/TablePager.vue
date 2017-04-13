@@ -5,13 +5,17 @@
       {{ table.totalRows }} rows 
     </div>
     <div class="table-pager-section table-pager-center">
-        <button @click="gotoPreviousPage" :disabled="table.currentPage < 2">
-          <icon name="chevron-left"/>
-        </button>
+        <a class="button" @click="gotoPreviousPage" :disabled="table.currentPage < 2">
+          <span class="icon">
+            <i class="fa fa-chevron-left"/>
+          </span>
+        </a>
         Page {{ table.currentPage }} of {{ pageCount }}
-        <button @click="gotoNextPage" :disabled="table.currentPage >= pageCount">
-          <icon name="chevron-right"/>
-        </button>
+        <a class="button" @click="gotoNextPage" :disabled="table.currentPage >= pageCount">
+          <span class="icon">
+            <i class="fa fa-chevron-right"/>
+          </span>
+        </a>
     </div>
     <div class="table-pager-section table-pager-right">
       <label>Rows per page: </label>

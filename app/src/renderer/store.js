@@ -7,7 +7,7 @@ Vue.use(Vuex);
 // root state object.
 const state = {
   connection: {
-    client: 'pg',
+    client: 'sqlite3',
     host: 'localhost',
     port: '5432',
     user: 'postgres',
@@ -327,6 +327,14 @@ const getters = {
   },
   connectionClients() {
     return [{
+      id: 'sqlite3',
+      name: 'SQLite3',
+      hasSchemas: false,
+      supported: true,
+      parameters: [
+        'filename',
+      ],
+    }, {
       id: 'pg',
       name: 'PostgresQL',
       hasSchemas: true,
@@ -337,14 +345,6 @@ const getters = {
         'user',
         'password',
         'database',
-      ],
-    }, {
-      id: 'sqlite3',
-      name: 'SQLite3',
-      hasSchemas: false,
-      supported: true,
-      parameters: [
-        'filename',
       ],
     }, {
       id: 'mysql',

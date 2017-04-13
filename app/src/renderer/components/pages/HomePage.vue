@@ -24,7 +24,7 @@
     <div class="column is-8 is-offset-2">
       <form>
         <span v-if="this.selectedClient.parameters.includes('filename')"> 
-          <label class="label">Filename</label>
+          <label class="label">Database file</label>
           <b-field>
             <input class="input expanded"
                   type="text"

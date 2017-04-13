@@ -1,5 +1,5 @@
 <template>
-  <nav class="nav has-shadow">
+  <nav class="nav has-border">
     <div class="container">
       <div class="nav-left">
         <div class="nav-item field is-grouped">

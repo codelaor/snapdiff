@@ -3,12 +3,16 @@
     <page-header v-bind:title="`Table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true" />
       <div class="column">
         <snapshot-select @select="handleSnapshotSelect"/>
-        <button @click="createSnapshot">
-          <icon name="plus"/>
-        </button>
-        <button @click="diffSnapsots" :disabled="!table.snapshots.length">
-          <icon name="balance-scale"/>
-        </button>
+        <a class="button" @click="createSnapshot">
+          <span class="icon">
+            <i class="fa fa-plus"></i>
+          </span>
+        </a>
+        <a class="button" @click="diffSnapsots" :disabled="!table.snapshots.length">
+          <span class="icon">
+            <i class="fa fa-balance-scale"></i>
+          </span>
+        </a>
       </div>
       <div class="column">
         <!--Table Pager-->
@@ -17,7 +21,10 @@
           <table class="snapdiff-data-table">
             <!--Table Header-->
             <tr>
-              <th v-for="column in table.columns"><icon v-if="table.primaryKeyFields.includes(column.name)" name="key"/> {{ column.name }}</th></tr>
+              <th v-for="column in table.columns">
+                <i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}
+              </th>
+            </tr>
             <!--Table Data-->
             <tr v-for="row in table.currentRows">
               <td v-for="column in table.columns">
