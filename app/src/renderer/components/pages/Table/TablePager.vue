@@ -36,7 +36,7 @@
     name: 'table-pager',
     computed: {
       table() {
-        return this.$store.state.table;
+        return this.$store.state.selectedTable;
       },
       pageCount() {
         return this.$store.getters.tablePageCount;

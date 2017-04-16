@@ -1,6 +1,6 @@
 <template>
   <div class="header-page">
-    <page-header title="Oops"/>
+    <page-header/>
     <div class="header-page-content-top">
       <p>Sorry, an unexpected error has occurred :(</p>
     </div>

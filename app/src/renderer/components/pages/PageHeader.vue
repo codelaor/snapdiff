@@ -3,9 +3,7 @@
     <div class="container">
       <div class="nav-left">
         <div class="nav-item field is-grouped">
-          <a v-if="showHome" v-on:click="goHome">
-              <img src="../../../../../art/banner_logo.svg"/>
-          </a>
+          <img src="../../../../../art/banner_logo.svg"/>
           <a v-if="showBack"
                   v-on:click="$router.go(-1)">
             <span class="icon">
@@ -15,7 +13,18 @@
         </div>
       </div>
       
-      <span class="nav-item">{{ title }}</span>
+      <div class="nav-center">
+        <span class="nav-item">{{ databaseTitle }}</span>
+      </div>
+
+      <div class="nav-right">
+        <a class="nav-item" v-on:click="goHome">
+          <span class="icon">
+            <i class="fa fa-sign-out"></i>
+          </span>
+          Sign-out
+        </a>
+      </div>
     </div>
   </nav>
 </template>
@@ -24,21 +33,14 @@
 export default {
   name: 'page-header',
   props: {
-    showHome: {
-      type: Boolean,
-      default: true,
-    },
     showBack: {
       type: Boolean,
       default: false,
     },
-    title: {
-      type: String,
-      default: 100,
-    },
   },
   data() {
     return {
+      databaseTitle: this.$store.getters.databaseTitle,
       connection: this.$store.state.knex,
     };
   },

@@ -1,14 +1,11 @@
 <template>
   <div class="container">
-    <page-header v-bind:title="`Diff snapshots for table '${ table.schema ? table.schema + '.' : ''}${ table.name}'`" v-bind:showBack="true"/>
-    <div class="field is-grouped">
-      <div class="control">
-        <snapshot-select @select="handleSnapshotSelectLeft" />
-      </div>
-      <div class="control">
-        <snapshot-select @select="handleSnapshotSelectRight" />
-      </div>
-    </div>
+    <page-header/>
+    <a v-on:click="$router.go(-1)">
+      <span class="icon">
+        <i class="fa fa-arrow-left"></i>
+      </span>
+    </a>
     <b-table :data="this.diff" :striped="true">
       <b-table-column field="snapdiffChange" label="Change"/>
       <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name"/>
@@ -34,7 +31,6 @@
 <script>
   import PageHeader from './PageHeader';
   import TablePager from './Table/TablePager';
-  import SnapshotSelect from '../shared/SnapshotSelect';
 
   function doesKeyMatch(rec1, rec2, keyFields) {
     const differences = keyFields.filter((keyField) => {
@@ -58,18 +54,15 @@
     components: {
       PageHeader,
       TablePager,
-      SnapshotSelect,
     },
     computed: {
       table() {
-        return this.$store.state.table;
+        return this.$store.getters.table;
       },
     },
 
     data() {
       return {
-        leftSnapshot: '',
-        rightSnapshot: '',
         diff: [],
       };
     },
@@ -109,27 +102,18 @@
       },
       async doDiff() {
         this.diff = [];
-        const left = await this.$store.dispatch('getTableRows', {
+        const older = await this.$store.dispatch('getTableRows', {
           schemaName: this.schemaName,
           tableName: this.tableName,
-          fromSnapshot: (this.leftSnapshot !== ''),
+          fromSnapshot: true,
           primaryKeyFields: this.table.primaryKeyFields,
         });
-        const right = await this.$store.dispatch('getTableRows', {
+        const newer = await this.$store.dispatch('getTableRows', {
           schemaName: this.schemaName,
           tableName: this.tableName,
-          fromSnapshot: (this.rightSnapshot !== ''),
+          fromSnapshot: false,
           primaryKeyFields: this.table.primaryKeyFields,
         });
-        let newer;
-        let older;
-        if (!this.leftSnapshot || this.leftSnapshot > this.rightSnapshot) {
-          newer = left;
-          older = right;
-        } else {
-          newer = right;
-          older = left;
-        }
 
         // Find removed records
         const removed = older.filter(olderRow => !newer.find(
@@ -184,7 +168,7 @@
       },
       setTable() {
         this.$store
-          .dispatch('setTable', {
+          .dispatch('setSelectedTable', {
             schemaName: this.schemaName,
             tableName: this.tableName,
           });

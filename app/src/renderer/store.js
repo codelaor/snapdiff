@@ -17,29 +17,24 @@ const state = {
   },
   knex: null,
   tables: [],
-  table: {
-    schema: '',
-    name: '',
-    primaryKeyFields: [],
+  selectedTable: {
+    index: -1,
     totalRows: 0,
     rowsPerPage: 10,
     currentPage: 1,
     currentRows: [],
     showSnapshot: false,
-    columns: [],
-    snapshots: [],
   },
 };
 
 const mutations = {
-  addTableSnapshot(state, { tableName, data }) {
-    const tableIndex = state.tables.findIndex(table => table.name === tableName);
-    state.tables[tableIndex].snapshots.unshift({
-      created: new Date(),
-    });
-
-    // Add data now as non-observable
-    state.tables[tableIndex].snapshots[0].data = data;
+  setTableSnapshot(state, { schemaName, tableName, data }) {
+    const tableIndex = state.tables.findIndex(table =>
+      table.schema === schemaName &&
+      table.name === tableName
+    );
+    state.tables[tableIndex].snapshot = data;
+    state.tables[tableIndex].snapshotCreated = new Date();
   },
 
   setConnection(state, connection) {
@@ -50,41 +45,40 @@ const mutations = {
     state.knex = newKnex;
   },
 
-  setTable(state, { schemaName, tableName }) {
-    const table = state.tables.find(table =>
-      table.name === tableName && table.schema === schemaName);
-    const tableComplete = Object.assign({
+  setSelectedTable(state, { index }) {
+    Vue.set(state, 'selectedTable', {
+      index,
       totalRows: 0,
       rowsPerPage: 10,
       currentPage: 1,
+      currentRows: [],
       showSnapshot: false,
-    }, table);
-    Vue.set(state, 'table', tableComplete);
+    });
   },
 
   setTableShowSnapshot(state, { showSnapshot }) {
-    state.table.showSnapshot = showSnapshot;
+    state.selectedTable.showSnapshot = showSnapshot;
   },
 
   setTableCurrentPage(state, currentPage) {
-    Vue.set(state.table, 'currentPage', currentPage);
+    Vue.set(state.selectedTable, 'currentPage', currentPage);
   },
 
   setTableColumns(state, columns) {
-    Vue.set(state.table, 'columns', columns);
-    state.table.columns = columns;
+    Vue.set(state.selectedTable, 'columns', columns);
+    state.selectedTable.columns = columns;
   },
 
-  setTableCurrentRows(state, currentRows) {
-    Vue.set(state.table, 'currentRows', currentRows);
+  setSelectedTableCurrentRows(state, currentRows) {
+    Vue.set(state.selectedTable, 'currentRows', currentRows);
   },
 
   setTableRowsPerPage(state, rowsPerPage) {
-    state.table.rowsPerPage = rowsPerPage;
+    state.selectedTable.rowsPerPage = rowsPerPage;
   },
 
   setTableTotalRows(state, totalRows) {
-    state.table.totalRows = totalRows;
+    state.selectedTable.totalRows = totalRows;
   },
 
   setTables(state, tables) {
@@ -144,7 +138,8 @@ const actions = {
             tableName: table.name,
           });
           return Object.assign(table, {
-            snapshots: [],
+            snapshot: [],
+            snapshotCreated: null,
             primaryKeyFields,
           });
         }));
@@ -161,11 +156,12 @@ const actions = {
     commit('setKnex', null);
   },
 
-  getTableColumns: ({ commit, state }) => {
+  getSelectedTableColumns: ({ commit, state }) => {
+    const table = state.tables[state.selectedTable.index];
     let query;
     switch (state.connection.client) {
       case 'sqlite3':
-        query = state.knex.schema.raw(`PRAGMA table_info(${state.table.name})`)
+        query = state.knex.schema.raw(`PRAGMA table_info(${table.name})`)
           // .orderBy('cid')
           .map((row) => ({
             name: row.name,
@@ -173,8 +169,8 @@ const actions = {
         break;
       case 'pg':
         query = state.knex('information_schema.columns')
-          .where('table_schema', state.table.schema)
-          .andWhere('table_name', state.table.name)
+          .where('table_schema', table.schema)
+          .andWhere('table_name', table.name)
           // .orderBy('ordinal_position')
           .map((row) => ({
             name: row.column_name,
@@ -220,9 +216,9 @@ const actions = {
   },
 
   getTableTotalRows({ commit, state }) {
-    let query = state.knex(state.table.name); // eslint-disable-line
-    if (state.table.schema) {
-      query = query.withSchema(state.table.schema);
+    let query = state.knex(state.selectedTable.name); // eslint-disable-line
+    if (state.selectedTable.schema) {
+      query = query.withSchema(state.selectedTable.schema);
     }
     query
       .count('* as count')
@@ -233,6 +229,12 @@ const actions = {
 
   async getTableRows({ commit, state }, {
     schemaName, tableName, fromSnapshot = false, primaryKeyFields, limit = 99999, offset = 0 }) {
+    // Validate parameters
+    if (!tableName) throw new Error('"tableName" is a required parameter for getTableRows');
+    if (!primaryKeyFields) {
+      throw new Error('"primaryKeyFields" is a required parameter for getTableRows');
+    }
+
     let results = [];
 
     // Get data
@@ -248,33 +250,42 @@ const actions = {
         .offset(offset);
     } else {
       // Snapshot selected, get data from snapshot
-      const snapshot = state.table.snapshots[0];
-      results = snapshot.data.slice(offset, offset + limit);
+      const table = state.tables.find(table =>
+        table.name === tableName && table.schema === schemaName);
+      results = table.snapshot.slice(offset, offset + limit);
     }
     return results;
   },
 
-  async getTableCurrentRows({ dispatch, commit, state }) {
+  async getSelectedTableCurrentRows({ dispatch, commit, state }) {
     // Calculate limit and offset - ie the portion of data to display
     // based on current paging values
-    const limit = state.table.rowsPerPage;
-    const offset = (state.table.currentPage - 1) * state.table.rowsPerPage;
+    const limit = state.selectedTable.rowsPerPage;
+    const offset = (state.selectedTable.currentPage - 1) * state.selectedTable.rowsPerPage;
+    const selectedTable = state.tables[state.selectedTable.index];
     const currentRows = await dispatch('getTableRows', {
-      schemaName: state.table.schema,
-      tableName: state.table.name,
-      fromSnapshot: state.table.showSnapshot,
-      primaryKeyFields: state.table.primaryKeyFields,
+      schemaName: selectedTable.schema,
+      tableName: selectedTable.name,
+      fromSnapshot: state.selectedTable.showSnapshot,
+      primaryKeyFields: selectedTable.primaryKeyFields,
       limit,
       offset,
     });
-    commit('setTableCurrentRows', currentRows);
+    commit('setSelectedTableCurrentRows', currentRows);
   },
 
-  async setTable({ dispatch, commit, state }, { schemaName, tableName }) {
-    commit('setTable', { schemaName, tableName });
-    await dispatch('getTableCurrentRows'); // can fetch at same time
+  async setSelectedTable({ dispatch, commit, state }, { schemaName, tableName }) {
+    const tableIndex = state.tables.findIndex(table =>
+      table.schema === schemaName &&
+      table.name === tableName
+    );
+    if (tableIndex < 0) {
+      throw new Error(`Table '${tableName}' not found with schema '${schemaName}'`);
+    }
+    commit('setSelectedTable', { index: tableIndex });
+    await dispatch('getSelectedTableCurrentRows'); // can fetch at same time
     await dispatch('getTableTotalRows'); // can fetch at same time
-    return dispatch('getTableColumns'); // minimum need info
+    return dispatch('getSelectedTableColumns'); // minimum need info
   },
 
   setTableCurrentPage({ dispatch, commit, state, getters }, currentPage) {
@@ -283,39 +294,52 @@ const actions = {
       throw new Error("Can't set current page to number outside range of pages.");
     }
     commit('setTableCurrentPage', currentPage);
-    return dispatch('getTableCurrentRows');
+    return dispatch('getSelectedTableCurrentRows');
   },
 
   setTableRowsPerPage({ dispatch, commit, state, getters }, rowsPerPage) {
     commit('setTableRowsPerPage', rowsPerPage);
     const newPageCount = getters.tablePageCount;
-    if (state.table.currentPage > newPageCount) {
+    if (state.selectedTable.currentPage > newPageCount) {
       // Current page is now out of bounds - reset to last page
       commit('setTableCurrentPage', newPageCount);
     }
-    return dispatch('getTableCurrentRows');
+    return dispatch('getSelectedTableCurrentRows');
   },
 
   setTableShowSnapshot({ dispatch, commit, state, getters }, showSnapshot) {
     commit('setTableShowSnapshot', showSnapshot);
-    return dispatch('getTableCurrentRows');
+    return dispatch('getSelectedTableCurrentRows');
   },
 
-  snapshotTable({ commit, dispatch }, { schemaName, tableName, primaryKeyFields }) {
-    return dispatch('getTableRows', { schemaName, tableName, primaryKeyFields })
-      .then(results => {
-        console.log("snapshot done!");// eslint-disable-line
-        commit('addTableSnapshot', {
-          tableName,
-          data: results,
-        });
+  snapshotTable({ commit, dispatch, state }, { schemaName, tableName }) {
+    const table = state.tables.find(table =>
+      table.name === tableName && table.schema === schemaName
+    );
+    return dispatch('getTableRows', {
+      schemaName,
+      tableName,
+      primaryKeyFields: table.primaryKeyFields,
+    })
+    .then(results => {
+      commit('setTableSnapshot', {
+        schemaName,
+        tableName,
+        data: results,
       });
+    });
   },
 
 };
 
 // getters are functions
 const getters = {
+  table(state) {
+    // Merge props of selectedTable and record from tables into one combined
+    // table object
+    const table = state.tables[state.selectedTable.index];
+    return Object.assign(table, state.selectedTable);
+  },
   connectionClient(state, getters) {
     return getters.connectionClients.find(client =>
       client.id === state.connection.client);
@@ -385,7 +409,7 @@ const getters = {
     return title;
   },
   tablePageCount(state) {
-    return Math.ceil(state.table.totalRows / state.table.rowsPerPage);
+    return Math.ceil(state.selectedTable.totalRows / state.selectedTable.rowsPerPage);
   },
 };
 
