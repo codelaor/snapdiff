@@ -215,16 +215,21 @@ const actions = {
     return fields;
   },
 
-  getTableTotalRows({ commit, state }) {
-    let query = state.knex(state.selectedTable.name); // eslint-disable-line
-    if (state.selectedTable.schema) {
-      query = query.withSchema(state.selectedTable.schema);
+  setTableTotalRows({ commit, state }) {
+    const table = state.tables[state.selectedTable.index];
+    if (state.selectedTable.showSnapshot) {
+      commit('setTableTotalRows', table.snapshot.length);
+    } else {
+      let query = state.knex(table.name); // eslint-disable-line
+      if (table.schema) {
+        query = query.withSchema(table.schema);
+      }
+      query
+        .count('* as count')
+        .then(results => {
+          commit('setTableTotalRows', results[0].count);
+        });
     }
-    query
-      .count('* as count')
-      .then(results => {
-        commit('setTableTotalRows', results[0].count);
-      });
   },
 
   async getTableRows({ commit, state }, {
@@ -257,7 +262,7 @@ const actions = {
     return results;
   },
 
-  async getSelectedTableCurrentRows({ dispatch, commit, state }) {
+  async setSelectedTableCurrentRows({ dispatch, commit, state }) {
     // Calculate limit and offset - ie the portion of data to display
     // based on current paging values
     const limit = state.selectedTable.rowsPerPage;
@@ -283,8 +288,8 @@ const actions = {
       throw new Error(`Table '${tableName}' not found with schema '${schemaName}'`);
     }
     commit('setSelectedTable', { index: tableIndex });
-    await dispatch('getSelectedTableCurrentRows'); // can fetch at same time
-    await dispatch('getTableTotalRows'); // can fetch at same time
+    await dispatch('setSelectedTableCurrentRows'); // can fetch at same time
+    await dispatch('setTableTotalRows'); // can fetch at same time
     return dispatch('getSelectedTableColumns'); // minimum need info
   },
 
@@ -294,7 +299,7 @@ const actions = {
       throw new Error("Can't set current page to number outside range of pages.");
     }
     commit('setTableCurrentPage', currentPage);
-    return dispatch('getSelectedTableCurrentRows');
+    return dispatch('setSelectedTableCurrentRows');
   },
 
   setTableRowsPerPage({ dispatch, commit, state, getters }, rowsPerPage) {
@@ -304,12 +309,13 @@ const actions = {
       // Current page is now out of bounds - reset to last page
       commit('setTableCurrentPage', newPageCount);
     }
-    return dispatch('getSelectedTableCurrentRows');
+    return dispatch('setSelectedTableCurrentRows');
   },
 
-  setTableShowSnapshot({ dispatch, commit, state, getters }, showSnapshot) {
+  async setTableShowSnapshot({ dispatch, commit, state, getters }, showSnapshot) {
     commit('setTableShowSnapshot', showSnapshot);
-    return dispatch('getSelectedTableCurrentRows');
+    await dispatch('setTableTotalRows');
+    return dispatch('setSelectedTableCurrentRows');
   },
 
   snapshotTable({ commit, dispatch, state }, { schemaName, tableName }) {

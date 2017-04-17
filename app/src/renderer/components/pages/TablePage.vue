@@ -50,6 +50,7 @@
     </div>
 
     <!--Table-->
+    <table-pager/>
     <b-table :data="table.currentRows"
              :striped="true">
       <!--Table Header-->
@@ -60,8 +61,7 @@
   
     </b-table>
     <!--Pager-->
-    <table-pager v-if="table.currentRows.length"/>
-    <p v-else="">
+    <p v-if="!table.currentRows.length">
       No rows found.
     </p>
   </div>
