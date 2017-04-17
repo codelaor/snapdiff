@@ -9,21 +9,21 @@
              @click="createSnapshots"
              title="Create new snapshot for all tables">
             <span class="icon is-small">
-                <i class="fa fa-clone"/>
-              </span>
+                  <i class="fa fa-clone"/>
+                </span>
           </a>
           <a class="level-item is-small"
              @click="diffLatestSnapshots"
              title="Diff current data against latest snapshot">
             <span class="icon is-small">
-                <i class="fa fa-balance-scale"/>
-              </span>
+                  <i class="fa fa-balance-scale"/>
+                </span>
           </a>
         </div>
         <div class="level-center">
           <span class="level-item">
-              Tables
-            </span>
+                Tables
+              </span>
         </div>
         <div class="level-right">
         </div>
@@ -48,26 +48,6 @@
                         :format="formatTime" />
         <b-table-column field="diff"
                         label="Diff" />
-        <!--<tr v-for="table in tables">
-            <td v-if="client.hasSchemas">
-              {{ table.schema }}
-            </td>
-            <td>
-              <router-link v-if="table.schema" v-bind:to="`/schema/${table.schema}/table/${table.name}`">{{ table.name }}</router-link>
-              <router-link v-if="!table.schema" v-bind:to="`/table/${table.name}`">{{ table.name }}</router-link>
-            </td>
-            <td>
-              <span v-if="table.snapshots.length">
-                <router-link v-if="table.schema" v-bind:to="`/schema/${table.schema}/table/${table.name}/diff`">{{ table.snapshots.length  }}</router-link>
-                <router-link v-if="!table.schema" v-bind:to="`/table/${table.name}/diff`">{{ table.snapshots.length }}</router-link>
-              </span>
-              <span v-if="!table.snapshots.length">
-                {{ table.snapshots.length }}
-              </span>
-            </td>
-            <td>
-            </td>
-          </tr>-->
       </b-table>
   
       <p v-if="!tables.length">
@@ -75,14 +55,19 @@
       </p>
   
     </div>
-    <dialog id="SnapshottingDialog">
-      <p>Creating snapshots {{ processing.tableIndex }} of {{ processing.tableCount }}</p>
-      <div class="progress-bar">
-        <div class="progress-bar-progress"
-             :style="{ width: processing.progressPercent + '%'}">
+    <div id="SnapshottingDialog"
+         v-bind:class="{ modal: true, 'is-active': processing.tableCount > processing.tableIndex }">
+      <div class="model-content">
+        <div class="card">
+          <div class="card-content">
+            <p>Creating snapshots {{ processing.tableIndex }} of {{ processing.tableCount }}</p>
+            <progress class="progress"
+                      :value="processing.progressPercent"
+                      max="100">{{ processing.progressPercent }}%</progress>
+          </div>
         </div>
       </div>
-    </dialog>
+    </div>
   </div>
 </template>
 
@@ -128,8 +113,6 @@ export default {
       this.processing.tableIndex = 1;
       this.processing.tableCount = this.$store.state.tables.length;
       this.processing.progressPercent = 0;
-      const dialog = document.getElementById('SnapshottingDialog');
-      dialog.showModal();
 
       await Promise.all(this.$store.state.tables.map(async (table) => {
         const promise = this.$store.dispatch('snapshotTable', {
@@ -146,12 +129,12 @@ export default {
         return promise;
       }))
         .catch((err) => {
-          dialog.close();
-          alert(err.message); // eslint-disable-line
-          this.message = err.message;
+          this.$toast.open({
+            message: err.message,
+            position: 'bottom-right',
+            type: 'is-danger',
+          });
         });
-
-      dialog.close();
     },
     diffLatestSnapshots() {
     },

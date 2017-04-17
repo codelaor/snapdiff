@@ -115,11 +115,14 @@ export default {
         tableName: this.tableName,
       })
         .then(() => {
-          alert('Snapshot created'); // eslint-disable-line
+          this.$snackbar.open('Snapshot created');
         })
         .catch((err) => {
-          alert(err.message); // eslint-disable-line
-          this.message = err.message;
+          this.$toast.open({
+            message: err.message,
+            position: 'bottom-right',
+            type: 'is-danger',
+          });
         });
     },
     diffSnapsots() {
