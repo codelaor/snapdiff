@@ -1,13 +1,13 @@
 <template>
 
-  <div class="nav">
-    <div class="nav-left">
-      <div class="nav-item">
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
         {{ table.totalRows }} rows 
       </div>
     </div>
-    <div class="nav-center">
-      <div class="nav-item">
+    <div class="level-center">
+      <div class="level-item">
         <a class="button is-small" @click="gotoPreviousPage" :disabled="table.currentPage < 2">
           <span class="icon is-small">
             <i class="fa fa-chevron-left"/>
@@ -21,8 +21,8 @@
         </a>
       </div>
     </div>
-    <div class="nav-right">
-      <div class="nav-item">
+    <div class="level-right">
+      <div class="level-item">
         <label>Rows per page: </label>
         <input type="number" @change="onChangeRowsPerPage" v-model.number="table.rowsPerPage"/>
       </div>
