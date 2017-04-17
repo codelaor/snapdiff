@@ -20,11 +20,21 @@
         </div>
         <div class="level-right">
           <div class="level-item">
+            <div class="control">
+              <a class="button is-small"
+                :disabled="table.showSnapshot"
+                @click="refresh">
+                <span class="icon is-small">
+                  <i class="fa fa-refresh"></i>
+                </span>
+              </a>
+            </div>
+            &nbsp;
             <span class="is-small">
-                  <b-radio-group :value="table.showSnapshot" @change="selectShowSnapshot">
-                      <b-radio :value="false">Current</b-radio>
-                      <b-radio :value="true" :disabled="!table.snapshotCreated">Snapshot</b-radio>
-                  </b-radio-group>
+              <b-radio-group :value="table.showSnapshot" @change="selectShowSnapshot">
+                  <b-radio :value="false">Current</b-radio>
+                  <b-radio :value="true" :disabled="!table.snapshotCreated">Snapshot</b-radio>
+              </b-radio-group>
             </span>
             &nbsp;
             <div class="control">
@@ -38,7 +48,7 @@
             <div class="control">
               <a class="button is-small"
                 @click="diffSnapsots"
-                :disabled="!table.snapshot">
+                :disabled="!table.snapshotCreated">
                 <span class="icon is-small">
                       <i class="fa fa-balance-scale"></i>
                     </span>
@@ -50,7 +60,6 @@
     </div>
 
     <!--Table-->
-    <table-pager/>
     <b-table :data="table.currentRows"
              :striped="true">
       <!--Table Header-->
@@ -64,6 +73,7 @@
     <p v-if="!table.currentRows.length">
       No rows found.
     </p>
+    <table-pager/>
   </div>
 </template>
 
@@ -94,6 +104,12 @@ export default {
   },
   methods: {
     formatTime,
+    refresh() {
+      this.$store.dispatch('setSelectedTableCurrentRows')
+        .then(() => {
+          this.$snackbar.open('Data refreshed');
+        });
+    },
     createSnapshot() {
       this.$store.dispatch('snapshotTable', {
         schemaName: this.schemaName,
