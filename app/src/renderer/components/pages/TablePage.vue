@@ -60,19 +60,18 @@
     </div>
 
     <!--Table-->
-    <b-table :data="table.currentRows"
-             :striped="true">
-      <!--Table Header-->
-      <b-table-column v-for="column in table.columns"
-                      :field="column.name"
-                      :label="column.name" />
-      <!--<i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}-->
-  
-    </b-table>
+    <div class="scrollWrapper">
+      <b-table :data="table.currentRows"
+              :striped="true">
+        <!--Table Header-->
+        <b-table-column v-for="column in table.columns"
+                        :field="column.name"
+                        :label="column.name" />
+        <!--<i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}-->
+    
+      </b-table>
+    </div>
     <!--Pager-->
-    <p v-if="!table.currentRows.length">
-      No rows found.
-    </p>
     <table-pager/>
   </div>
 </template>

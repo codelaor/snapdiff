@@ -20,4 +20,10 @@ td {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+div.scrollWrapper{
+  overflow-x:auto;
+  margin-bottom: 5px;
+}
+
 </style>
