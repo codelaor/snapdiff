@@ -2,9 +2,9 @@
   <div class="container">
     <page-header/>
     <div class="column">
-      <div class="nav">
-        <div class="nav-left">
-          <div class="nav-item">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
             <a v-on:click="$router.go(-1)">
               <span class="icon">
                 <i class="fa fa-arrow-left"></i>
@@ -12,20 +12,21 @@
             </a>
           </div>
         </div>
-        <div class="nav-center">
-          <span class="nav-item">
+        <div class="level-center">
+          <span class="level-item">
             Table {{ table.name }}
-            <span v-if="table.showSnapshot"> ({{ formatTime(table.snapshotCreated) }})</span>
+            <span v-if="table.showSnapshot">&nbsp;({{ formatTime(table.snapshotCreated) }})</span>
           </span>
         </div>
-        <div class="nav-right">
-          <div class="nav-item">
+        <div class="level-right">
+          <div class="level-item">
             <span class="is-small">
                   <b-radio-group :value="table.showSnapshot" @change="selectShowSnapshot">
                       <b-radio :value="false">Current</b-radio>
                       <b-radio :value="true" :disabled="!table.snapshotCreated">Snapshot</b-radio>
                   </b-radio-group>
-                </span>
+            </span>
+            &nbsp;
             <div class="control">
               <a class="button is-small"
                 @click="createSnapshot">
@@ -58,8 +59,11 @@
       <!--<i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}-->
   
     </b-table>
-    <!--Repeat Pager-->
-    <table-pager/>
+    <!--Pager-->
+    <table-pager v-if="table.currentRows.length"/>
+    <p v-else="">
+      No rows found.
+    </p>
   </div>
 </template>
 

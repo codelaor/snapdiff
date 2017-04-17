@@ -1,11 +1,15 @@
 <template>
   <div class="container">
     <page-header/>
-    <a v-on:click="$router.go(-1)">
-      <span class="icon">
-        <i class="fa fa-arrow-left"></i>
-      </span>
-    </a>
+    <div class="level">
+      <div class="level-left">
+        <a v-on:click="$router.go(-1)">
+          <span class="icon">
+            <i class="fa fa-arrow-left"></i>
+          </span>
+        </a>
+      </div>
+    </div>
     <b-table :data="this.diff" :striped="true">
       <b-table-column field="snapdiffChange" label="Change"/>
       <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name"/>
@@ -25,6 +29,7 @@
       <!--</tr>-->
 
     </b-table>
+    <p v-if="!this.diff.length">No differences found between snapshot and current data</p>
   </div>
 </template>
 
@@ -171,6 +176,9 @@
           .dispatch('setSelectedTable', {
             schemaName: this.schemaName,
             tableName: this.tableName,
+          })
+          .then(() => {
+            this.doDiff();
           });
       },
     },

@@ -18,18 +18,27 @@
       </div>
 
       <div class="nav-right">
-        <a class="nav-item" v-on:click="goHome">
-          <span class="icon">
-            <i class="fa fa-sign-out"></i>
-          </span>
-          Sign-out
-        </a>
+        <b-tooltip label="Sign-out" position="is-bottom">
+          <a class="nav-item" v-on:click="goHome">
+            <span class="icon">
+              <i class="fa fa-sign-out"></i>
+            </span>
+          </a>
+        </b-tooltip>
+        <b-tooltip label="Quit" position="is-bottom">
+          <a class="nav-item" v-on:click="quit">
+            <span class="icon">
+              <i class="fa fa-power-off"></i>
+            </span>
+          </a>
+        </b-tooltip>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
+import electron from 'electron';
 export default {
   name: 'page-header',
   props: {
@@ -47,6 +56,9 @@ export default {
   watch: {
   },
   methods: {
+    quit() {
+      electron.remote.app.quit();
+    },
     goHome() {
       this.$store.dispatch('disconnect')
         .then(() => this.$router.push({ name: 'home' }));
