@@ -4,6 +4,19 @@ import knex from 'knex';
 
 Vue.use(Vuex);
 
+function doesKeyMatch(rec1, rec2, keyFields) {
+  const differences = keyFields.filter((keyField) => {
+    let bHasDifferences = false;
+    if (rec1[keyField] !== rec2[keyField]) {
+      if (rec1[keyField].valueOf() !== rec2[keyField].valueOf()) {
+        bHasDifferences = true;
+      }
+    }
+    return bHasDifferences;
+  });
+  return differences.length < 1;
+}
+
 // root state object.
 const state = {
   connection: {
@@ -28,6 +41,15 @@ const state = {
 };
 
 const mutations = {
+  setTableDiff(state, { schemaName, tableName, diff }) {
+    const tableIndex = state.tables.findIndex(table =>
+      table.schema === schemaName &&
+      table.name === tableName
+    );
+    Vue.set(state.tables[tableIndex], 'diff', diff);
+    Vue.set(state.tables[tableIndex], 'diffedAt', new Date());
+  },
+
   setTableSnapshot(state, { schemaName, tableName, data }) {
     const tableIndex = state.tables.findIndex(table =>
       table.schema === schemaName &&
@@ -318,6 +340,79 @@ const actions = {
     return dispatch('setSelectedTableCurrentRows');
   },
 
+  async getDiff({ commit, dispatch, state }, { schemaName, tableName, primaryKeyFields }) {
+    const older = await dispatch('getTableRows', {
+      schemaName,
+      tableName,
+      fromSnapshot: true,
+      primaryKeyFields,
+    });
+    const newer = await dispatch('getTableRows', {
+      schemaName,
+      tableName,
+      fromSnapshot: false,
+      primaryKeyFields,
+    });
+
+    // Find removed records
+    const removed = older.filter(olderRow => !newer.find(
+      newerRow => doesKeyMatch(newerRow, olderRow, primaryKeyFields)))
+      .map(removedRow => {
+        removedRow.snapdiffChange = 'Removed';
+        return removedRow;
+      });
+
+    // Find edited records
+    const edited = newer.filter(newerRow => {
+      const olderRow = older.find(
+        row => doesKeyMatch(newerRow, row, primaryKeyFields)
+      );
+      if (!olderRow) {
+        return false;
+      }
+      let diff = false;
+      for (var prop in newerRow) { // eslint-disable-line
+        if (olderRow[prop] !== newerRow[prop]) {
+          if (olderRow[prop].valueOf() !== newerRow[prop].valueOf()) {
+            diff = true;
+            break;
+          }
+        }
+      }
+      return diff;
+    }).map(editedRow => {
+      editedRow.snapdiffChange = 'Edited';
+      return editedRow;
+    });
+
+    // Find added/new records
+    const added = newer.filter(newerRow => !older.find(
+      olderRow => doesKeyMatch(newerRow, olderRow, primaryKeyFields)))
+      .map(addedRow => {
+        addedRow.snapdiffChange = 'Added';
+        return addedRow;
+      });
+    return removed.concat(added).concat(edited);
+  },
+
+  diffTable({ commit, dispatch, state }, { schemaName, tableName }) {
+    const table = state.tables.find(table =>
+      table.name === tableName && table.schema === schemaName
+    );
+    return dispatch('getDiff', {
+      schemaName,
+      tableName,
+      primaryKeyFields: table.primaryKeyFields,
+    })
+    .then(results => {
+      commit('setTableDiff', {
+        schemaName,
+        tableName,
+        diff: results,
+      });
+    });
+  },
+
   snapshotTable({ commit, dispatch, state }, { schemaName, tableName }) {
     const table = state.tables.find(table =>
       table.name === tableName && table.schema === schemaName
@@ -344,7 +439,9 @@ const getters = {
     // Merge props of selectedTable and record from tables into one combined
     // table object
     const table = state.tables[state.selectedTable.index];
-    return Object.assign(table, state.selectedTable);
+    return Object.assign(table, state.selectedTable, {
+      diffRowsChanged: table.diff ? table.diff.length : null,
+    });
   },
   connectionClient(state, getters) {
     return getters.connectionClients.find(client =>

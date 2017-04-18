@@ -44,7 +44,7 @@
         <b-table-column field="snapshotCreated"
                         label="Snapshot"
                         :format="formatTime" />
-        <b-table-column field="diff"
+        <b-table-column field="diffRowsChanged"
                         label="Diff" />
       </b-table>
   
