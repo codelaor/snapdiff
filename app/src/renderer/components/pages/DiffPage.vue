@@ -1,35 +1,37 @@
 <template>
   <div class="container">
     <page-header/>
-    <div class="level">
-      <div class="level-left">
-        <a v-on:click="$router.go(-1)">
-          <span class="icon">
-            <i class="fa fa-arrow-left"></i>
-          </span>
-        </a>
+    <div class="column">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <a v-on:click="$router.go(-1)">
+              <b-icon icon="arrow_back"/>
+            </a>
+          </div>
+        </div>
       </div>
+      <b-table :data="this.diff" :striped="true">
+        <b-table-column field="snapdiffChange" label="Change"/>
+        <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name"/>
+        <!--< v-for="diffRow in diff" :class="getDiffStyleClass(diffRow.snapdiffChange)">-->
+          <!--<td class="diff-icon-cell">-->
+            <!--<i :class="'fa fa-' + getDiffIcon(diffRow.snapdiffChange) "/>-->
+          <!--</td>-->
+          <!--<td>-->
+            <!--{{ diffRow }}-->
+          <!--</td>-->
+        <!--</tr>-->
+
+        <!--<tr v-if="!diff.length">-->
+          <!--<td colspan="100%">-->
+            <!--No difference between selected snapshots.-->
+          <!--</td>-->
+        <!--</tr>-->
+
+      </b-table>
+      <p v-if="!this.diff.length">No differences found between snapshot and current data</p>
     </div>
-    <b-table :data="this.diff" :striped="true">
-      <b-table-column field="snapdiffChange" label="Change"/>
-      <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name"/>
-      <!--< v-for="diffRow in diff" :class="getDiffStyleClass(diffRow.snapdiffChange)">-->
-        <!--<td class="diff-icon-cell">-->
-          <!--<i :class="'fa fa-' + getDiffIcon(diffRow.snapdiffChange) "/>-->
-        <!--</td>-->
-        <!--<td>-->
-          <!--{{ diffRow }}-->
-        <!--</td>-->
-      <!--</tr>-->
-
-      <!--<tr v-if="!diff.length">-->
-        <!--<td colspan="100%">-->
-          <!--No difference between selected snapshots.-->
-        <!--</td>-->
-      <!--</tr>-->
-
-    </b-table>
-    <p v-if="!this.diff.length">No differences found between snapshot and current data</p>
   </div>
 </template>
 

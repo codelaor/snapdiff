@@ -4,12 +4,6 @@
       <div class="nav-left">
         <div class="nav-item field is-grouped">
           <img src="../../../../../art/banner_logo.svg"/>
-          <a v-if="showBack"
-                  v-on:click="$router.go(-1)">
-            <span class="icon">
-              <i class="fa fa-arrow-left"></i>
-            </span>
-          </a>
         </div>
       </div>
       
@@ -20,16 +14,12 @@
       <div class="nav-right">
         <b-tooltip label="Sign-out" position="is-bottom">
           <a class="nav-item" v-on:click="goHome">
-            <span class="icon">
-              <i class="fa fa-sign-out"></i>
-            </span>
+            <b-icon icon="home"/>
           </a>
         </b-tooltip>
         <b-tooltip label="Quit" position="is-bottom">
           <a class="nav-item" v-on:click="quit">
-            <span class="icon">
-              <i class="fa fa-power-off"></i>
-            </span>
+            <b-icon icon="power_settings_new"/>
           </a>
         </b-tooltip>
       </div>
@@ -41,12 +31,6 @@
 import electron from 'electron';
 export default {
   name: 'page-header',
-  props: {
-    showBack: {
-      type: Boolean,
-      default: false,
-    },
-  },
   data() {
     return {
       databaseTitle: this.$store.getters.databaseTitle,

@@ -8,16 +8,12 @@
     </div>
     <div class="level-center">
       <div class="level-item">
-        <a class="button is-small" @click="gotoPreviousPage" :disabled="table.currentPage < 2">
-          <span class="icon is-small">
-            <i class="fa fa-chevron-left"/>
-          </span>
+        <a class="button" @click="gotoPreviousPage" :disabled="table.currentPage < 2">
+            <b-icon icon="chevron_left"/>
         </a>
         Page {{ table.currentPage }} of {{ pageCount }}
-        <a class="button is-small" @click="gotoNextPage" :disabled="table.currentPage >= pageCount">
-          <span class="icon is-small">
-            <i class="fa fa-chevron-right"/>
-          </span>
+        <a class="button" @click="gotoNextPage" :disabled="table.currentPage >= pageCount">
+            <b-icon icon="chevron_right"/>
         </a>
       </div>
     </div>

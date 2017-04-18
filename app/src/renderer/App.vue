@@ -13,7 +13,8 @@
 </script>
 
 <style>
-  @import '../../icons/font-awesome/css/font-awesome.min.css';
+  /*@import '../../node_modules/mdi/css/materialdesignicons.min.css';*/
+  @import '//fonts.googleapis.com/icon?family=Material+Icons';
 td {
     max-width: 200px;
     overflow: hidden;

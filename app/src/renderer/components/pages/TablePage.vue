@@ -5,11 +5,11 @@
       <div class="level">
         <div class="level-left">
           <div class="level-item">
-            <a v-on:click="$router.go(-1)">
-              <span class="icon">
-                <i class="fa fa-arrow-left"></i>
-              </span>
-            </a>
+            <b-tooltip label="Go back" position="is-bottom">
+              <a v-on:click="$router.go(-1)">
+                <b-icon icon="arrow_back"/>
+              </a>
+            </b-tooltip>
           </div>
         </div>
         <div class="level-center">
@@ -20,40 +20,34 @@
         </div>
         <div class="level-right">
           <div class="level-item">
-            <div class="control">
-              <a class="button is-small"
-                :disabled="table.showSnapshot"
-                @click="refresh">
-                <span class="icon is-small">
-                  <i class="fa fa-refresh"></i>
-                </span>
-              </a>
-            </div>
-            &nbsp;
-            <span class="is-small">
+            <b-tooltip label="Show current data or snapshot" position="is-bottom">
               <b-radio-group :value="table.showSnapshot" @change="selectShowSnapshot">
                   <b-radio :value="false">Current</b-radio>
                   <b-radio :value="true" :disabled="!table.snapshotCreated">Snapshot</b-radio>
               </b-radio-group>
-            </span>
-            &nbsp;
-            <div class="control">
-              <a class="button is-small"
-                @click="createSnapshot">
-                <span class="icon is-small">
-                      <i class="fa fa-clone"></i>
-                    </span>
-              </a>
-            </div>
-            <div class="control">
-              <a class="button is-small"
-                @click="diffSnapsots"
-                :disabled="!table.snapshotCreated">
-                <span class="icon is-small">
-                      <i class="fa fa-balance-scale"></i>
-                    </span>
-              </a>
-            </div>
+            </b-tooltip>
+          </div>
+          <div class="level-item">
+              <b-tooltip label="Refresh current data" position="is-bottom">
+                <a class="button"
+                  :disabled="table.showSnapshot"
+                  @click="refresh">
+                  <b-icon icon="refresh"/>
+                </a>
+              </b-tooltip>
+              <b-tooltip label="Create / update snapshot" position="is-bottom">
+                <a class="button"
+                  @click="createSnapshot">
+                  <b-icon icon="content_copy"/>
+                </a>
+              </b-tooltip>
+              <b-tooltip label="Diff snapshot with current data" position="is-bottom">
+                <a class="button"
+                  @click="diffSnapsots"
+                  :disabled="!table.snapshotCreated">
+                  <b-icon icon="compare"/>
+                </a>
+              </b-tooltip>
           </div>
         </div>
       </div>

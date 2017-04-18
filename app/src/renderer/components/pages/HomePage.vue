@@ -32,9 +32,7 @@
                   v-model="connection.filename">
             <p class="control">
               <a class="button" v-on:click="openFileDialog">
-                <span class="icon">
-                  <i class="fa fa-folder-open-o"></i>
-                </span>
+                <b-icon icon="folder_open"/>
               </a>
             </p>
           </b-field>

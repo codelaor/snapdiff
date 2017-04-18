@@ -5,25 +5,23 @@
       <!--Toolbar-->
       <div class="level">
         <div class="level-left">
-          <a class="level-item is-small"
+          <a class="level-item"
              @click="createSnapshots"
              title="Create new snapshot for all tables">
-            <span class="icon is-small">
-                  <i class="fa fa-clone"/>
-                </span>
+            <b-icon icon="content_copy"/>
+             Create snapshots
           </a>
-          <a class="level-item is-small"
+          <a class="level-item"
              @click="diffLatestSnapshots"
-             title="Diff current data against latest snapshot">
-            <span class="icon is-small">
-                  <i class="fa fa-balance-scale"/>
-                </span>
+             title="Diff current data against latest snapshots">
+            <b-icon icon="compare"/>
+             Diff snapshots
           </a>
         </div>
         <div class="level-center">
           <span class="level-item">
                 Tables
-              </span>
+          </span>
         </div>
         <div class="level-right">
         </div>
