@@ -12,7 +12,7 @@
              Create snapshots
           </a>
           <a class="level-item"
-             @click="diffLatestSnapshots"
+             @click="diffSnapshots"
              title="Diff current data against latest snapshots">
             <b-icon icon="compare"/>
              Diff snapshots
@@ -58,7 +58,7 @@
       <div class="model-content">
         <div class="card">
           <div class="card-content">
-            <p>Creating snapshots {{ processing.tableIndex }} of {{ processing.tableCount }}</p>
+            <p>{{ processing.task }} {{ processing.tableIndex }} of {{ processing.tableCount }}</p>
             <progress class="progress"
                       :value="processing.progressPercent"
                       max="100">{{ processing.progressPercent }}%</progress>
@@ -83,6 +83,7 @@ export default {
       connection: this.$store.state.connection,
       databaseTitle: this.$store.getters.databaseTitle,
       processing: {
+        task: '',
         tableCount: 0,
         tableIndex: 0,
         progressPercent: 50,
@@ -108,6 +109,7 @@ export default {
       });
     },
     async createSnapshots() {
+      this.processing.task = 'Creating snapshots';
       this.processing.tableIndex = 1;
       this.processing.tableCount = this.$store.state.tables.length;
       this.processing.progressPercent = 0;
@@ -133,8 +135,42 @@ export default {
             type: 'is-danger',
           });
         });
+      this.$snackbar.open(`${this.processing.tableCount} snapshots created.`);
     },
-    diffLatestSnapshots() {
+    async diffSnapshots() {
+      const tablesWithSnapshots = this.$store.state.tables
+        .filter(table => (table.snapshotCreated));
+      if (!tablesWithSnapshots.length) {
+        this.$snackbar.open('No snapshots to diff');
+        return;
+      }
+      this.processing.task = 'Diffing snapshots';
+      this.processing.tableIndex = 1;
+      this.processing.tableCount = tablesWithSnapshots.length;
+      this.processing.progressPercent = 0;
+
+      await Promise.all(tablesWithSnapshots.map(async (table) => {
+        const promise = this.$store.dispatch('snapshotTable', {
+          schemaName: table.schema,
+          tableName: table.name,
+        })
+          .then(async () => {
+            // Force refresh of showing which table we are up to
+            this.processing.tableIndex++;
+            this.processing.progressPercent = this.processing.tableIndex /
+              this.processing.tableCount * 100;
+            await this.$forceUpdate();
+          });
+        return promise;
+      }))
+        .catch((err) => {
+          this.$toast.open({
+            message: err.message,
+            position: 'bottom-right',
+            type: 'is-danger',
+          });
+        });
+      this.$snackbar.open(`Diff of ${tablesWithSnapshots.length} table snapshots completed.`);
     },
   },
 };
