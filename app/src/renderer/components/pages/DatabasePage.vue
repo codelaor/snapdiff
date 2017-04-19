@@ -137,7 +137,7 @@ export default {
         });
       this.$snackbar.open(`${this.processing.tableCount} snapshots created.`);
     },
-    async diffSnapshots() {
+    diffSnapshots() {
       const tablesWithSnapshots = this.$store.state.tables
         .filter(table => (table.snapshotCreated));
       if (!tablesWithSnapshots.length) {
@@ -149,8 +149,8 @@ export default {
       this.processing.tableCount = tablesWithSnapshots.length;
       this.processing.progressPercent = 0;
 
-      await Promise.all(tablesWithSnapshots.map(async (table) => {
-        const promise = this.$store.dispatch('snapshotTable', {
+      Promise.all(tablesWithSnapshots.map((table) => {
+        const promise = this.$store.dispatch('diffTable', {
           schemaName: table.schema,
           tableName: table.name,
         })
@@ -169,8 +169,10 @@ export default {
             position: 'bottom-right',
             type: 'is-danger',
           });
+        })
+        .then(() => {
+          this.$snackbar.open(`Diff of ${tablesWithSnapshots.length} table snapshots completed.`);
         });
-      this.$snackbar.open(`Diff of ${tablesWithSnapshots.length} table snapshots completed.`);
     },
   },
 };

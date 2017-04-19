@@ -395,22 +395,24 @@ const actions = {
     return removed.concat(added).concat(edited);
   },
 
-  diffTable({ commit, dispatch, state }, { schemaName, tableName }) {
+  async diffTable({ commit, dispatch, state }, { schemaName, tableName }) {
     const table = state.tables.find(table =>
       table.name === tableName && table.schema === schemaName
     );
-    return dispatch('getDiff', {
+
+    console.log('diffing ', tableName); // eslint-disable-line
+    const diff = await dispatch('getDiff', {
       schemaName,
       tableName,
       primaryKeyFields: table.primaryKeyFields,
-    })
-    .then(results => {
-      commit('setTableDiff', {
-        schemaName,
-        tableName,
-        diff: results,
-      });
     });
+
+    commit('setTableDiff', {
+      schemaName,
+      tableName,
+      diff,
+    });
+    console.log('finished diffing ', tableName); // eslint-disable-line
   },
 
   snapshotTable({ commit, dispatch, state }, { schemaName, tableName }) {
