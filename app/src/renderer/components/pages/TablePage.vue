@@ -5,75 +5,88 @@
       <div class="level">
         <div class="level-left">
           <div class="level-item">
-            <b-tooltip label="Go back" position="is-bottom">
+            <b-tooltip label="Go back"
+                       position="is-bottom">
               <a v-on:click="$router.go(-1)">
-                <b-icon icon="arrow_back"/>
+                <b-icon icon="arrow_back" />
               </a>
             </b-tooltip>
           </div>
         </div>
         <div class="level-center">
           <span class="level-item">
-            Table {{ table.name }}
-            <span v-if="table.showSnapshot">&nbsp;({{ formatTime(table.snapshotCreated) }})</span>
+              Table {{ table.name }}
+              <span v-if="table.showSnapshot">&nbsp;({{ formatTime(table.snapshotCreated) }})</span>
           </span>
         </div>
         <div class="level-right">
           <div class="level-item">
-            <b-tooltip label="Show current data or snapshot" position="is-bottom">
-              <b-radio-group :value="table.showSnapshot" @change="selectShowSnapshot">
-                  <b-radio :value="false">Current</b-radio>
-                  <b-radio :value="true" :disabled="!table.snapshotCreated">Snapshot</b-radio>
+            <b-tooltip label="Show current data or snapshot"
+                       position="is-bottom">
+              <b-radio-group :value="table.showSnapshot"
+                             @change="selectShowSnapshot">
+                <b-radio :value="false">Current</b-radio>
+                <b-radio :value="true"
+                         :disabled="!table.snapshotCreated">Snapshot</b-radio>
               </b-radio-group>
             </b-tooltip>
           </div>
           <div class="level-item">
-              <b-tooltip label="Refresh current data" position="is-bottom">
-                <a class="button"
-                  :disabled="table.showSnapshot"
-                  @click="refresh">
-                  <b-icon icon="refresh"/>
-                </a>
-              </b-tooltip>
-              <b-tooltip label="Create / update snapshot" position="is-bottom">
-                <a class="button"
-                  @click="createSnapshot">
-                  <b-icon icon="content_copy"/>
-                </a>
-              </b-tooltip>
-              <b-tooltip label="Diff snapshot with current data" position="is-bottom">
-                <a class="button"
-                  @click="diffSnapsots"
-                  :disabled="!table.snapshotCreated">
-                  <b-icon icon="compare"/>
-                </a>
-              </b-tooltip>
+            <b-tooltip label="Refresh current data"
+                       position="is-bottom">
+              <a class="button"
+                 :disabled="table.showSnapshot"
+                 @click="refresh">
+                <b-icon icon="refresh" />
+              </a>
+            </b-tooltip>
+            <b-tooltip label="Create / update snapshot"
+                       position="is-bottom">
+              <a class="button"
+                 @click="createSnapshot">
+                <b-icon icon="content_copy" />
+              </a>
+            </b-tooltip>
+            <b-tooltip label="Diff snapshot with current data"
+                       position="is-bottom">
+              <a class="button"
+                 @click="diffSnapsots"
+                 :disabled="!table.snapshotCreated">
+                <b-icon icon="compare" />
+              </a>
+            </b-tooltip>
           </div>
         </div>
       </div>
     </div>
-
+  
     <!--Table-->
     <div class="scrollWrapper">
       <b-table :data="table.currentRows"
-              :striped="true">
+               :striped="true">
         <!--Table Header-->
         <b-table-column v-for="column in table.columns"
                         :field="column.name"
                         :label="column.name" />
         <!--<i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}-->
-    
+  
       </b-table>
     </div>
     <!--Pager-->
     <table-pager/>
+    <b-pagination class="is-pulled-right"
+                  :total="table.totalRows"
+                  :current="table.currentPage"
+                  :per-page="10"
+                  :simple="true"
+                  @change="pageChanged">
+    </b-pagination>
   </div>
 </template>
 
 <script>
 import { formatTime } from '../../formatters';
 import PageHeader from './PageHeader';
-import TablePager from './Table/TablePager';
 
 export default {
   name: 'table-page',
@@ -83,7 +96,6 @@ export default {
   },
   components: {
     PageHeader,
-    TablePager,
   },
   computed: {
     table() {
@@ -97,6 +109,9 @@ export default {
   },
   methods: {
     formatTime,
+    pageChanged(value) {
+      this.$store.dispatch('setTableCurrentPage', value);
+    },
     refresh() {
       this.$store.dispatch('setSelectedTableCurrentRows')
         .then(() => {

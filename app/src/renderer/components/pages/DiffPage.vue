@@ -37,7 +37,6 @@
 
 <script>
   import PageHeader from './PageHeader';
-  import TablePager from './Table/TablePager';
 
   export default {
     name: 'diff-page',
@@ -47,7 +46,6 @@
     },
     components: {
       PageHeader,
-      TablePager,
     },
     computed: {
       table() {
