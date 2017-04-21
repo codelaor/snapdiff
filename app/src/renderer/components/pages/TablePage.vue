@@ -73,7 +73,6 @@
       </b-table>
     </div>
     <!--Pager-->
-    <table-pager/>
     <b-pagination class="is-pulled-right"
                   :total="table.totalRows"
                   :current="table.currentPage"
