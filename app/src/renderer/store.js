@@ -30,6 +30,9 @@ const state = {
   },
   knex: null,
   tables: [],
+  settings: {
+    snapshotRowLimit: 1000,
+  },
   selectedTable: {
     index: -1,
     totalRows: 0,
@@ -57,6 +60,14 @@ const mutations = {
     );
     state.tables[tableIndex].snapshot = data;
     state.tables[tableIndex].snapshotCreated = new Date();
+  },
+
+  setTableSnapshotError(state, { schemaName, tableName, message }) {
+    const tableIndex = state.tables.findIndex(table =>
+      table.schema === schemaName &&
+      table.name === tableName
+    );
+    Vue.set(state.tables[tableIndex], 'snapshotError', message);
   },
 
   setConnection(state, connection) {
@@ -242,7 +253,7 @@ const actions = {
     if (state.selectedTable.showSnapshot) {
       commit('setTableTotalRows', table.snapshot.length);
     } else {
-      let query = state.knex(table.name); // eslint-disable-line
+      let query = state.knex(table.name);
       if (table.schema) {
         query = query.withSchema(table.schema);
       }
@@ -267,7 +278,7 @@ const actions = {
     // Get data
     if (!fromSnapshot) {
       // No snapshot selected, get current data from database
-      let query = state.knex(tableName); // eslint-disable-line
+      let query = state.knex(tableName);
       if (schemaName) {
         query = query.withSchema(schemaName);
       }
@@ -400,7 +411,6 @@ const actions = {
       table.name === tableName && table.schema === schemaName
     );
 
-    console.log('diffing ', tableName); // eslint-disable-line
     const diff = await dispatch('getDiff', {
       schemaName,
       tableName,
@@ -412,7 +422,6 @@ const actions = {
       tableName,
       diff,
     });
-    console.log('finished diffing ', tableName); // eslint-disable-line
   },
 
   snapshotTable({ commit, dispatch, state }, { schemaName, tableName }) {
@@ -423,13 +432,22 @@ const actions = {
       schemaName,
       tableName,
       primaryKeyFields: table.primaryKeyFields,
+      limit: state.settings.snapshotRowLimit + 1,
     })
     .then(results => {
-      commit('setTableSnapshot', {
-        schemaName,
-        tableName,
-        data: results,
-      });
+      if (results.length > state.settings.snapshotRowLimit) {
+        commit('setTableSnapshotError', {
+          schemaName,
+          tableName,
+          message: `Table exceeds ${state.settings.snapshotRowLimit} rows`,
+        });
+      } else {
+        commit('setTableSnapshot', {
+          schemaName,
+          tableName,
+          data: results,
+        });
+      }
     });
   },
 
@@ -441,9 +459,7 @@ const getters = {
     // Merge props of selectedTable and record from tables into one combined
     // table object
     const table = state.tables[state.selectedTable.index];
-    return Object.assign(table, state.selectedTable, {
-      diffRowsChanged: table.diff ? table.diff.length : null,
-    });
+    return Object.assign(table, state.selectedTable);
   },
   connectionClient(state, getters) {
     return getters.connectionClients.find(client =>

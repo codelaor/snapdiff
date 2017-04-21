@@ -142,8 +142,7 @@ export default {
           tableName: this.tableName,
         });
     },
-    selectShowSnapshot(showSnapshot) { // eslint-disable-line
-      // debugger; // eslint-disable-line
+    selectShowSnapshot(showSnapshot) {
       this.$store
         .dispatch('setTableShowSnapshot', {
           showSnapshot,

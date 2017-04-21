@@ -2,6 +2,11 @@
   <nav class="nav has-shadow">
     <div class="container">
       <div class="nav-left">
+        <b-tooltip label="Sign-out" position="is-bottom">
+          <a class="nav-item" v-on:click="goHome">
+            <b-icon icon="home"/>
+          </a>
+        </b-tooltip>
         <div class="nav-item field is-grouped">
           <img src="../../../../../art/banner_logo.svg"/>
         </div>
@@ -12,11 +17,6 @@
       </div>
 
       <div class="nav-right">
-        <b-tooltip label="Sign-out" position="is-bottom">
-          <a class="nav-item" v-on:click="goHome">
-            <b-icon icon="home"/>
-          </a>
-        </b-tooltip>
         <b-tooltip label="Quit" position="is-bottom">
           <a class="nav-item" v-on:click="quit">
             <b-icon icon="power_settings_new"/>

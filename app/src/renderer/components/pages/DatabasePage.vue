@@ -8,25 +8,22 @@
           <a class="level-item"
              @click="createSnapshots"
              title="Create new snapshot for all tables">
-            <b-icon icon="content_copy"/>
-             Create snapshots
+            <b-icon icon="content_copy" /> Create snapshots
           </a>
           <a class="level-item"
              @click="diffSnapshots"
              title="Diff current data against latest snapshots">
-            <b-icon icon="compare"/>
-             Diff snapshots
+            <b-icon icon="compare" /> Diff snapshots
           </a>
         </div>
         <div class="level-center">
           <span class="level-item">
-                Tables
-          </span>
+                  Tables
+            </span>
         </div>
         <div class="level-right">
         </div>
       </div>
-  
       <!--Table-->
       <b-table :data="tables"
                v-if="tables.length"
@@ -35,7 +32,8 @@
                :paginated="true"
                :per-page="12"
                :pagination-simple="true"
-               @select="tableSelected">
+               @select="tableSelected"
+               render-html>
         <b-table-column field="schema"
                         label="Schema"
                         v-if="client.hasSchemas" />
@@ -43,7 +41,7 @@
                         label="Name" />
         <b-table-column field="snapshotCreated"
                         label="Snapshot"
-                        :format="formatTime" />
+                        :format="formatSnapshotState" />
         <b-table-column field="diffRowsChanged"
                         label="Diff" />
       </b-table>
@@ -95,11 +93,22 @@ export default {
       return this.$store.getters.connectionClient;
     },
     tables() {
-      return this.$store.state.tables;
+      return this.$store.state.tables.map(table =>
+        Object.assign(table, {
+          diffRowsChanged: table.diff ? table.diff.length : null,
+        }));
     },
   },
   methods: {
-    formatTime,
+    formatSnapshotState(value, row) {
+      let result;
+      if (row.snapshotError) {
+        result = '<span class="tag is-danger">Error</span>';
+      } else {
+        result = formatTime(value);
+      }
+      return result;
+    },
     tableSelected(selectedTable) {
       this.$router.push({
         name: 'schemaTable', params: {
@@ -137,7 +146,7 @@ export default {
         });
       this.$snackbar.open(`${this.processing.tableCount} snapshots created.`);
     },
-    diffSnapshots() {
+    async diffSnapshots() {
       const tablesWithSnapshots = this.$store.state.tables
         .filter(table => (table.snapshotCreated));
       if (!tablesWithSnapshots.length) {
@@ -149,11 +158,18 @@ export default {
       this.processing.tableCount = tablesWithSnapshots.length;
       this.processing.progressPercent = 0;
 
-      Promise.all(tablesWithSnapshots.map((table) => {
-        const promise = this.$store.dispatch('diffTable', {
+      for (const table of tablesWithSnapshots) {
+        await this.$store.dispatch('diffTable', {
           schemaName: table.schema,
           tableName: table.name,
         })
+          .catch((err) => {
+            this.$toast.open({
+              message: err.message,
+              position: 'bottom-right',
+              type: 'is-danger',
+            });
+          })
           .then(async () => {
             // Force refresh of showing which table we are up to
             this.processing.tableIndex++;
@@ -161,18 +177,9 @@ export default {
               this.processing.tableCount * 100;
             await this.$forceUpdate();
           });
-        return promise;
-      }))
-        .catch((err) => {
-          this.$toast.open({
-            message: err.message,
-            position: 'bottom-right',
-            type: 'is-danger',
-          });
-        })
-        .then(() => {
-          this.$snackbar.open(`Diff of ${tablesWithSnapshots.length} table snapshots completed.`);
-        });
+      }
+
+      this.$snackbar.open(`Diff of ${tablesWithSnapshots.length} table snapshots completed.`);
     },
   },
 };
