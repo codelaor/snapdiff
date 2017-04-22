@@ -41,9 +41,6 @@
   export default {
     name: 'diff-page',
     props: ['schemaName', 'tableName'],
-    created() {
-      this.setTable();
-    },
     components: {
       PageHeader,
     },
@@ -108,16 +105,6 @@
       handleSnapshotSelectRight(snapshot) {
         this.rightSnapshot = snapshot;
         this.doDiff();
-      },
-      setTable() {
-        this.$store
-          .dispatch('setSelectedTable', {
-            schemaName: this.schemaName,
-            tableName: this.tableName,
-          })
-          .then(() => {
-            this.doDiff();
-          });
       },
     },
   };

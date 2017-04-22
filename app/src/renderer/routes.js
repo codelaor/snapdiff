@@ -5,25 +5,13 @@ export default [
     component: require('components/pages/HomePage'),
   },
   {
-    path: '/schema/:schemaName/table/:tableName',
-    name: 'schemaTable',
-    component: require('components/pages/TablePage'),
-    props: true,
-  },
-  {
-    path: '/table/:tableName',
+    path: '/table',
     name: 'table',
     component: require('components/pages/TablePage'),
     props: true,
   },
   {
-    path: '/schema/:schemaName/table/:tableName/diff',
-    name: 'schemaDiff',
-    component: require('components/pages/DiffPage'),
-    props: true,
-  },
-  {
-    path: '/table/:tableName/diff',
+    path: '/diff',
     name: 'diff',
     component: require('components/pages/DiffPage'),
     props: true,

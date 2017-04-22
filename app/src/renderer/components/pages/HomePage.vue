@@ -118,13 +118,16 @@ export default {
   },
   methods: {
     openFileDialog() {
-      [this.connection.filename] = remote.dialog.showOpenDialog({
+      const result = remote.dialog.showOpenDialog({
         properties: ['openFile'],
         filters: [
           { name: 'Database files', extensions: ['db'] },
           { name: 'All files', extensions: ['*'] },
         ],
       });
+      if (result && result.length) {
+        this.connection.filename = result;
+      }
     },
     connect() {
       this.$store.dispatch('connect', this.connection)

@@ -36,14 +36,18 @@
                render-html>
         <b-table-column field="schema"
                         label="Schema"
-                        v-if="client.hasSchemas" />
+                        v-if="client.hasSchemas" 
+                        sortable/>
         <b-table-column field="name"
-                        label="Name" />
+                        label="Name"                         
+                        sortable/>
         <b-table-column field="snapshotCreated"
                         label="Snapshot"
-                        :format="formatSnapshotState" />
+                        :format="formatSnapshotState" 
+                        sortable/>
         <b-table-column field="diffRowsChanged"
-                        label="Diff" />
+                        label="Diff" 
+                        sortable/>
       </b-table>
   
       <p v-if="!tables.length">
@@ -110,12 +114,16 @@ export default {
       return result;
     },
     tableSelected(selectedTable) {
-      this.$router.push({
-        name: 'schemaTable', params: {
+      this.$store
+        .dispatch('setSelectedTable', {
           schemaName: selectedTable.schema,
           tableName: selectedTable.name,
-        },
-      });
+        })
+        .then(() => {
+          this.$router.push({
+            name: 'table',
+          });
+        });
     },
     async createSnapshots() {
       this.processing.task = 'Creating snapshots';

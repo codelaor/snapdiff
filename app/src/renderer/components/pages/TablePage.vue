@@ -47,10 +47,10 @@
                 <b-icon icon="content_copy" />
               </a>
             </b-tooltip>
-            <b-tooltip label="Diff snapshot with current data"
+            <b-tooltip label="Diff snapshot"
                        position="is-bottom">
               <a class="button"
-                 @click="diffSnapsots"
+                 @click="gotoDiff"
                  :disabled="!table.snapshotCreated">
                 <b-icon icon="compare" />
               </a>
@@ -90,9 +90,6 @@ import PageHeader from './PageHeader';
 export default {
   name: 'table-page',
   props: ['schemaName', 'tableName'],
-  created() {
-    this.setSelectedTable();
-  },
   components: {
     PageHeader,
   },
@@ -133,28 +130,12 @@ export default {
           });
         });
     },
-    diffSnapsots() {
-      if (this.schemaName) {
-        this.$router.push({
-          name: 'schemaDiff', params: {
-            schemaName: this.schemaName,
-            tableName: this.tableName,
-          },
-        });
-      } else {
-        this.$router.push({
-          name: 'diff', params: {
-            tableName: this.tableName,
-          },
-        });
-      }
-    },
-    setSelectedTable() {
-      this.$store
-        .dispatch('setSelectedTable', {
-          schemaName: this.schemaName,
+    gotoDiff() {
+      this.$router.push({
+        name: 'diff', params: {
           tableName: this.tableName,
-        });
+        },
+      });
     },
     selectShowSnapshot(showSnapshot) {
       this.$store
