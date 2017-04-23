@@ -135,7 +135,7 @@ export default {
         ],
       });
       if (result && result.length) {
-        this.connection.filename = result;
+        this.connection.filename = result[0];
       }
     },
     async connect() {
