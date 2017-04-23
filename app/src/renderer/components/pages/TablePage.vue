@@ -95,7 +95,7 @@ export default {
   },
   computed: {
     table() {
-      return this.$store.getters.table;
+      return this.$store.getters['tables/current'];
     },
   },
   watch: {
@@ -106,18 +106,18 @@ export default {
   methods: {
     formatTime,
     pageChanged(value) {
-      this.$store.dispatch('setCurrentPage', value);
+      this.$store.dispatch('tables/setCurrentPage', value);
     },
     refresh() {
-      this.$store.dispatch('setCurrentRows')
+      this.$store.dispatch('tables/setCurrentRows')
         .then(() => {
           this.$snackbar.open('Data refreshed');
         });
     },
     createSnapshot() {
-      this.$store.dispatch('snapshotTable', {
-        schemaName: this.schemaName,
-        tableName: this.tableName,
+      this.$store.dispatch('tables/snapshotTable', {
+        schemaName: this.table.schema,
+        tableName: this.table.name,
       })
         .then(() => {
           this.$snackbar.open('Snapshot created');
@@ -132,14 +132,12 @@ export default {
     },
     gotoDiff() {
       this.$router.push({
-        name: 'diff', params: {
-          tableName: this.tableName,
-        },
+        name: 'diff',
       });
     },
     selectShowSnapshot(showSnapshot) {
       this.$store
-        .dispatch('setCurrentShowSnapshot', {
+        .dispatch('tables/setCurrentShowSnapshot', {
           showSnapshot,
         });
     },
