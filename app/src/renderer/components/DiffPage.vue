@@ -46,7 +46,7 @@
     },
     computed: {
       table() {
-        return this.$store.getters.table;
+        return this.$store.getters['tables/current'];
       },
     },
 

@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { formatTime } from '../../formatters';
+import { formatTime } from '../formatters';
 import PageHeader from './PageHeader';
 
 export default {

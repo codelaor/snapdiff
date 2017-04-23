@@ -2,7 +2,7 @@
   <div class="container">
     <div class="column is-half is-offset-one-quarter">
       <img class="home-page-group"
-           src="../../../../../art/logo.png"
+           src="../../../../art/logo.png"
            alt="electron-vue">
     </div>
   

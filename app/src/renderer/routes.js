@@ -2,29 +2,29 @@ export default [
   {
     path: '/',
     name: 'home',
-    component: require('components/pages/HomePage'),
+    component: require('components/HomePage'),
   },
   {
     path: '/table',
     name: 'table',
-    component: require('components/pages/TablePage'),
+    component: require('components/TablePage'),
     props: true,
   },
   {
     path: '/diff',
     name: 'diff',
-    component: require('components/pages/DiffPage'),
+    component: require('components/DiffPage'),
     props: true,
   },
   {
     path: '/database',
     name: 'database',
-    component: require('components/pages/DatabasePage'),
+    component: require('components/DatabasePage'),
   },
   {
     path: '/error',
     name: 'error',
-    component: require('components/pages/ErrorPage'),
+    component: require('components/ErrorPage'),
   },
   {
     path: '*',

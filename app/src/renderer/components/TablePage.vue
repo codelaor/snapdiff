@@ -15,8 +15,8 @@
         </div>
         <div class="level-center">
           <span class="level-item">
-              Table {{ table.name }}
-              <span v-if="table.showSnapshot">&nbsp;({{ formatTime(table.snapshotCreated) }})</span>
+                      Table {{ table.name }}
+                      <span v-if="table.showSnapshot">&nbsp;({{ formatTime(table.snapshotCreated) }})</span>
           </span>
         </div>
         <div class="level-right">
@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { formatTime } from '../../formatters';
+import { formatTime } from '../formatters';
 import PageHeader from './PageHeader';
 
 export default {
@@ -131,9 +131,22 @@ export default {
         });
     },
     gotoDiff() {
-      this.$router.push({
-        name: 'diff',
-      });
+      this.$store.dispatch('tables/diffTable', {
+        schemaName: this.table.schema,
+        tableName: this.table.name,
+      })
+        .then(() => {
+          this.$router.push({
+            name: 'diff',
+          });
+        })
+        .catch((err) => {
+          this.$toast.open({
+            message: err.message,
+            position: 'bottom-right',
+            type: 'is-danger',
+          });
+        });
     },
     selectShowSnapshot(showSnapshot) {
       this.$store
