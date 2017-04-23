@@ -374,7 +374,6 @@ const actions = {
   },
 
   snapshotTable({ commit, dispatch, state, rootState }, { schemaName, tableName }) {
-    debugger; // eslint-disable-line
     const table = state.all.find(table =>
       table.name === tableName && table.schema === schemaName
     );

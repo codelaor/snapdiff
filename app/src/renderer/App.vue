@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import store from './vuex/store';
+  import store from './store';
   export default {
     store,
   };

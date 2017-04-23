@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <page-header/>
+    <page-header :title="pageTitle"/>
     <div class="column">
       <div class="level">
         <div class="level-left">
@@ -11,7 +11,7 @@
           </div>
         </div>
       </div>
-      <b-table :data="table.diff" :striped="true">
+      <b-table v-if="table.diff.length" :data="table.diff" :striped="true">
         <b-table-column field="snapdiffChange" label="Change"/>
         <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name"/>
         <!--< v-for="diffRow in diff" :class="getTableDiffStyleClass(diffRow.snapdiffChange)">-->
@@ -30,7 +30,9 @@
         <!--</tr>-->
 
       </b-table>
-      <p v-if="!this.diff.length">No differences found between snapshot and current data</p>
+      <div v-if="!table.diff.length" class="notification is-info">
+        No differences found between snapshot and current data
+      </div>
     </div>
   </div>
 </template>
@@ -40,7 +42,6 @@
 
   export default {
     name: 'diff-page',
-    props: ['schemaName', 'tableName'],
     components: {
       PageHeader,
     },
@@ -48,11 +49,12 @@
       table() {
         return this.$store.getters['tables/current'];
       },
+      pageTitle() {
+        return `Table '${this.table.name}' Diff`;
+      },
     },
-
     data() {
       return {
-        diff: [],
       };
     },
     methods: {

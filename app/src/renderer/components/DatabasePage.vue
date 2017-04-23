@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <page-header/>
+    <page-header :title="`Database '${databaseTitle}'`"/>
     <div class="column">
       <!--Toolbar-->
       <div class="level">
@@ -16,11 +16,6 @@
             <b-icon icon="compare" /> Diff snapshots
           </a>
         </div>
-        <div class="level-center">
-          <span class="level-item">
-                  Tables
-            </span>
-        </div>
         <div class="level-right">
         </div>
       </div>
@@ -32,6 +27,7 @@
                :paginated="true"
                :per-page="12"
                :pagination-simple="true"
+               :default-sort="['name', 'asc']"
                @select="tableSelected"
                render-html>
         <b-table-column field="schema"
@@ -83,7 +79,7 @@ export default {
   data() {
     return {
       connection: this.$store.state.connection,
-      databaseTitle: this.$store.getters.databaseTitle,
+      databaseTitle: this.$store.getters['connection/databaseTitle'],
       processing: {
         task: '',
         tableCount: 0,

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <page-header/>
+    <page-header :title="pageTitle"/>
     <div class="column">
       <div class="level">
         <div class="level-left">
@@ -12,12 +12,6 @@
               </a>
             </b-tooltip>
           </div>
-        </div>
-        <div class="level-center">
-          <span class="level-item">
-                      Table {{ table.name }}
-                      <span v-if="table.showSnapshot">&nbsp;({{ formatTime(table.snapshotCreated) }})</span>
-          </span>
         </div>
         <div class="level-right">
           <div class="level-item">
@@ -89,11 +83,17 @@ import PageHeader from './PageHeader';
 
 export default {
   name: 'table-page',
-  props: ['schemaName', 'tableName'],
   components: {
     PageHeader,
   },
   computed: {
+    pageTitle() {
+      let title = `Table '${this.table.name}'`;
+      if (this.table.showSnapshot) {
+        title = `${title} (Snapshot @ ${formatTime(this.table.snapshotCreated)})`;
+      }
+      return title;
+    },
     table() {
       return this.$store.getters['tables/current'];
     },

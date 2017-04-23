@@ -13,7 +13,6 @@ Vue.use(Buefy, {
   defaultTooltipAnimated: true,
 });
 
-
 Vue.use(Electron);
 Vue.use(Resource);
 Vue.use(Router);

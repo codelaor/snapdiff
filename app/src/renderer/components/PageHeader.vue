@@ -6,13 +6,12 @@
           <a class="nav-item" v-on:click="goHome">
             <b-icon icon="home"/>
             <img src="../../../../art/banner_logo.svg"/>
-
           </a>
         </b-tooltip>
       </div>
       
       <div class="nav-center">
-        <span class="nav-item">{{ databaseTitle }}</span>
+        <span class="nav-item" v-if="title">{{ title }}</span>
       </div>
 
       <div class="nav-right">
@@ -30,9 +29,9 @@
 import electron from 'electron';
 export default {
   name: 'page-header',
+  props: ['title'],
   data() {
     return {
-      databaseTitle: this.$store.getters['connection/databaseTitle'],
       connection: this.$store.state['connection/knex'],
     };
   },
