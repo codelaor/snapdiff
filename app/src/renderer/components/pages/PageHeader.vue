@@ -32,8 +32,8 @@ export default {
   name: 'page-header',
   data() {
     return {
-      databaseTitle: this.$store.getters.databaseTitle,
-      connection: this.$store.state.knex,
+      databaseTitle: this.$store.getters['connection/databaseTitle'],
+      connection: this.$store.state['connection/knex'],
     };
   },
   watch: {
@@ -43,7 +43,7 @@ export default {
       electron.remote.app.quit();
     },
     goHome() {
-      this.$store.dispatch('disconnect')
+      this.$store.dispatch('connection/disconnect')
         .then(() => this.$router.push({ name: 'home' }));
     },
   },

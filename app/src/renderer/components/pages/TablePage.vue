@@ -62,7 +62,7 @@
   
     <!--Table-->
     <div class="scrollWrapper">
-      <b-table :data="table.currentRows"
+      <b-table :data="table.rows"
                :striped="true">
         <!--Table Header-->
         <b-table-column v-for="column in table.columns"
@@ -75,7 +75,7 @@
     <!--Pager-->
     <b-pagination class="is-pulled-right"
                   :total="table.totalRows"
-                  :current="table.currentPage"
+                  :current="table.page"
                   :per-page="10"
                   :simple="true"
                   @change="pageChanged">
@@ -106,10 +106,10 @@ export default {
   methods: {
     formatTime,
     pageChanged(value) {
-      this.$store.dispatch('setTableCurrentPage', value);
+      this.$store.dispatch('setCurrentPage', value);
     },
     refresh() {
-      this.$store.dispatch('setSelectedTableCurrentRows')
+      this.$store.dispatch('setCurrentRows')
         .then(() => {
           this.$snackbar.open('Data refreshed');
         });
@@ -139,7 +139,7 @@ export default {
     },
     selectShowSnapshot(showSnapshot) {
       this.$store
-        .dispatch('setTableShowSnapshot', {
+        .dispatch('setCurrentShowSnapshot', {
           showSnapshot,
         });
     },

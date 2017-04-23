@@ -14,9 +14,9 @@
       <b-table :data="table.diff" :striped="true">
         <b-table-column field="snapdiffChange" label="Change"/>
         <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name"/>
-        <!--< v-for="diffRow in diff" :class="getDiffStyleClass(diffRow.snapdiffChange)">-->
+        <!--< v-for="diffRow in diff" :class="getTableDiffStyleClass(diffRow.snapdiffChange)">-->
           <!--<td class="diff-icon-cell">-->
-            <!--<i :class="'fa fa-' + getDiffIcon(diffRow.snapdiffChange) "/>-->
+            <!--<i :class="'fa fa-' + getTableDiffIcon(diffRow.snapdiffChange) "/>-->
           <!--</td>-->
           <!--<td>-->
             <!--{{ diffRow }}-->
@@ -56,7 +56,7 @@
       };
     },
     methods: {
-      getDiffStyleClass(snapdiffChange) {
+      getTableDiffStyleClass(snapdiffChange) {
         const styles = [];
         switch (snapdiffChange) {
           case 'Added':
@@ -72,7 +72,7 @@
         }
         return styles;
       },
-      getDiffIcon(snapdiffChange) {
+      getTableDiffIcon(snapdiffChange) {
         let icon;
         switch (snapdiffChange) {
           case 'Added':

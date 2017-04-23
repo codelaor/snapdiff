@@ -24,19 +24,19 @@
     <div class="column is-8 is-offset-2">
       <form>
         <span v-if="this.selectedClient.parameters.includes('filename')"> 
-          <label class="label">Database file</label>
-          <b-field>
-            <input class="input expanded"
-                  type="text"
-                  name="host"
-                  v-model="connection.filename">
-            <p class="control">
-              <a class="button" v-on:click="openFileDialog">
-                <b-icon icon="folder_open"/>
-              </a>
-            </p>
-          </b-field>
-        </span>
+            <label class="label">Database file</label>
+            <b-field>
+              <input class="input expanded"
+                    type="text"
+                    name="host"
+                    v-model="connection.filename">
+              <p class="control">
+                <a class="button" v-on:click="openFileDialog">
+                  <b-icon icon="folder_open"/>
+                </a>
+              </p>
+            </b-field>
+          </span>
         <div class="field"
              v-if="this.selectedClient.parameters.includes('host')">
           <label class="label">Host</label>
@@ -87,12 +87,13 @@
                    v-model="connection.database">
           </p>
         </div>
-
+  
       </form>
     </div>
     <div class="column is-8 is-offset-2">
       <div class="block">
-        <a class="button is-primary" v-on:click="connect">Connect</a>
+        <a class="button is-primary"
+           v-on:click="connect">Connect</a>
       </div>
     </div>
   </div>
@@ -105,13 +106,21 @@ export default {
   name: 'home-page',
   data() {
     return {
-      clients: this.$store.getters.connectionClients,
-      connection: this.$store.state.connection,
+      clients: this.$store.getters['connection/clients'],
+      connection: {
+        client: 'sqlite3',
+        host: 'localhost',
+        port: '5432',
+        user: 'postgres',
+        password: '',
+        database: 'postgres',
+        filename: '',
+      },
     };
   },
   computed: {
     selectedClient() {
-      return this.$store.getters.connectionClients.find(
+      return this.$store.getters['connection/clients'].find(
         (client) => client.id === this.connection.client
       );
     },
@@ -129,18 +138,19 @@ export default {
         this.connection.filename = result;
       }
     },
-    connect() {
-      this.$store.dispatch('connect', this.connection)
-        .then(() => {
-          this.$router.push({ name: 'database' });
-        })
-        .catch((err) => {
-          this.$toast.open({
-            message: err.message,
-            position: 'bottom',
-            type: 'is-danger',
-          });
+    async connect() {
+      try {
+        await this.$store.dispatch('connection/connect', this.connection);
+        await this.$store.dispatch('tables/setTables');
+        this.$router.push({ name: 'database' });
+      } catch (err) {
+        this.$snackbar.open({
+          message: err.message,
+          type: 'is-danger',
+          position: 'bottom-left',
+          duration: 5000,
         });
+      }
     },
   },
 };

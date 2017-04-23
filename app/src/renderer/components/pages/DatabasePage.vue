@@ -94,10 +94,10 @@ export default {
   },
   computed: {
     client() {
-      return this.$store.getters.connectionClient;
+      return this.$store.getters['connection/client'];
     },
     tables() {
-      return this.$store.state.tables.map(table =>
+      return this.$store.state.tables.all.map(table =>
         Object.assign(table, {
           diffRowsChanged: table.diff ? table.diff.length : null,
         }));
@@ -115,7 +115,7 @@ export default {
     },
     tableSelected(selectedTable) {
       this.$store
-        .dispatch('setSelectedTable', {
+        .dispatch('tables/setCurrentTable', {
           schemaName: selectedTable.schema,
           tableName: selectedTable.name,
         })
@@ -128,11 +128,11 @@ export default {
     async createSnapshots() {
       this.processing.task = 'Creating snapshots';
       this.processing.tableIndex = 1;
-      this.processing.tableCount = this.$store.state.tables.length;
+      this.processing.tableCount = this.$store.state.tables.all.length;
       this.processing.progressPercent = 0;
 
-      await Promise.all(this.$store.state.tables.map(async (table) => {
-        const promise = this.$store.dispatch('snapshotTable', {
+      await Promise.all(this.$store.state.tables.all.map(async (table) => {
+        const promise = this.$store.dispatch('tables/snapshotTable', {
           schemaName: table.schema,
           tableName: table.name,
         })
@@ -155,7 +155,7 @@ export default {
       this.$snackbar.open(`${this.processing.tableCount} snapshots created.`);
     },
     async diffSnapshots() {
-      const tablesWithSnapshots = this.$store.state.tables
+      const tablesWithSnapshots = this.$store.state.tables.all
         .filter(table => (table.snapshotCreated));
       if (!tablesWithSnapshots.length) {
         this.$snackbar.open('No snapshots to diff');
@@ -167,7 +167,7 @@ export default {
       this.processing.progressPercent = 0;
 
       for (const table of tablesWithSnapshots) {
-        await this.$store.dispatch('diffTable', {
+        await this.$store.dispatch('tables/diffTable', {
           schemaName: table.schema,
           tableName: table.name,
         })
