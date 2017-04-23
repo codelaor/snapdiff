@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <page-header :title="pageTitle"/>
+    <page-header :title="pageTitle" />
     <div class="column">
       <div class="level">
         <div class="level-left">
@@ -56,7 +56,8 @@
   
     <!--Table-->
     <div class="scrollWrapper">
-      <b-table :data="table.rows"
+      <b-table v-if="table.rows.length"
+               :data="table.rows"
                :striped="true">
         <!--Table Header-->
         <b-table-column v-for="column in table.columns"
@@ -67,13 +68,18 @@
       </b-table>
     </div>
     <!--Pager-->
-    <b-pagination class="is-pulled-right"
+    <b-pagination v-if="table.rows.length"
+                  class="is-pulled-right"
                   :total="table.totalRows"
                   :current="table.page"
                   :per-page="10"
                   :simple="true"
                   @change="pageChanged">
     </b-pagination>
+    <div v-if="!table.rows.length"
+         class="notification is-info">
+      No data found.
+    </div>
   </div>
 </template>
 

@@ -11,7 +11,7 @@
       </div>
       
       <div class="nav-center">
-        <span class="nav-item" v-if="title">{{ title }}</span>
+        <strong class="nav-item" v-if="title">{{ title }}</strong>
       </div>
 
       <div class="nav-right">

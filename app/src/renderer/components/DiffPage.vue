@@ -14,23 +14,8 @@
       <b-table v-if="table.diff.length" :data="table.diff" :striped="true">
         <b-table-column field="snapdiffChange" label="Change"/>
         <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name"/>
-        <!--< v-for="diffRow in diff" :class="getTableDiffStyleClass(diffRow.snapdiffChange)">-->
-          <!--<td class="diff-icon-cell">-->
-            <!--<i :class="'fa fa-' + getTableDiffIcon(diffRow.snapdiffChange) "/>-->
-          <!--</td>-->
-          <!--<td>-->
-            <!--{{ diffRow }}-->
-          <!--</td>-->
-        <!--</tr>-->
-
-        <!--<tr v-if="!diff.length">-->
-          <!--<td colspan="100%">-->
-            <!--No difference between selected snapshots.-->
-          <!--</td>-->
-        <!--</tr>-->
-
       </b-table>
-      <div v-if="!table.diff.length" class="notification is-info">
+      <div v-if="!table.diff.length" class="notification is-primary">
         No differences found between snapshot and current data
       </div>
     </div>
