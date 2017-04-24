@@ -1,3 +1,5 @@
+// Custom component for displaying table name with drill down 
+// refer https://buefy.github.io/#/documentation/table
 <template>
   <a @click="onClick">
     {{ data }}

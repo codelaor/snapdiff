@@ -79,7 +79,7 @@
 <script>
 import { formatTime } from '../formatters';
 import PageHeader from './PageHeader';
-import TableNameCell from './TableNameCell';
+import TableNameCell from './DatabasePage/TableNameCell';
 import Vue from 'vue';
 Vue.component('TableNameCell', TableNameCell);
 
