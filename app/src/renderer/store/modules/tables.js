@@ -23,6 +23,8 @@ const state = {
     rows: [],
     showSnapshot: false,
   },
+  snapshotsExist: false,
+  diffsExist: false,
 };
 
 const mutations = {
@@ -33,6 +35,7 @@ const mutations = {
     );
     Vue.set(state.all[tableIndex], 'diff', diff);
     Vue.set(state.all[tableIndex], 'diffedAt', new Date());
+    state.diffsExist = true;
   },
 
   setTableSnapshot(state, { schemaName, tableName, data }) {
@@ -42,6 +45,7 @@ const mutations = {
     );
     state.all[tableIndex].snapshot = data;
     state.all[tableIndex].snapshotCreated = new Date();
+    state.snapshotsExist = true;
   },
 
   setTableSnapshotError(state, { schemaName, tableName, message }) {
@@ -91,6 +95,8 @@ const mutations = {
 
   setTables(state, tables) {
     state.all = tables;
+    state.snapshotsExist = false;
+    state.diffsExist = false;
   },
 };
 

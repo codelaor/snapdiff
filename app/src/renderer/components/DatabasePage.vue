@@ -8,12 +8,17 @@
           <a class="level-item"
              @click="createSnapshots"
              title="Create new snapshot for all tables">
-            <b-icon icon="content_copy" /> Create snapshots
+            <b-icon icon="content_copy" /> 
+              <span v-if="snapshotsExist">Recreate snapshots</span>
+              <span v-else>Create snapshots</span>
           </a>
           <a class="level-item"
+             v-if="snapshotsExist"
              @click="diffSnapshots"
              title="Diff current data against latest snapshots">
-            <b-icon icon="compare" /> Diff snapshots
+            <b-icon icon="compare" /> 
+            <span v-if="diffsExist">Re-diff snapshots</span>
+            <span v-else>Diff snapshots</span>
           </a>
         </div>
         <div class="level-right">
@@ -22,13 +27,12 @@
       <!--Table-->
       <b-table :data="tables"
                v-if="tables.length"
-               :selectable="true"
+               :selectable="false"
                :striped="true"
                :paginated="true"
                :per-page="12"
                :pagination-simple="true"
                :default-sort="['name', 'asc']"
-               @select="tableSelected"
                render-html>
         <b-table-column field="schema"
                         label="Schema"
@@ -36,13 +40,18 @@
                         sortable/>
         <b-table-column field="name"
                         label="Name"                         
+                        component="table-name-cell"
                         sortable/>
         <b-table-column field="snapshotCreated"
                         label="Snapshot"
+                        v-if="snapshotsExist"
                         :format="formatSnapshotState" 
+                        width="25"
                         sortable/>
         <b-table-column field="diffRowsChanged"
                         label="Diff" 
+                        v-if="diffsExist"
+                        width="25"
                         sortable/>
       </b-table>
   
@@ -70,6 +79,9 @@
 <script>
 import { formatTime } from '../formatters';
 import PageHeader from './PageHeader';
+import TableNameCell from './TableNameCell';
+import Vue from 'vue';
+Vue.component('TableNameCell', TableNameCell);
 
 export default {
   name: 'database-page',
@@ -89,6 +101,12 @@ export default {
     };
   },
   computed: {
+    snapshotsExist() {
+      return this.$store.state.tables.snapshotsExist;
+    },
+    diffsExist() {
+      return this.$store.state.tables.diffsExist;
+    },
     client() {
       return this.$store.getters['connection/client'];
     },
@@ -108,18 +126,6 @@ export default {
         result = formatTime(value);
       }
       return result;
-    },
-    tableSelected(selectedTable) {
-      this.$store
-        .dispatch('tables/setCurrentTable', {
-          schemaName: selectedTable.schema,
-          tableName: selectedTable.name,
-        })
-        .then(() => {
-          this.$router.push({
-            name: 'table',
-          });
-        });
     },
     async createSnapshots() {
       this.processing.task = 'Creating snapshots';
