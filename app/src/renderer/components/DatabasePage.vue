@@ -40,17 +40,18 @@
                         sortable/>
         <b-table-column field="name"
                         label="Name"                         
-                        component="table-name-cell"
+                        component="table-link-column"
                         sortable/>
         <b-table-column field="snapshotCreated"
                         label="Snapshot"
                         v-if="snapshotsExist"
-                        :format="formatSnapshotState" 
                         width="25"
+                        component="snapshot-column"
                         sortable/>
         <b-table-column field="diffRowsChanged"
                         label="Diff" 
                         v-if="diffsExist"
+                        component="diff-link-column"
                         width="25"
                         sortable/>
       </b-table>
@@ -77,11 +78,7 @@
 </template>
 
 <script>
-import { formatTime } from '../formatters';
 import PageHeader from './PageHeader';
-import TableNameCell from './DatabasePage/TableNameCell';
-import Vue from 'vue';
-Vue.component('TableNameCell', TableNameCell);
 
 export default {
   name: 'database-page',
@@ -118,15 +115,6 @@ export default {
     },
   },
   methods: {
-    formatSnapshotState(value, row) {
-      let result;
-      if (row.snapshotError) {
-        result = '<span class="tag is-danger">Error</span>';
-      } else {
-        result = formatTime(value);
-      }
-      return result;
-    },
     async createSnapshots() {
       this.processing.task = 'Creating snapshots';
       this.processing.tableIndex = 1;
