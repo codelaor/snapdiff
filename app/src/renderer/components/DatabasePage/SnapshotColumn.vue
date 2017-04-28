@@ -1,12 +1,15 @@
 // Custom component for displaying table name with drill down 
 // refer https://buefy.github.io/#/documentation/table
 <template>
-  <span v-if="row.snapshotError"
-        class="tag is-danger">Error</span>
+  <a v-if="row.snapshotError"
+     class="button is-small is-danger"
+     @click="onClickError">
+        Error
+      </a>
   <a v-else
      @click="onClick">
-      {{formatTime(data)}}
-    </a>
+          {{formatTime(data)}}
+        </a>
 </template>
 
 <script>
@@ -16,6 +19,12 @@ export default {
   props: ['data', 'row'], // beufy table props
   methods: {
     formatTime,
+    onClickError() {
+      this.$dialog.alert({
+        title: 'Snapshot error',
+        message: this.row.snapshotError,
+      });
+    },
     async onClick() {
       await this.$store.dispatch('tables/setCurrentTable', {
         schemaName: this.row.schema,
