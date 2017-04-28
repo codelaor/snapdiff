@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <page-header :title="`Database '${databaseTitle}'`"/>
+    <page-header :title="`Database '${databaseTitle}'`" />
     <div class="column">
       <!--Toolbar-->
       <div class="level">
@@ -8,15 +8,15 @@
           <a class="level-item"
              @click="createSnapshots"
              title="Create new snapshot for all tables">
-            <b-icon icon="content_copy" /> 
-              <span v-if="snapshotsExist">Recreate snapshots</span>
-              <span v-else>Create snapshots</span>
+            <b-icon icon="content_copy" />
+            <span v-if="snapshotsExist">Recreate snapshots</span>
+            <span v-else>Create snapshots</span>
           </a>
           <a class="level-item"
              v-if="snapshotsExist"
              @click="diffSnapshots"
              title="Diff current data against latest snapshots">
-            <b-icon icon="compare" /> 
+            <b-icon icon="compare" />
             <span v-if="diffsExist">Re-diff snapshots</span>
             <span v-else>Diff snapshots</span>
           </a>
@@ -36,10 +36,10 @@
                render-html>
         <b-table-column field="schema"
                         label="Schema"
-                        v-if="client.hasSchemas" 
+                        v-if="client.hasSchemas"
                         sortable/>
         <b-table-column field="name"
-                        label="Name"                         
+                        label="Name"
                         component="table-link-column"
                         sortable/>
         <b-table-column field="snapshotCreated"
@@ -49,7 +49,7 @@
                         component="snapshot-column"
                         sortable/>
         <b-table-column field="diffRowsChanged"
-                        label="Diff" 
+                        label="Diff"
                         v-if="diffsExist"
                         component="diff-link-column"
                         width="25"
@@ -85,6 +85,9 @@ export default {
   components: {
     PageHeader,
   },
+  created() {
+    this.offerToSnapshot();
+  },
   data() {
     return {
       connection: this.$store.state.connection,
@@ -115,6 +118,20 @@ export default {
     },
   },
   methods: {
+    offerToSnapshot() {
+      if (this.tables.length && !this.snapshotsExist) {
+        this.$dialog.confirm({
+          title: 'Snapshots not created yet',
+          message: 'Would you like to snapshot all tables now?',
+          cancelText: 'No',
+          confirmText: 'Yes',
+          type: 'is-information',
+          onConfirm: () => {
+            this.createSnapshots();
+          },
+        });
+      }
+    },
     async createSnapshots() {
       this.processing.task = 'Creating snapshots';
       this.processing.tableIndex = 1;
