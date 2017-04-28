@@ -394,7 +394,7 @@ const actions = {
           commit('setTableSnapshotError', {
             schemaName,
             tableName,
-            message: `Table exceeds ${rootState.settings.snapshotRowLimit} rows`,
+            message: `Table exceeds ${rootState.settings.snapshotRowLimit} rows limit`,
           });
         } else {
           commit('setTableSnapshot', {
