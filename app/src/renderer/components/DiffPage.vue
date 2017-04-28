@@ -82,9 +82,6 @@
           tableName: this.tableName,
         });
       },
-      getSnapshotData(snapshot) { // eslint-disable-line
-
-      },
       handleSnapshotSelectLeft(snapshot) {
         this.leftSnapshot = snapshot;
         this.doDiff();

@@ -21,6 +21,7 @@ const state = {
     rowsPerPage: 10,
     page: 1,
     rows: [],
+    rowKey: {},
     showSnapshot: false,
   },
   snapshotsExist: false,
@@ -70,6 +71,10 @@ const mutations = {
 
   setCurrentShowSnapshot(state, { showSnapshot }) {
     state.current.showSnapshot = showSnapshot;
+  },
+
+  setCurrentRowKey(state, { key }) {
+    state.current.rowKey = key;
   },
 
   setCurrentPage(state, page) {
@@ -337,7 +342,7 @@ const actions = {
         return false;
       }
       let diff = false;
-      for (var prop in newerRow) { // eslint-disable-line
+      for (const prop in newerRow) { // eslint-disable-line no-restricted-syntax
         if (olderRow[prop] !== newerRow[prop]) {
           if (olderRow[prop].valueOf() !== newerRow[prop].valueOf()) {
             diff = true;

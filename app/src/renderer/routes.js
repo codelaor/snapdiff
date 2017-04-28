@@ -5,6 +5,12 @@ export default [
     component: require('components/HomePage'),
   },
   {
+    path: '/row',
+    name: 'row',
+    component: require('components/TableRowPage'),
+    props: true,
+  },
+  {
     path: '/table',
     name: 'table',
     component: require('components/TablePage'),

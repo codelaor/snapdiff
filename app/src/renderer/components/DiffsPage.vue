@@ -54,7 +54,7 @@
       </b-table>
   
       <p v-if="!tables.length">
-        No tables with differences found in 'database' {{ databaseTitle }} (system tables are excluded.)
+        No tables with differences found in database (system tables are excluded.)
       </p>
   
     </div>

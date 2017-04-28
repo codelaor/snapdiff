@@ -58,6 +58,8 @@
     <div class="scrollWrapper">
       <b-table v-if="table.rows.length"
                :data="table.rows"
+               :selectable="true"
+               @select="onRowSelect"
                :striped="true">
         <!--Table Header-->
         <b-table-column v-for="column in table.columns"
@@ -111,6 +113,18 @@ export default {
   },
   methods: {
     formatTime,
+    onRowSelect(row) {
+      const key = {};
+      this.table.primaryKeyFields.forEach(field => {
+        key[field] = row[field];
+      });
+      this.$store.commit('tables/setCurrentRowKey', {
+        key,
+      });
+      this.$router.push({
+        name: 'row',
+      });
+    },
     pageChanged(value) {
       this.$store.dispatch('tables/setCurrentPage', value);
     },
