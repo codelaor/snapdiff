@@ -17,6 +17,12 @@ export default [
     props: true,
   },
   {
+    path: '/diffs',
+    name: 'diffs',
+    component: require('components/DiffsPage'),
+    props: true,
+  },
+  {
     path: '/database',
     name: 'database',
     component: require('components/DatabasePage'),

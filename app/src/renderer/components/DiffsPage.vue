@@ -5,20 +5,19 @@
       <!--Toolbar-->
       <div class="level">
         <div class="level-left">
+          <div class="level-item">
+            <b-tooltip label="Go back"
+                       position="is-bottom">
+              <a v-on:click="$router.go(-1)">
+                <b-icon icon="arrow_back" />
+              </a>
+            </b-tooltip>
+          </div>
           <a class="level-item"
-             v-if="this.$route.name === 'database'"
-             @click="createSnapshots"
-             title="Create new snapshot for all tables">
-            <b-icon icon="content_copy" />
-            <span v-if="snapshotsExist">Recreate snapshots</span>
-            <span v-else>Create snapshots</span>
-          </a>
-          <a class="level-item"
-             v-if="snapshotsExist"
              @click="diffSnapshots"
-             title="Diff current data against latest snapshots">
+             title="Re-diff current data against latest snapshots">
             <b-icon icon="compare" />
-            <span>Diff snapshots</span>
+            <span>Re-diff snapshots</span>
           </a>
         </div>
         <div class="level-right">
@@ -32,7 +31,7 @@
                :paginated="true"
                :per-page="12"
                :pagination-simple="true"
-               :default-sort="['name', 'asc']"
+               :default-sort="['diffRowsChanged', 'desc']"
                render-html>
         <b-table-column field="schema"
                         label="Schema"
@@ -44,14 +43,18 @@
                         sortable/>
         <b-table-column field="snapshotCreated"
                         label="Snapshot"
-                        v-if="snapshotsExist"
                         width="25"
                         component="snapshot-column"
+                        sortable/>
+        <b-table-column field="diffRowsChanged"
+                        label="Diff"
+                        component="diff-link-column"
+                        width="25"
                         sortable/>
       </b-table>
   
       <p v-if="!tables.length">
-        No tables found in 'database' {{ databaseTitle }} (system tables are excluded.)
+        No tables with differences found in 'database' {{ databaseTitle }} (system tables are excluded.)
       </p>
   
     </div>
@@ -75,12 +78,9 @@
 import PageHeader from './PageHeader';
 
 export default {
-  name: 'database-page',
+  name: 'diffs-page',
   components: {
     PageHeader,
-  },
-  created() {
-    this.offerToSnapshot();
   },
   data() {
     return {
@@ -102,60 +102,19 @@ export default {
       }
       return pageTitle;
     },
-    snapshotsExist() {
-      return this.$store.state.tables.snapshotsExist;
-    },
     client() {
       return this.$store.getters['connection/client'];
     },
     tables() {
-      return this.$store.state.tables.all;
+      return this.$store.state.tables.all
+        .map(table =>
+          Object.assign(table, {
+            diffRowsChanged: table.diff ? table.diff.length : 0,
+          }))
+        .filter(table => table.diffRowsChanged > 0);
     },
   },
   methods: {
-    offerToSnapshot() {
-      if (this.tables.length && !this.snapshotsExist) {
-        this.$dialog.confirm({
-          title: 'Snapshots not created yet',
-          message: 'Would you like to snapshot all tables now?',
-          cancelText: 'No',
-          confirmText: 'Yes',
-          type: 'is-information',
-          onConfirm: () => {
-            this.createSnapshots();
-          },
-        });
-      }
-    },
-    async createSnapshots() {
-      this.processing.task = 'Creating snapshots';
-      this.processing.tableIndex = 1;
-      this.processing.tableCount = this.$store.state.tables.all.length;
-      this.processing.progressPercent = 0;
-
-      await Promise.all(this.$store.state.tables.all.map(async (table) => {
-        const promise = this.$store.dispatch('tables/snapshotTable', {
-          schemaName: table.schema,
-          tableName: table.name,
-        })
-          .then(async () => {
-            // Force refresh of showing which table we are up to
-            this.processing.tableIndex++;
-            this.processing.progressPercent = this.processing.tableIndex /
-              this.processing.tableCount * 100;
-            await this.$forceUpdate();
-          });
-        return promise;
-      }))
-        .catch((err) => {
-          this.$toast.open({
-            message: err.message,
-            position: 'bottom-right',
-            type: 'is-danger',
-          });
-        });
-      this.$snackbar.open(`${this.processing.tableCount} snapshots created.`);
-    },
     async diffSnapshots() {
       const tablesWithSnapshots = this.$store.state.tables.all
         .filter(table => (table.snapshotCreated));
