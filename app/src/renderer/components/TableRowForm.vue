@@ -3,10 +3,11 @@
             :striped="true">
     <b-table-column field="key"
                     label="Field" />
-    <b-table-column field="snapshotValue"
-                    :label="table.snapshotCreated ? `@ ${formatTime(table.snapshotCreated)}` : 'No snapshot'" />
     <b-table-column field="dbValue"
-                    label="Current Value" />
+                    :label="table.snapshotCreated ? `Current Value` : 'Value'"/>
+    <b-table-column v-if="table.snapshotCreated"
+                    field="snapshotValue"
+                    :label="`@ ${formatTime(table.snapshotCreated)}`"/>
   </b-table>
 </template>
 
@@ -22,7 +23,7 @@
       row() {
         const rowKey = this.$store.state.tables.current.rowKey; // TODO get this from this.tables
         const fields = this.table.columns;
-        const dbRow = this.table.rows
+        const dbRow = this.table.rows // TODO fix. Only works if showSnapshot is set to false
           .find(row => {
             let matched = true;
             const unmatchedKey = this.table.primaryKeyFields
