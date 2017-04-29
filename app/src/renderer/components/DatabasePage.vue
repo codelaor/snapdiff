@@ -53,6 +53,10 @@
       <p v-if="!tables.length">
         No tables found in database (system tables are excluded.)
       </p>
+
+    <b-message title="Snapshots not created yet" has-icon type="is-info" v-if="tables.length && !snapshotsExist">
+        Click 'Create snapshots' to snapshot all tables.  These snapshots can then be diffed to look for changes.
+    </b-message>
   
     </div>
     <div id="SnapshottingDialog"
@@ -78,9 +82,6 @@ export default {
   name: 'database-page',
   components: {
     PageHeader,
-  },
-  created() {
-    this.offerToSnapshot();
   },
   data() {
     return {
@@ -113,20 +114,6 @@ export default {
     },
   },
   methods: {
-    offerToSnapshot() {
-      if (this.tables.length && !this.snapshotsExist) {
-        this.$dialog.confirm({
-          title: 'Snapshots not created yet',
-          message: 'Would you like to snapshot all tables now?',
-          cancelText: 'No',
-          confirmText: 'Yes',
-          type: 'is-information',
-          onConfirm: () => {
-            this.createSnapshots();
-          },
-        });
-      }
-    },
     async createSnapshots() {
       this.processing.task = 'Creating snapshots';
       this.processing.tableIndex = 1;
