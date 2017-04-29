@@ -14,8 +14,17 @@
           </div>
         </div>
       </div>
-
-      <table-row-form/>
+  
+      <b-table :data="row"
+               :striped="true">
+        <b-table-column field="key"
+                        label="Field" />
+        <b-table-column field="dbValue"
+                        :label="table.snapshotCreated ? `Current Value` : 'Value'" />
+        <b-table-column field="snapshotValue"
+                        v-if="table.snapshotCreated"
+                        :label="`@ ${ formatTime(table.snapshotCreated) }`" />
+      </b-table>
     </div>
   
   </div>
@@ -23,30 +32,27 @@
 
 <script>
 import PageHeader from './PageHeader';
-import TableRowForm from './TableRowForm';
+import { formatTime } from '../formatters';
 
 export default {
   name: 'table-row-page',
   components: {
     PageHeader,
-    TableRowForm,
   },
   computed: {
     pageTitle() {
       const title = `Table '${this.$store.getters['tables/current'].name}' Row`;
       return title;
     },
+    table() {
+      return this.$store.getters['tables/current'];
+    },
     row() {
-      return this.$store.getters['tables/current']
-        .find(row => {
-          if (row.id) {
-            return true;
-          }
-          return false;
-        });
+      return this.$store.getters['tables/currentRow'];
     },
   },
   methods: {
+    formatTime,
   },
 };
 

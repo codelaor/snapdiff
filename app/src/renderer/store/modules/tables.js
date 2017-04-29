@@ -421,6 +421,41 @@ const getters = {
     const table = state.all[state.current.index];
     return Object.assign(table, state.current);
   },
+  currentRow(state) {
+    // Merge props of current table and record from tables into one combined
+    // table object
+    const table = Object.assign(state.all[state.current.index], state.current);
+    const rowKey = table.rowKey;
+    const fields = table.columns;
+    const dbRow = table.rows // TODO fix. Only works if showSnapshot is set to false
+      .find(row => {
+        let matched = true;
+        const unmatchedKey = table.primaryKeyFields
+          .find(field => rowKey[field] !== row[field]);
+        if (unmatchedKey) {
+          matched = false;
+        }
+        return matched;
+      });
+    const snapshotRow = !table.snapshotCreated ? {} : table.snapshot
+      .find(row => {
+        let matched = true;
+        const unmatchedKey = table.primaryKeyFields
+          .find(field => rowKey[field] !== row[field]);
+        if (unmatchedKey) {
+          matched = false;
+        }
+        return matched;
+      });
+    return fields
+      .map(field => {
+        const entry = {};
+        entry.key = field.name;
+        entry.dbValue = dbRow[field.name];
+        entry.snapshotValue = snapshotRow[field.name];
+        return entry;
+      });
+  },
 };
 
 export default {
