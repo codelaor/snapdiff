@@ -3,11 +3,11 @@
 <template>
   <a v-if="row.snapshotError"
      class="button is-small is-danger"
-     @click="onClickError">
+     @click.stop="onClickError">
         Error
       </a>
   <a v-else
-     @click="onClick">
+     @click.stop="onClick">
           {{formatTime(data)}}
         </a>
 </template>

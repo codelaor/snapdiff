@@ -26,20 +26,20 @@
       <!--Table-->
       <b-table :data="tables"
                v-if="tables.length"
-               :selectable="false"
+               :selectable="true"
                :striped="true"
                :paginated="true"
                :per-page="12"
                :pagination-simple="true"
                :default-sort="['diffRowsChanged', 'desc']"
-               render-html>
+               render-html
+               @select="onRowSelect">
         <b-table-column field="schema"
                         label="Schema"
                         v-if="client.hasSchemas"
                         sortable/>
         <b-table-column field="name"
                         label="Name"
-                        component="table-link-column"
                         sortable/>
         <b-table-column field="snapshotCreated"
                         label="Snapshot"
@@ -96,11 +96,7 @@ export default {
   },
   computed: {
     pageTitle() {
-      let pageTitle = `Database '${this.databaseTitle}'`;
-      if (this.$route.name === 'diffs') {
-        pageTitle = `${pageTitle} - Diffs`;
-      }
-      return pageTitle;
+      return `Database '${this.databaseTitle}' - Diffs`;
     },
     client() {
       return this.$store.getters['connection/client'];
@@ -115,6 +111,23 @@ export default {
     },
   },
   methods: {
+    async onRowSelect(row) {
+      try {
+        await this.$store.dispatch('tables/setCurrentTable', {
+          schemaName: row.schema,
+          tableName: row.name,
+        });
+        this.$router.push({
+          name: 'tableDiff',
+        });
+      } catch (err) {
+        this.$toast.open({
+          message: err.message,
+          position: 'bottom-right',
+          type: 'is-danger',
+        });
+      }
+    },
     async diffSnapshots() {
       const tablesWithSnapshots = this.$store.state.tables.all
         .filter(table => (table.snapshotCreated));
@@ -149,9 +162,6 @@ export default {
       }
 
       this.$snackbar.open(`Diff of ${tablesWithSnapshots.length} table snapshots completed.`);
-      this.$router.push({
-        name: 'diffs',
-      });
     },
   },
 };

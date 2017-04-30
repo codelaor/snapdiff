@@ -27,12 +27,13 @@
       <!--Table-->
       <b-table :data="tables"
                v-if="tables.length"
-               :selectable="false"
+               :selectable="true"
                :striped="true"
                :paginated="true"
                :per-page="12"
                :pagination-simple="true"
                :default-sort="['name', 'asc']"
+               @select="onSelect"
                render-html>
         <b-table-column field="schema"
                         label="Schema"
@@ -40,7 +41,6 @@
                         sortable/>
         <b-table-column field="name"
                         label="Name"
-                        component="table-link-column"
                         sortable/>
         <b-table-column field="snapshotCreated"
                         label="Snapshot"
@@ -114,6 +114,15 @@ export default {
     },
   },
   methods: {
+    async onSelect(row) {
+      await this.$store.dispatch('tables/setCurrentTable', {
+        schemaName: row.schema,
+        tableName: row.name,
+      });
+      this.$router.push({
+        name: 'table',
+      });
+    },
     async createSnapshots() {
       this.processing.task = 'Creating snapshots';
       this.processing.tableIndex = 1;
@@ -178,7 +187,7 @@ export default {
 
       this.$snackbar.open(`Diff of ${tablesWithSnapshots.length} table snapshots completed.`);
       this.$router.push({
-        name: 'diffs',
+        name: 'databaseDiffs',
       });
     },
   },

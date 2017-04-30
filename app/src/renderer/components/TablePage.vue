@@ -150,23 +150,22 @@ export default {
           });
         });
     },
-    gotoDiff() {
-      this.$store.dispatch('tables/diffTable', {
-        schemaName: this.table.schema,
-        tableName: this.table.name,
-      })
-        .then(() => {
-          this.$router.push({
-            name: 'diff',
-          });
-        })
-        .catch((err) => {
-          this.$toast.open({
-            message: err.message,
-            position: 'bottom-right',
-            type: 'is-danger',
-          });
+    async gotoDiff() {
+      try {
+        await this.$store.dispatch('tables/diffTable', {
+          schemaName: this.table.schema,
+          tableName: this.table.name,
         });
+        this.$router.push({
+          name: 'tableDiff',
+        });
+      } catch (err) {
+        this.$toast.open({
+          message: err.message,
+          position: 'bottom-right',
+          type: 'is-danger',
+        });
+      }
     },
     selectShowSnapshot(showSnapshot) {
       this.$store

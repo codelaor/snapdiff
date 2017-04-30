@@ -1,7 +1,7 @@
 // Custom component for displaying table name with drill down 
 // refer https://buefy.github.io/#/documentation/table
 <template>
-  <a @click="onClick">
+  <a @click.stop="onClick">
     {{ data }}
   </a>
 </template>
@@ -17,7 +17,7 @@ export default {
         tableName: this.row.name,
       });
       this.$router.push({
-        name: 'diff',
+        name: 'tableDiff',
       });
     },
   },

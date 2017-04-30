@@ -11,7 +11,10 @@
           </div>
         </div>
       </div>
-      <b-table v-if="table.diff.length" :data="table.diff" :striped="true">
+      <b-table v-if="table.diff.length" 
+        :selectable="true"
+        @select="onSelect"
+        :data="table.diff" :striped="true">
         <b-table-column field="snapdiffChange" label="Change"/>
         <b-table-column v-for="column in table.columns" :field="column.name" :label="column.name"/>
       </b-table>
@@ -43,6 +46,19 @@
       };
     },
     methods: {
+      /* eslint-disable */
+      onSelect(row) {
+        const key = {};
+        this.table.primaryKeyFields.forEach(field => {
+          key[field] = row[field];
+        });
+        this.$store.commit('tables/setCurrentRowKey', {
+          key,
+        });
+        this.$router.push({
+          name: 'row',
+        });
+      },
       getTableDiffStyleClass(snapdiffChange) {
         const styles = [];
         switch (snapdiffChange) {

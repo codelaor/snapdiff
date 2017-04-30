@@ -17,15 +17,15 @@ export default [
     props: true,
   },
   {
-    path: '/diff',
-    name: 'diff',
-    component: require('components/DiffPage'),
+    path: '/table/diff',
+    name: 'tableDiff',
+    component: require('components/TableDiffPage'),
     props: true,
   },
   {
-    path: '/diffs',
-    name: 'diffs',
-    component: require('components/DiffsPage'),
+    path: '/database/diffs',
+    name: 'databaseDiffs',
+    component: require('components/DatabaseDiffsPage'),
     props: true,
   },
   {
