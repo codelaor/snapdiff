@@ -1,7 +1,7 @@
 <template>
   <nav class="nav has-shadow">
     <div class="container">
-      <div class="nav-left">
+      <div v-if="!noHome" class="nav-left">
         <b-tooltip label="Sign-out" position="is-bottom">
           <a class="nav-item" v-on:click="goHome">
             <b-icon icon="home"/>
@@ -29,7 +29,7 @@
 import electron from 'electron';
 export default {
   name: 'page-header',
-  props: ['title'],
+  props: ['title', 'noHome'],
   data() {
     return {
       connection: this.$store.state['connection/knex'],

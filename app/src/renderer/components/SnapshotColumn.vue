@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { formatTime } from '../../formatters';
+import { formatTime } from '../formatters';
 export default {
   name: 'snapshot-column',
   props: ['data', 'row'], // beufy table props

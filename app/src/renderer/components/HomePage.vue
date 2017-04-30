@@ -1,5 +1,9 @@
 <template>
   <div class="container">
+    <!--<page-header :no-home="true"/>-->
+    <div class="column">
+      <page-header :no-home="true"/>
+    </div>
     <div class="column is-half is-offset-one-quarter">
       <img class="home-page-group"
            src="../../../../art/logo.png"
@@ -100,10 +104,14 @@
 </template>
 
 <script>
+import PageHeader from './PageHeader';
 import { remote } from 'electron';
 
 export default {
   name: 'home-page',
+  components: {
+    PageHeader,
+  },
   data() {
     return {
       clients: this.$store.getters['connection/clients'],

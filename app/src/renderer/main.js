@@ -9,8 +9,8 @@ import routes from './routes';
 import Buefy from 'buefy';
 import 'buefy/lib/buefy.css';
 
-import SnapshotColumn from './components/DatabasePage/SnapshotColumn';
-import DiffLinkColumn from './components/DatabasePage/DiffLinkColumn';
+import SnapshotColumn from './components/SnapshotColumn';
+import DiffLinkColumn from './components/DiffLinkColumn';
 Vue.component('SnapshotColumn', SnapshotColumn);
 Vue.component('DiffLinkColumn', DiffLinkColumn);
 

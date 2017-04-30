@@ -2,6 +2,8 @@
 app/dist/index.html
 app/dist/main.js
 app/dist/renderer.js
+app/dist/fonts
+app/dist/imgs
 app/dist/styles.css
 builds/*
 dist/*
