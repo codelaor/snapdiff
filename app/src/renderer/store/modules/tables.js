@@ -74,7 +74,7 @@ const mutations = {
   },
 
   setCurrentRowKey(state, { key }) {
-    state.current.rowKey = key;
+    Vue.set(state.current, 'rowKey', key);
   },
 
   setCurrentPage(state, page) {
@@ -421,10 +421,10 @@ const getters = {
     const table = state.all[state.current.index];
     return Object.assign(table, state.current);
   },
-  currentRow(state) {
+  currentRow(state, getters) {
     // Merge props of current table and record from tables into one combined
     // table object
-    const table = Object.assign(state.all[state.current.index], state.current);
+    const table = getters.current;
     const rowKey = table.rowKey;
     const fields = table.columns;
     const dbRow = table.rows // TODO fix. Only works if showSnapshot is set to false

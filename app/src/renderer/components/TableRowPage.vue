@@ -58,14 +58,14 @@ export default {
     formatTime,
     formatSnapshotValue(value, row) {
       let retValue = value;
-      if (this.table.snapshotCreated && value !== row.dbValue) {
+      if (this.table.snapshotCreated && (value.valueOf() !== row.dbValue.valueOf())) {
         retValue = `<span class="removed">${value}</span>`;
       }
       return retValue;
     },
     formatDbValue(value, row) {
       let retValue = value;
-      if (this.table.snapshotCreated && value !== row.snapshotValue) {
+      if (this.table.snapshotCreated && (value.valueOf() !== row.snapshotValue.valueOf())) {
         retValue = `<span class="added">${value}</span>`;
       }
       return retValue;
