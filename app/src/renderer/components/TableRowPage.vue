@@ -16,15 +16,14 @@
       </div>
   
       <b-table :data="row"
-                render-html
                :striped="true">
         <b-table-column field="key"
                         label="Field" />
         <b-table-column field="dbValue"
-                        :format="formatDbValue"
+                        component="TableValueColumn"
                         :label="table.snapshotCreated ? `Current Value` : 'Value'" />
         <b-table-column field="snapshotValue"
-                        :format="formatSnapshotValue"
+                        component="TableValueColumn"
                         v-if="table.snapshotCreated"
                         :label="`@ ${ formatTime(table.snapshotCreated) }`" />
       </b-table>
@@ -56,33 +55,10 @@ export default {
   },
   methods: {
     formatTime,
-    formatSnapshotValue(value, row) {
-      let retValue = value;
-      if (this.table.snapshotCreated && (value.valueOf() !== row.dbValue.valueOf())) {
-        retValue = `<span class="removed">${value}</span>`;
-      }
-      return retValue;
-    },
-    formatDbValue(value, row) {
-      let retValue = value;
-      if (this.table.snapshotCreated && (value.valueOf() !== row.snapshotValue.valueOf())) {
-        retValue = `<span class="added">${value}</span>`;
-      }
-      return retValue;
-    },
   },
 };
 
 </script>
 
 <style>
-  .added {
-    background-color: lightgreen;
-    padding: 5px;
-  }
-  .removed {
-    background-color: palevioletred;
-    color: white;
-    padding: 5px;
-  }
 </style>

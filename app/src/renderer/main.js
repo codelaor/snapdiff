@@ -11,8 +11,10 @@ import 'buefy/lib/buefy.css';
 
 import SnapshotColumn from './components/SnapshotColumn';
 import DiffLinkColumn from './components/DiffLinkColumn';
+import TableValueColumn from './components/TableValueColumn';
 Vue.component('SnapshotColumn', SnapshotColumn);
 Vue.component('DiffLinkColumn', DiffLinkColumn);
+Vue.component('TableValueColumn', TableValueColumn);
 
 Vue.use(Buefy, {
   defaultTooltipAnimated: true,
