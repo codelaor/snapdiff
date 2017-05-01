@@ -9,7 +9,7 @@
              v-if="this.$route.name === 'database'"
              @click="createSnapshots"
              title="Create new snapshot for all tables">
-            <b-icon icon="content_copy" />
+            <b-icon icon="archive" />
             <span v-if="snapshotsExist">Recreate snapshots</span>
             <span v-else>Create snapshots</span>
           </a>

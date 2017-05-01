@@ -38,7 +38,7 @@
                        position="is-bottom">
               <a class="button"
                  @click="createSnapshot">
-                <b-icon icon="content_copy" />
+                <b-icon icon="archive" />
               </a>
             </b-tooltip>
             <b-tooltip label="Diff snapshot"
