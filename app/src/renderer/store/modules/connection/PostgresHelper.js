@@ -48,14 +48,15 @@ export default class PostgresHelper extends DatabaseHelper {
    * @returns {string[]}          Promise: Field names
    *
    */
-  getTablePrimaryKeyFields(schemaName, tableName) {
-    return this.knex.schema.raw(`
+  async getTablePrimaryKeyFields(schemaName, tableName) {
+    const fields = await this.knex.schema.raw(`
       SELECT a.attname as name
         FROM   pg_index i
         JOIN   pg_attribute a ON a.attrelid = i.indrelid
                             AND a.attnum = ANY(i.indkey)
         WHERE  i.indrelid = '${schemaName}.${tableName}'::regclass
         AND    i.indisprimary;
-    `).map(row => row.name);
+    `);
+    return fields.rows.map(row => row.name);
   }
 }

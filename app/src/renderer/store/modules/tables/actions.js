@@ -83,37 +83,8 @@ export default {
       .then((columns) => commit('setCurrentColumns', columns));
   },
 
-  //eslint-disable-next-line
-  async getTablePrimaryKeyFields({ rootState, state }, { schemaName, tableName }) {
-    let query = '';
-    let results = [];
-    let fields = [];
-    switch (rootState.connection.client) {
-      case 'pg':
-        query = rootState.connection.knex.schema.raw(`
-          SELECT a.attname as name
-            FROM   pg_index i
-            JOIN   pg_attribute a ON a.attrelid = i.indrelid
-                                AND a.attnum = ANY(i.indkey)
-            WHERE  i.indrelid = '${schemaName}.${tableName}'::regclass
-            AND    i.indisprimary;
-        `);
-        results = await query;
-        fields = results.rows.map(row => row.name);
-        break;
-      case 'sqlite3':
-        query = rootState.connection.knex.schema.raw(`PRAGMA table_info(${tableName})`);
-        results = await query;
-        fields = results
-          .filter(row => row.pk)
-          .sort((a, b) => a.pk - b.pk)
-          .map(row => row.name);
-        break;
-      default:
-        throw new Error('Unsupported client type - do not know how to get primary key');
-    }
-    return fields;
-    // return rootState.connection.dbHelper.getTablePrimaryKeyFields(schemaName, tableName);
+  getTablePrimaryKeyFields({ rootState, state }, { schemaName, tableName }) {
+    return rootState.connection.dbHelper.getTablePrimaryKeyFields(schemaName, tableName);
   },
 
   setCurrentTotalRows({ commit, state, rootState }) {
