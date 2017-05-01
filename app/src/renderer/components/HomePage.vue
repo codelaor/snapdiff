@@ -5,9 +5,10 @@
       <page-header :no-home="true"/>
     </div>
     <div class="column is-half is-offset-one-quarter">
-      <img class="home-page-group"
-           src="../../../../art/logo.png"
-           alt="electron-vue">
+      <figure class="image">
+        <img src="../../../../art/logo.png"
+            alt="SnapDiff logo">
+      </figure>
     </div>
   
     <div class="column is-offset-5">

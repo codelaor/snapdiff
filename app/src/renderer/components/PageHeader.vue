@@ -1,5 +1,8 @@
 <template>
-  <nav class="nav has-shadow">
+  <nav v-bind:class="{
+    nav: true,
+    'has-shadow': !noHome
+   }">
     <div class="container">
       <div v-if="!noHome" class="nav-left">
         <b-tooltip label="Sign-out" position="is-bottom">
