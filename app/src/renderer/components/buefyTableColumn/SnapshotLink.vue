@@ -1,4 +1,4 @@
-// Custom component for displaying table name with drill down 
+// Custom component for displaying snapshot information with drill down 
 // refer https://buefy.github.io/#/documentation/table
 <template>
   <a v-if="row.snapshotError"

@@ -20,7 +20,7 @@
         <b-table-column field="key"
                         label="Field" />
         <b-table-column field="dbValue"
-                        :component="table.snapshotExists ? 'TableRowValueDiff' : null"
+                        :component="table.snapshotExists ? 'TableRowValueDiff' : 'TableRowValue'"
                         :label="table.snapshotCreated ? `Current Value` : 'Value'" />
         <b-table-column field="snapshotValue"
                         component="TableRowValueDiff"

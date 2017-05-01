@@ -1,4 +1,4 @@
-// Custom component for displaying table name with drill down 
+// Custom component for displaying table row value with diff colors and drill down 
 // refer https://buefy.github.io/#/documentation/table
 <template>
   <span v-if="data" @click.stop="onClick" v-bind:class="{ removed: changeType === 'Removed', added: changeType === 'Added' }" >
