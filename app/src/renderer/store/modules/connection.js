@@ -1,4 +1,6 @@
 import knex from 'knex';
+import PostgresHelper from './connection/PostgresHelper';
+import SqliteHelper from './connection/SqliteHelper';
 
 // root state object.
 const state = {
@@ -10,6 +12,7 @@ const state = {
   database: '',
   filename: '',
   knex: null,
+  dbHelper: null,
 };
 
 const mutations = {
@@ -21,10 +24,19 @@ const mutations = {
     state.password = connection.password;
     state.database = connection.database;
     state.filename = connection.filename;
-    state.knex = connection.knex;
   },
-  setKnex(state, knex) {
+  setKnex(state, { knex, client }) {
     state.knex = knex;
+    switch (client) {
+      case 'pg':
+        state.dbHelper = new PostgresHelper(knex);
+        break;
+      case 'sqlite3':
+        state.dbHelper = new SqliteHelper(knex);
+        break;
+      default:
+        state.dbHelper = null;
+    }
   },
 };
 
@@ -62,10 +74,11 @@ const actions = {
       useNullAsDefault: true,
     });
 
-    const connection = Object.assign({
+    commit('setConnection', parameters);
+    commit('setKnex', {
       knex: knexConnection,
-    }, parameters);
-    commit('setConnection', connection);
+      client: parameters.client,
+    });
   },
 
   disconnect: ({ commit }) => {
@@ -74,7 +87,10 @@ const actions = {
       state.knex.destroy();
     }
 
-    commit('setKnex', null);
+    commit('setKnex', {
+      knex: null,
+      client: null,
+    });
   },
 };
 

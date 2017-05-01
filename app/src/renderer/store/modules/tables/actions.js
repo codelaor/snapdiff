@@ -59,31 +59,8 @@ export default {
       });
   },
   setTables({ rootState, dispatch, commit }) {
-    // Get database tables from connection.  We need these anyway and it has the benefit
-    // of testing our connection was successful
-    let queryTables;
-    switch (rootState.connection.client) {
-      case 'sqlite3':
-        // Query tables now and return promise for caller to wait on
-        queryTables = rootState.connection.knex('sqlite_master')
-          .select('name')
-          .where('type', 'table')
-          .andWhere('name', '<>', 'sqlite_sequence')
-          .andWhere('name', '<>', 'sqlite_stat1')
-          .orderBy('name');
-        break;
-      case 'pg':
-        queryTables = rootState.connection.knex('information_schema.tables')
-          .select(['table_schema as schema', 'table_name as name'])
-          .where('table_type', 'BASE TABLE')
-          .andWhere('table_schema', '<>', 'information_schema')
-          .andWhere('table_schema', '<>', 'pg_catalog')
-          .orderBy(['schema', 'name']);
-        break;
-      default:
-        throw new Error('Unsupported client type - do not know how to read tables');
-    }
-    return queryTables
+    // Get database tables using database helper (every client is different)
+    return rootState.connection.dbHelper.getTables()
       .then(async (results) => {
         const resultsWithPrimaryKeyFields = await Promise.all(results.map(async table => {
           const primaryKeyFields = await dispatch('getTablePrimaryKeyFields', {
@@ -102,31 +79,11 @@ export default {
 
   setCurrentTableColumns: ({ commit, state, rootState }) => {
     const table = state.all[state.current.index];
-    let query;
-    switch (rootState.connection.client) {
-      case 'sqlite3':
-        query = rootState.connection.knex.schema.raw(`PRAGMA table_info(${table.name})`)
-          // .orderBy('cid')
-          .map((row) => ({
-            name: row.name,
-          }));
-        break;
-      case 'pg':
-        query = rootState.connection.knex('information_schema.columns')
-          .where('table_schema', table.schema)
-          .andWhere('table_name', table.name)
-          // .orderBy('ordinal_position')
-          .map((row) => ({
-            name: row.column_name,
-          }));
-        break;
-      default:
-        throw new Error('Unsupported client type - do not know how to get table columns');
-    }
-
-    return query.then((columns) => commit('setCurrentColumns', columns));
+    return rootState.connection.dbHelper.getTableColumns(table.schema, table.name)
+      .then((columns) => commit('setCurrentColumns', columns));
   },
 
+  //eslint-disable-next-line
   async getTablePrimaryKeyFields({ rootState, state }, { schemaName, tableName }) {
     let query = '';
     let results = [];
@@ -155,8 +112,8 @@ export default {
       default:
         throw new Error('Unsupported client type - do not know how to get primary key');
     }
-
     return fields;
+    // return rootState.connection.dbHelper.getTablePrimaryKeyFields(schemaName, tableName);
   },
 
   setCurrentTotalRows({ commit, state, rootState }) {
