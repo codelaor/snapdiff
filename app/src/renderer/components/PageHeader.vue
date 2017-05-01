@@ -8,7 +8,7 @@
         <b-tooltip label="Sign-out" position="is-bottom">
           <a class="nav-item" v-on:click="goHome">
             <b-icon icon="home"/>
-            <img src="../../../../art/banner_logo.svg"/>
+            <img src="../../../../art/banner_logo_nav.png"/>
           </a>
         </b-tooltip>
       </div>
