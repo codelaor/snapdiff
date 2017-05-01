@@ -1,6 +1,6 @@
 {
   "name": "snapdiff",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Quickly snapshot and diff database tables.",
   "scripts": {
     "build": "npm run pack && build",
@@ -49,8 +49,16 @@
       ]
     }
   },
-  "author": "Peter Roehlen",
-  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codelaor/snapdiff.git"
+  },
+  "author": "Code Laor Company Limited",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/codelaor/snapdiff/issues"
+  },
+  "homepage": "https://github.com/codelaor/snapdiff#readme",
   "devDependencies": {
     "babel-core": "^6.8.0",
     "babel-loader": "^6.2.4",
