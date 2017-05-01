@@ -44,11 +44,11 @@
         <b-table-column field="snapshotCreated"
                         label="Snapshot"
                         width="25"
-                        component="snapshot-column"
+                        component="snapshot-link"
                         sortable/>
         <b-table-column field="diffRowsChanged"
                         label="Diff"
-                        component="diff-link-column"
+                        component="diff-link"
                         width="25"
                         sortable/>
       </b-table>

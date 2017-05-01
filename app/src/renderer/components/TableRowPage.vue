@@ -20,10 +20,10 @@
         <b-table-column field="key"
                         label="Field" />
         <b-table-column field="dbValue"
-                        component="TableValueColumn"
+                        :component="table.snapshotExists ? 'TableRowValueDiff' : null"
                         :label="table.snapshotCreated ? `Current Value` : 'Value'" />
         <b-table-column field="snapshotValue"
-                        component="TableValueColumn"
+                        component="TableRowValueDiff"
                         v-if="table.snapshotCreated"
                         :label="`@ ${ formatTime(table.snapshotCreated) }`" />
       </b-table>

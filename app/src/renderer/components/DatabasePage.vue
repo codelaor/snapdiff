@@ -46,7 +46,7 @@
                         label="Snapshot"
                         v-if="snapshotsExist"
                         width="25"
-                        component="snapshot-column"
+                        component="snapshot-link"
                         sortable/>
       </b-table>
   

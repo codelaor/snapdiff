@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: 'diff-link-column',
+  name: 'diff-link',
   props: ['data', 'row'], // beufy table props
   methods: {
     async onClick() {

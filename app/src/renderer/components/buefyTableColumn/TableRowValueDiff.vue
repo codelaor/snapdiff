@@ -7,9 +7,8 @@
 </template>
 
 <script>
-import { formatTime } from '../formatters';
 export default {
-  name: 'snapshot-column',
+  name: 'table-row-value-diff',
   props: ['data', 'row'], // beufy table props
   computed: {
     changeType() {
@@ -28,7 +27,6 @@ export default {
     },
   },
   methods: {
-    formatTime,
     onClick() {
       this.$dialog.alert({
         title: 'Field value',

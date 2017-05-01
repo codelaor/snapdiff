@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import { formatTime } from '../formatters';
+import { formatTime } from '../../formatters';
 export default {
-  name: 'snapshot-column',
+  name: 'snapshot-link',
   props: ['data', 'row'], // beufy table props
   methods: {
     formatTime,
