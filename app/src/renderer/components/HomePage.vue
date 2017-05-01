@@ -107,6 +107,7 @@
 <script>
 import PageHeader from './PageHeader';
 import { remote } from 'electron';
+import fs from 'fs';
 
 export default {
   name: 'home-page',
@@ -149,6 +150,7 @@ export default {
     },
     async connect() {
       try {
+        this.validateFilename();
         await this.$store.dispatch('connection/connect', this.connection);
         await this.$store.dispatch('tables/setTables');
         this.$router.push({ name: 'database' });
@@ -159,6 +161,20 @@ export default {
           position: 'bottom-left',
           duration: 5000,
         });
+      }
+    },
+    validateFilename() {
+      // Check Filename is required
+      if (this.selectedClient.parameters.includes('filename')) {
+        // Check file name has been entered
+        if (!this.connection.filename) {
+          throw new Error('A database file name is required for this client.');
+        }
+
+        // See if file exists
+        if (!fs.existsSync(this.connection.filename)) {
+          throw new Error('File does not exist');
+        }
       }
     },
   },
