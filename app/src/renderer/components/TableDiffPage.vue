@@ -46,7 +46,6 @@
       };
     },
     methods: {
-      /* eslint-disable */
       onSelect(row) {
         const key = {};
         this.table.primaryKeyFields.forEach(field => {

@@ -41,6 +41,17 @@ export default {
   components: {
     PageHeader,
   },
+  created() {
+    this.$store.dispatch('tables/getCurrentRow')
+      .then(result => {
+        this.row = result;
+      });
+  },
+  data() {
+    return {
+      row: [],
+    };
+  },
   computed: {
     pageTitle() {
       const title = `Table '${this.$store.getters['tables/current'].name}' Row`;
@@ -48,9 +59,6 @@ export default {
     },
     table() {
       return this.$store.getters['tables/current'];
-    },
-    row() {
-      return this.$store.getters['tables/currentRow'];
     },
   },
   methods: {

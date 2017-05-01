@@ -1,7 +1,7 @@
 // Custom component for displaying table name with drill down 
 // refer https://buefy.github.io/#/documentation/table
 <template>
-  <span @click.stop="onClick" v-bind:class="{ removed: changeType === 'Removed', added: changeType === 'Added' }" >
+  <span v-if="data" @click.stop="onClick" v-bind:class="{ removed: changeType === 'Removed', added: changeType === 'Added' }" >
         {{ data }}
   </span>
 </template>
@@ -22,8 +22,6 @@ export default {
         changeType = 'Removed';
       } else if (thisValue === dbValue && thisValue !== snapshotValue) {
         changeType = 'Added';
-      } else {
-        changeType = 'NoChange';
       }
 
       return changeType;
