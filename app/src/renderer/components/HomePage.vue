@@ -153,6 +153,7 @@ export default {
         this.validateFilename();
         await this.$store.dispatch('connection/connect', this.connection);
         await this.$store.dispatch('tables/setTables');
+        this.$store.commit('pages/setDatabaseActiveTab', 'Tables');
         this.$router.push({ name: 'database' });
       } catch (err) {
         this.$snackbar.open({

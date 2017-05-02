@@ -5,10 +5,9 @@ export default [
     component: require('components/HomePage'),
   },
   {
-    path: '/row',
-    name: 'row',
-    component: require('components/TableRowPage'),
-    props: true,
+    path: '/database',
+    name: 'database',
+    component: require('components/DatabasePage'),
   },
   {
     path: '/table',
@@ -23,15 +22,10 @@ export default [
     props: true,
   },
   {
-    path: '/database/diffs',
-    name: 'databaseDiffs',
-    component: require('components/DatabaseDiffsPage'),
+    path: '/row',
+    name: 'row',
+    component: require('components/TableRowPage'),
     props: true,
-  },
-  {
-    path: '/database',
-    name: 'database',
-    component: require('components/DatabasePage'),
   },
   {
     path: '/error',

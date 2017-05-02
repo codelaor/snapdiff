@@ -6,7 +6,6 @@
       <div class="level">
         <div class="level-left">
           <a class="level-item"
-             v-if="this.$route.name === 'database'"
              @click="createSnapshots"
              title="Create new snapshot for all tables">
             <b-icon icon="archive" />
@@ -24,39 +23,18 @@
         <div class="level-right">
         </div>
       </div>
-      <!--Table-->
-      <b-table :data="tables"
-               v-if="tables.length"
-               :selectable="true"
-               :striped="true"
-               :paginated="true"
-               :per-page="12"
-               :pagination-simple="true"
-               :default-sort="['name', 'asc']"
-               @select="onSelect"
-               render-html>
-        <b-table-column field="schema"
-                        label="Schema"
-                        v-if="client.hasSchemas"
-                        sortable/>
-        <b-table-column field="name"
-                        label="Name"
-                        sortable/>
-        <b-table-column field="snapshotCreated"
-                        label="Snapshot"
-                        v-if="snapshotsExist"
-                        width="25"
-                        component="snapshot-link"
-                        sortable/>
-      </b-table>
   
-      <p v-if="!tables.length">
-        No tables found in database (system tables are excluded.)
-      </p>
-
-    <b-message title="Snapshots not created yet" has-icon type="is-info" v-if="tables.length && !snapshotsExist">
-        Click 'Create snapshots' to snapshot all tables.  These snapshots can then be diffed to look for changes.
-    </b-message>
+      <!--Tabs-->
+      <div class="tabs">
+        <ul>
+          <li :class="{ 'is-active': activeTab === 'Tables' }"><a @click="selectTabTables">Tables</a></li>
+          <li :class="{ 'is-active': activeTab === 'Diffs' }"><a @click="selectTabDiffs">Diffs</a></li>
+        </ul>
+      </div>
+  
+      <database-tables v-if="activeTab === 'Tables'" />
+      
+      <database-diffs v-if="activeTab === 'Diffs'" />
   
     </div>
     <div id="SnapshottingDialog"
@@ -77,11 +55,15 @@
 
 <script>
 import PageHeader from './PageHeader';
+import DatabaseTables from './DatabaseTables';
+import DatabaseDiffs from './DatabaseDiffs';
 
 export default {
   name: 'database-page',
   components: {
     PageHeader,
+    DatabaseTables,
+    DatabaseDiffs,
   },
   data() {
     return {
@@ -96,6 +78,9 @@ export default {
     };
   },
   computed: {
+    activeTab() {
+      return this.$store.state.pages.database.activeTab;
+    },
     pageTitle() {
       let pageTitle = `Database '${this.databaseTitle}'`;
       if (this.$route.name === 'diffs') {
@@ -114,6 +99,12 @@ export default {
     },
   },
   methods: {
+    selectTabDiffs() {
+      this.$store.commit('pages/setDatabaseActiveTab', 'Diffs');
+    },
+    selectTabTables() {
+      this.$store.commit('pages/setDatabaseActiveTab', 'Tables');
+    },
     async onSelect(row) {
       await this.$store.dispatch('tables/setCurrentTable', {
         schemaName: row.schema,
@@ -124,6 +115,7 @@ export default {
       });
     },
     async createSnapshots() {
+      this.selectTabTables();
       this.processing.task = 'Creating snapshots';
       this.processing.tableIndex = 1;
       this.processing.tableCount = this.$store.state.tables.all.length;
@@ -186,9 +178,7 @@ export default {
       }
 
       this.$snackbar.open(`Diff of ${tablesWithSnapshots.length} table snapshots completed.`);
-      this.$router.push({
-        name: 'databaseDiffs',
-      });
+      this.selectTabDiffs();
     },
   },
 };
