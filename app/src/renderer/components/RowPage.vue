@@ -14,8 +14,8 @@
           <div class="level">
             <div class="level-right">
               <div class="level-item">
-                <b-tooltip label="Refresh current data" position="is-bottom">
-                  <a class="button" :disabled="table.showSnapshot" @click="refresh">
+                <b-tooltip label="Refresh" position="is-bottom">
+                  <a class="button" @click="refresh">
                     <b-icon icon="refresh" />
                   </a>
                 </b-tooltip>
@@ -71,6 +71,11 @@ export default {
   },
   methods: {
     formatTime,
+    refresh() {
+      this.$store.commit('tables/setCurrentRowKey', {
+        key: this.table.rowKey,
+      });
+    },
   },
 };
 

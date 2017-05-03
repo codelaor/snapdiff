@@ -6,7 +6,11 @@
       <div class="columns">
         <div class="column">
           <!--Breadcrumbs-->
-          <breadcrumbs class="is-half" />
+          <div class="level">
+            <div class="level-right">
+              <breadcrumbs class="is-half" />
+            </div>
+          </div>
         </div>
         <div class="column is-narrow">
           <!--Toolbar-->
@@ -38,7 +42,10 @@
       <div class="tabs is-boxed">
         <ul>
           <li :class="{ 'is-active': activeTab === 'Current' }"><a @click="selectTabCurrent">Current data</a></li>
-          <li :class="{ 'is-active': activeTab === 'Snapshot' }"><a @click="selectTabSnapshot">Snapshot</a></li>
+          <li :class="{ 'is-active': activeTab === 'Snapshot' }">
+            <a @click="selectTabSnapshot">Snapshot
+              <span v-if="table.snapshotCreated">@ {{ formatTime(table.snapshotCreated)}}</span>
+            </a></li>
           <li :class="{ 'is-active': activeTab === 'Diff' }"><a @click="selectTabDiff">Diff</a></li>
         </ul>
       </div>

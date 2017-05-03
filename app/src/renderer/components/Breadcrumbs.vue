@@ -1,17 +1,18 @@
 <template>
-  <div>
-    <span v-for="(route, index) in routes">
-      <span v-if="index > 0">
-        >>
-      </span>
+  <div class="content">
+    <span class="subtitle">
+      <span v-for="(route, index) in routes">
 
-      <a v-if="index !== routes.length - 1" @click="goBack(index - routes.length + 1)">
-        {{ route.title }}
-      </a>
-      <span v-else>
-        {{ route.title }}
-      </span>
+        <b-icon v-if="index > 0" icon="chevron_right"/>
 
+        <a v-if="index !== routes.length - 1" @click="goBack(index - routes.length + 1)">
+          {{ route.title }}
+        </a>
+        <span v-else>
+          {{ route.title }}
+        </span>
+
+      </span>
     </span>
   </div>
 </template>

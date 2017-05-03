@@ -101,12 +101,14 @@ const getters = {
   },
   databaseTitle(state, getters) {
     let title = '';
+    let lastSlash = 0;
     switch (state.client) {
       case 'pg':
         title = state.database;
         break;
       case 'sqlite3':
-        title = state.filename;
+        lastSlash = state.filename.lastIndexOf('/') + 1;  // TODO - check if works with windows
+        title = state.filename.substring(lastSlash);
         break;
       default:
         title = getters.client.name;
