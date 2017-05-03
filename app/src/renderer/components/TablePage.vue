@@ -45,9 +45,14 @@
           <li :class="{ 'is-active': activeTab === 'Current' }"><a @click="selectTabCurrent">Current data</a></li>
           <li :class="{ 'is-active': activeTab === 'Snapshot' }">
             <a @click="selectTabSnapshot">Snapshot
-                  <span v-if="table.snapshotCreated">&nbsp;@ {{ formatTime(table.snapshotCreated)}}</span>
-                </a></li>
-          <li :class="{ 'is-active': activeTab === 'Diff' }"><a @click="selectTabDiff">Diff</a></li>
+              <span v-if="table.snapshotCreated">&nbsp;@ {{ formatTime(table.snapshotCreated)}}</span>
+            </a>
+          </li>
+          <li :class="{ 'is-active': activeTab === 'Diff' }">
+            <a @click="selectTabDiff">Diff
+              <span v-if="table.diffedAt">&nbsp;@ {{ formatTime(table.diffedAt)}}</span>
+            </a>
+          </li>
         </ul>
       </div>
   
@@ -130,7 +135,6 @@ export default {
         });
 
         this.selectTabSnapshot();
-        debugger; // eslint-disable-line
         if (this.table.snapshotError) {
           this.$snackbar.open({
             type: 'is-danger',
@@ -140,9 +144,8 @@ export default {
           this.$snackbar.open('Snapshot created');
         }
       } catch (err) {
-        this.$toast.open({
+        this.$snackbar.open({
           message: err.message,
-          position: 'bottom-right',
           type: 'is-danger',
         });
       }
@@ -156,9 +159,8 @@ export default {
         this.$snackbar.open('Snapshot diffed');
         this.selectTabDiff();
       } catch (err) {
-        this.$toast.open({
+        this.$snackbar.open({
           message: err.message,
-          position: 'bottom-right',
           type: 'is-danger',
         });
       }

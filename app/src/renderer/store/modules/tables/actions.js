@@ -46,6 +46,7 @@ export default {
         return entry;
       });
   },
+
   setTables({ rootState, dispatch, commit }) {
     // Get database tables using database helper (every client is different)
     return rootState.connection.dbHelper.getTables()
@@ -245,6 +246,11 @@ export default {
     const table = state.all.find(table =>
       table.name === tableName && table.schema === schemaName
     );
+
+    // Validate we have snapshot to diff against
+    if (!table.snapshotCreated) {
+      throw new Error('No snapshot found - cannot diff');
+    }
 
     const diff = await dispatch('getTableDiff', {
       schemaName,

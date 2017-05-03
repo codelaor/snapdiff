@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <page-header/>
-
+  
     <div class="column">
       <!--Content header / toolbar-->
       <div class="columns">
@@ -26,7 +26,7 @@
           </div>
         </div>
       </div>
-
+  
       <!--Tabs-->
       <div class="tabs is-boxed">
         <ul>
@@ -134,9 +134,8 @@ export default {
         return promise;
       }))
         .catch((err) => {
-          this.$toast.open({
+          this.$snackbar.open({
             message: err.message,
-            position: 'bottom-right',
             type: 'is-danger',
           });
         });
@@ -160,9 +159,8 @@ export default {
           tableName: table.name,
         })
           .catch((err) => {
-            this.$toast.open({
+            this.$snackbar.open({
               message: err.message,
-              position: 'bottom-right',
               type: 'is-danger',
             });
           })

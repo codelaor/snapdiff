@@ -1,6 +1,13 @@
-# snapdiff
+# SnapDiff
 
 > Quickly snapshot and diff database tables.
+
+WARNING: This application is currently in pre-release state.
+
+### Limitations
+
+* Snapshot size is currently limited to 1000 rows.  Tables of greater sizes cannot currently be snapshotted or diffed.  [See issue #8](https://github.com/codelaor/snapdiff/issues/8).
+* ***Please Note:*** SnapDiff is not a production database support tool but an application development utility.  Snapshotting takes place while the database is live and recieving concurrent updates and for this reason cannot be relied upon in a multi-user environment.
 
 ## Build Setup
 

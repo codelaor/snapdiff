@@ -80,9 +80,8 @@ export default {
         this.$store.commit('pages/setTableActiveTab', 'Diff');
         this.$router.push({ name: 'table' });
       } catch (err) {
-        this.$toast.open({
+        this.$snackbar.open({
           message: err.message,
-          position: 'bottom-right',
           type: 'is-danger',
         });
       }
