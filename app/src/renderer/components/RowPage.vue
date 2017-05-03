@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <page-header/>
-
+  
     <div class="column">
       <!--Content header / toolbar-->
       <div class="columns">
@@ -13,29 +13,21 @@
           <!--Toolbar-->
           <div class="level">
             <div class="level-right">
-              <div class="level-item">
+              <a class="level-item" @click="refresh">
                 <b-tooltip label="Refresh" position="is-bottom">
-                  <a class="button" @click="refresh">
-                    <b-icon icon="refresh" />
-                  </a>
+                  <b-icon icon="refresh" />
+                  Refresh
                 </b-tooltip>
-              </div>
+              </a>
             </div>
           </div>
         </div>
       </div>
-
-      <b-table :data="row"
-               :striped="true">
-        <b-table-column field="key"
-                        label="Field" />
-        <b-table-column field="dbValue"
-                        :component="table.snapshotExists ? 'TableRowValueDiff' : 'TableRowValue'"
-                        :label="table.snapshotCreated ? `Current Value` : 'Value'" />
-        <b-table-column field="snapshotValue"
-                        component="TableRowValueDiff"
-                        v-if="table.snapshotCreated"
-                        :label="`@ ${ formatTime(table.snapshotCreated) }`" />
+  
+      <b-table :data="row" :striped="true">
+        <b-table-column field="key" label="Field" />
+        <b-table-column field="dbValue" :component="table.snapshotExists ? 'TableRowValueDiff' : 'TableRowValue'" :label="table.snapshotCreated ? `Current Value` : 'Value'" />
+        <b-table-column field="snapshotValue" component="TableRowValueDiff" v-if="table.snapshotCreated" :label="`@ ${ formatTime(table.snapshotCreated) }`" />
       </b-table>
     </div>
   
@@ -72,9 +64,11 @@ export default {
   methods: {
     formatTime,
     refresh() {
-      this.$store.commit('tables/setCurrentRowKey', {
-        key: this.table.rowKey,
-      });
+      this.$store.dispatch('tables/getCurrentRow')
+        .then(result => {
+          this.row = result;
+          this.$snackbar.open('Data refreshed');
+        });
     },
   },
 };
@@ -82,4 +76,5 @@ export default {
 </script>
 
 <style>
+
 </style>

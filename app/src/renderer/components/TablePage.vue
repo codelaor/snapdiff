@@ -16,23 +16,24 @@
           <!--Toolbar-->
           <div class="level">
             <div class="level-right">
-              <div class="level-item">
+              <a class="level-item" :disabled="table.showSnapshot" @click="refresh">
                 <b-tooltip label="Refresh current data" position="is-bottom">
-                  <a class="button" :disabled="table.showSnapshot" @click="refresh">
-                    <b-icon icon="refresh" />
-                  </a>
+                  <b-icon icon="refresh" />
+                  <span>Refresh</span>
                 </b-tooltip>
+              </a>
+              <a class="level-item" @click="createSnapshot">
                 <b-tooltip label="Create / update snapshot" position="is-bottom">
-                  <a class="button" @click="createSnapshot">
-                    <b-icon icon="archive" />
-                  </a>
+                  <b-icon icon="archive" />
+                  <span>Snapshot</span>
                 </b-tooltip>
+              </a>
+              <a class="level-item" @click="gotoDiff" :disabled="!table.snapshotCreated">
                 <b-tooltip label="Diff snapshot" position="is-bottom">
-                  <a class="button" @click="gotoDiff" :disabled="!table.snapshotCreated">
-                    <b-icon icon="compare" />
-                  </a>
+                  <b-icon icon="compare" />
+                  <span>Diff</span>
                 </b-tooltip>
-              </div>
+              </a>
             </div>
           </div>
         </div>
@@ -44,8 +45,8 @@
           <li :class="{ 'is-active': activeTab === 'Current' }"><a @click="selectTabCurrent">Current data</a></li>
           <li :class="{ 'is-active': activeTab === 'Snapshot' }">
             <a @click="selectTabSnapshot">Snapshot
-              <span v-if="table.snapshotCreated">@ {{ formatTime(table.snapshotCreated)}}</span>
-            </a></li>
+                <span v-if="table.snapshotCreated">@ {{ formatTime(table.snapshotCreated)}}</span>
+              </a></li>
           <li :class="{ 'is-active': activeTab === 'Diff' }"><a @click="selectTabDiff">Diff</a></li>
         </ul>
       </div>
@@ -127,6 +128,7 @@ export default {
         tableName: this.table.name,
       })
         .then(() => {
+          this.selectTabSnapshot();
           this.$snackbar.open('Snapshot created');
         })
         .catch((err) => {
@@ -143,9 +145,8 @@ export default {
           schemaName: this.table.schema,
           tableName: this.table.name,
         });
-        this.$router.push({
-          name: 'tableDiff',
-        });
+        this.$snackbar.open('Snapshot diffed');
+        this.selectTabDiff();
       } catch (err) {
         this.$toast.open({
           message: err.message,
