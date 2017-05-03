@@ -53,46 +53,32 @@
         </div>
       </div>
     </div>
-  
-    <!--Table-->
-    <div class="scrollWrapper">
-      <b-table v-if="table.rows.length"
-               :data="table.rows"
-               :selectable="true"
-               @select="onRowSelect"
-               :striped="true">
-        <!--Table Header-->
-        <b-table-column v-for="column in table.columns"
-                        :field="column.name"
-                        :label="column.name" />
-        <!--<i v-if="table.primaryKeyFields.includes(column.name)" class="fa fa-key"/> {{ column.name }}-->
-  
-      </b-table>
+    <!--Tabs-->
+    <div class="tabs">
+      <ul>
+        <li :class="{ 'is-active': activeTab === 'Current' }"><a @click="selectTabCurrent">Current data</a></li>
+        <li :class="{ 'is-active': activeTab === 'Snapshot' }"><a @click="selectTabSnapshot">Snapshot</a></li>
+        <li :class="{ 'is-active': activeTab === 'Diff' }"><a @click="selectTabDiff">Diff</a></li>
+      </ul>
     </div>
-    <!--Pager-->
-    <b-pagination v-if="table.rows.length"
-                  class="is-pulled-right"
-                  :total="table.totalRows"
-                  :current="table.page"
-                  :per-page="10"
-                  :simple="true"
-                  @change="pageChanged">
-    </b-pagination>
-    <div v-if="!table.rows.length"
-         class="notification is-info">
-      No data found.
-    </div>
+
+    <table-data v-if="activeTab === 'Current' || activeTab === 'Snapshot'" />
+    <table-diff v-if="activeTab === 'Diff'" />
   </div>
 </template>
 
 <script>
 import { formatTime } from '../formatters';
 import PageHeader from './PageHeader';
+import TableData from './TableData';
+import TableDiff from './TableDiff';
 
 export default {
   name: 'table-page',
   components: {
     PageHeader,
+    TableData,
+    TableDiff,
   },
   computed: {
     pageTitle() {
@@ -102,17 +88,32 @@ export default {
       }
       return title;
     },
+    activeTab() {
+      return this.$store.state.pages.table.activeTab;
+    },
     table() {
       return this.$store.getters['tables/current'];
     },
   },
-  watch: {
-    limit() {
-      this.getData();
-    },
-  },
   methods: {
     formatTime,
+    selectTabCurrent() {
+      this.$store
+        .dispatch('tables/setCurrentShowSnapshot', {
+          showSnapshot: false,
+        });
+      this.$store.commit('pages/setTableActiveTab', 'Current');
+    },
+    selectTabSnapshot() {
+      this.$store
+        .dispatch('tables/setCurrentShowSnapshot', {
+          showSnapshot: true,
+        });
+      this.$store.commit('pages/setTableActiveTab', 'Snapshot');
+    },
+    selectTabDiff() {
+      this.$store.commit('pages/setTableActiveTab', 'Diff');
+    },
     onRowSelect(row) {
       const key = {};
       this.table.primaryKeyFields.forEach(field => {

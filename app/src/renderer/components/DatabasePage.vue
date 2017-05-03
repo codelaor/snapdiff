@@ -110,6 +110,9 @@ export default {
         schemaName: row.schema,
         tableName: row.name,
       });
+      await this.$store.dispatch('tables/setCurrentShowSnapshot', {
+        showSnapshot: false,
+      });
       this.$router.push({
         name: 'table',
       });

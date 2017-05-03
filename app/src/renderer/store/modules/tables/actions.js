@@ -13,8 +13,6 @@ function doesKeyMatch(rec1, rec2, keyFields) {
 
 export default {
   async getCurrentRow({ rootState, getters }) {
-    // Merge props of current table and record from tables into one combined
-    // table object
     const table = getters.current;
     const rowKey = table.rowKey;
     const fields = table.columns;
@@ -29,16 +27,6 @@ export default {
         return row;
       });
 
-    // const dbRow = table.rows // TODO fix. Only works if showSnapshot is set to false
-    //   .find(row => {
-    //     let matched = true;
-    //     const unmatchedKey = table.primaryKeyFields
-    //       .find(field => rowKey[field] !== row[field]);
-    //     if (unmatchedKey) {
-    //       matched = false;
-    //     }
-    //     return matched;
-    //   });
     const snapshotRow = !table.snapshotCreated ? {} : table.snapshot
       .find(row => {
         let matched = true;
@@ -139,7 +127,9 @@ export default {
     // Calculate limit and offset - ie the portion of data to display
     // based on current paging values
     const limit = state.current.rowsPerPage;
-    const offset = (state.current.page - 1) * state.current.rowsPerPage;
+    const pageMultiplier = state.current.page ? state.current.page - 1 : 0;
+    const offset = pageMultiplier * state.current.rowsPerPage;
+    debugger; // eslint-disable-line
     const selectedTable = state.all[state.current.index];
     const rows = await dispatch('getTableRows', {
       schemaName: selectedTable.schema,
@@ -150,6 +140,12 @@ export default {
       offset,
     });
     commit('setCurrentRows', rows);
+
+    // Reset current page if it was previously zero (set by buefy table when data)
+    // but we now have data
+    if (rows.length && !state.current.page) {
+      commit('setCurrentPage', 1);
+    }
   },
 
   async setCurrentTable({ dispatch, commit, state }, { schemaName, tableName }) {
@@ -168,7 +164,7 @@ export default {
 
   setCurrentPage({ dispatch, commit, state, getters }, page) {
     const totalPages = getters.tablePageCount;
-    if (page > totalPages || page < 1) {
+    if (page > totalPages) {
       throw new Error("Can't set current page to number outside range of pages.");
     }
     commit('setCurrentPage', page);
@@ -178,6 +174,7 @@ export default {
   setCurrentRowsPerPage({ dispatch, commit, state, getters }, rowsPerPage) {
     commit('setCurrentRowsPerPage', rowsPerPage);
     const newPageCount = getters.tablePageCount;
+    debugger; //eslint-disable-line
     if (state.current.page > newPageCount) {
       // Current page is now out of bounds - reset to last page
       commit('setCurrentPage', newPageCount);

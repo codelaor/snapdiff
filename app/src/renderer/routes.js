@@ -16,15 +16,9 @@ export default [
     props: true,
   },
   {
-    path: '/table/diff',
-    name: 'tableDiff',
-    component: require('components/TableDiffPage'),
-    props: true,
-  },
-  {
     path: '/row',
     name: 'row',
-    component: require('components/TableRowPage'),
+    component: require('components/RowPage'),
     props: true,
   },
   {

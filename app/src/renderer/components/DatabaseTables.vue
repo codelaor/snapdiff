@@ -25,9 +25,13 @@
                     sortable/>
   </b-table>
 
-  <p v-else>
+  <b-message v-else
+            title="No tables"
+            has-icon
+            type="is-info"
+            v-else>
     No tables found in database (system tables are excluded.)
-  </p>
+  </b-message>
 </template>
 
 <script>
@@ -51,6 +55,7 @@ export default {
         schemaName: row.schema,
         tableName: row.name,
       });
+      this.$store.commit('pages/setTableActiveTab', 'Current');
       this.$router.push({
         name: 'table',
       });

@@ -78,9 +78,8 @@ export default {
           schemaName: row.schema,
           tableName: row.name,
         });
-        this.$router.push({
-          name: 'tableDiff',
-        });
+        this.$store.commit('pages/setTableActiveTab', 'Diff');
+        this.$router.push({ name: 'table' });
       } catch (err) {
         this.$toast.open({
           message: err.message,

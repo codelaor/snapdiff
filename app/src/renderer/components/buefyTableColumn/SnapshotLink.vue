@@ -33,6 +33,7 @@ export default {
       await this.$store.dispatch('tables/setCurrentShowSnapshot', {
         showSnapshot: true,
       });
+      this.$store.commit('pages/setTableActiveTab', 'Snapshot');
       this.$router.push({
         name: 'table',
       });

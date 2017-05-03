@@ -16,9 +16,8 @@ export default {
         schemaName: this.row.schema,
         tableName: this.row.name,
       });
-      this.$router.push({
-        name: 'tableDiff',
-      });
+      this.$store.commit('pages/setTableActiveTab', 'Diff');
+      this.$router.push({ name: 'table' });
     },
   },
 };
