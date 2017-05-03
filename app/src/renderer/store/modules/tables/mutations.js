@@ -16,9 +16,10 @@ export default {
       table.schema === schemaName &&
       table.name === tableName
     );
-    state.all[tableIndex].snapshot = data;
-    state.all[tableIndex].snapshotCreated = new Date();
-    state.snapshotsExist = true;
+    Vue.set(state.all[tableIndex], 'snapshot', data);
+    Vue.set(state.all[tableIndex], 'snapshotCreated', new Date());
+    Vue.set(state.all[tableIndex], 'snapshotError', null);
+    Vue.set(state, 'snapshotsExist', true);
   },
 
   setTableSnapshotError(state, { schemaName, tableName, message }) {

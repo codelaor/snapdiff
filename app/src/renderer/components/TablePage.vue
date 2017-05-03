@@ -45,8 +45,8 @@
           <li :class="{ 'is-active': activeTab === 'Current' }"><a @click="selectTabCurrent">Current data</a></li>
           <li :class="{ 'is-active': activeTab === 'Snapshot' }">
             <a @click="selectTabSnapshot">Snapshot
-                <span v-if="table.snapshotCreated">&nbsp;@ {{ formatTime(table.snapshotCreated)}}</span>
-              </a></li>
+                  <span v-if="table.snapshotCreated">&nbsp;@ {{ formatTime(table.snapshotCreated)}}</span>
+                </a></li>
           <li :class="{ 'is-active': activeTab === 'Diff' }"><a @click="selectTabDiff">Diff</a></li>
         </ul>
       </div>
@@ -122,22 +122,30 @@ export default {
           this.$snackbar.open('Data refreshed');
         });
     },
-    createSnapshot() {
-      this.$store.dispatch('tables/snapshotTable', {
-        schemaName: this.table.schema,
-        tableName: this.table.name,
-      })
-        .then(() => {
-          this.selectTabSnapshot();
-          this.$snackbar.open('Snapshot created');
-        })
-        .catch((err) => {
-          this.$toast.open({
-            message: err.message,
-            position: 'bottom-right',
-            type: 'is-danger',
-          });
+    async createSnapshot() {
+      try {
+        await this.$store.dispatch('tables/snapshotTable', {
+          schemaName: this.table.schema,
+          tableName: this.table.name,
         });
+
+        this.selectTabSnapshot();
+        debugger; // eslint-disable-line
+        if (this.table.snapshotError) {
+          this.$snackbar.open({
+            type: 'is-danger',
+            message: 'Error creating snapshot',
+          });
+        } else {
+          this.$snackbar.open('Snapshot created');
+        }
+      } catch (err) {
+        this.$toast.open({
+          message: err.message,
+          position: 'bottom-right',
+          type: 'is-danger',
+        });
+      }
     },
     async gotoDiff() {
       try {
