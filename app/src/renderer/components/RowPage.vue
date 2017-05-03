@@ -15,8 +15,7 @@
             <div class="level-right">
               <a class="level-item" @click="refresh">
                 <b-tooltip label="Refresh" position="is-bottom">
-                  <b-icon icon="refresh" />
-                  Refresh
+                  <b-icon icon="refresh" /> Refresh
                 </b-tooltip>
               </a>
             </div>
@@ -26,7 +25,7 @@
   
       <b-table :data="row" :striped="true">
         <b-table-column field="key" label="Field" />
-        <b-table-column field="dbValue" :component="table.snapshotExists ? 'TableRowValueDiff' : 'TableRowValue'" :label="table.snapshotCreated ? `Current Value` : 'Value'" />
+        <b-table-column field="dbValue" :component="table.snapshotCreated ? 'TableRowValueDiff' : 'TableRowValue'" :label="table.snapshotCreated ? `Current Value` : 'Value'" />
         <b-table-column field="snapshotValue" component="TableRowValueDiff" v-if="table.snapshotCreated" :label="`@ ${ formatTime(table.snapshotCreated) }`" />
       </b-table>
     </div>
