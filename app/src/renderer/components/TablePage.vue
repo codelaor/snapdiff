@@ -45,7 +45,7 @@
           <li :class="{ 'is-active': activeTab === 'Current' }"><a @click="selectTabCurrent">Current data</a></li>
           <li :class="{ 'is-active': activeTab === 'Snapshot' }">
             <a @click="selectTabSnapshot">Snapshot
-                <span v-if="table.snapshotCreated">@ {{ formatTime(table.snapshotCreated)}}</span>
+                <span v-if="table.snapshotCreated">&nbsp;@ {{ formatTime(table.snapshotCreated)}}</span>
               </a></li>
           <li :class="{ 'is-active': activeTab === 'Diff' }"><a @click="selectTabDiff">Diff</a></li>
         </ul>
