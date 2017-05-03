@@ -1,51 +1,51 @@
 <template>
   <div class="container">
-    <page-header :title="pageTitle" />
+    <page-header/>
+
     <div class="column">
-      <!--Toolbar-->
-      <div class="level">
-        <div class="level-left">
-          <a class="level-item"
-             @click="createSnapshots"
-             title="Create new snapshot for all tables">
-            <b-icon icon="archive" />
-            <span v-if="snapshotsExist">Recreate snapshots</span>
-            <span v-else>Create snapshots</span>
-          </a>
-          <a class="level-item"
-             v-if="snapshotsExist"
-             @click="diffSnapshots"
-             title="Diff current data against latest snapshots">
-            <b-icon icon="compare" />
-            <span>Diff snapshots</span>
-          </a>
+      <!--Content header / toolbar-->
+      <div class="columns">
+        <div class="column">
+          <!--Breadcrumbs-->
+          <breadcrumbs class="is-half" />
         </div>
-        <div class="level-right">
+        <div class="column is-narrow">
+          <!--Toolbar-->
+          <div class="level">
+            <div class="level-right">
+              <a class="level-item" @click="createSnapshots" title="Create new snapshot for all tables">
+                <b-icon icon="archive" />
+                <span v-if="snapshotsExist">Recreate snapshots</span>
+                <span v-else>Create snapshots</span>
+              </a>
+              <a class="level-item" v-if="snapshotsExist" @click="diffSnapshots" title="Diff current data against latest snapshots">
+                <b-icon icon="compare" />
+                <span>Diff snapshots</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-  
+
       <!--Tabs-->
-      <div class="tabs">
+      <div class="tabs is-boxed">
         <ul>
           <li :class="{ 'is-active': activeTab === 'Tables' }"><a @click="selectTabTables">Tables</a></li>
           <li :class="{ 'is-active': activeTab === 'Diffs' }"><a @click="selectTabDiffs">Diffs</a></li>
         </ul>
       </div>
   
+      <!--Tab content-->
       <database-tables v-if="activeTab === 'Tables'" />
-      
       <database-diffs v-if="activeTab === 'Diffs'" />
   
     </div>
-    <div id="SnapshottingDialog"
-         v-bind:class="{ modal: true, 'is-active': processing.tableCount > processing.tableIndex }">
+    <div id="SnapshottingDialog" v-bind:class="{ modal: true, 'is-active': processing.tableCount > processing.tableIndex }">
       <div class="model-content">
         <div class="card">
           <div class="card-content">
             <p>{{ processing.task }} {{ processing.tableIndex }} of {{ processing.tableCount }}</p>
-            <progress class="progress"
-                      :value="processing.progressPercent"
-                      max="100">{{ processing.progressPercent }}%</progress>
+            <progress class="progress" :value="processing.progressPercent" max="100">{{ processing.progressPercent }}%</progress>
           </div>
         </div>
       </div>
@@ -55,6 +55,7 @@
 
 <script>
 import PageHeader from './PageHeader';
+import Breadcrumbs from './Breadcrumbs';
 import DatabaseTables from './DatabaseTables';
 import DatabaseDiffs from './DatabaseDiffs';
 
@@ -62,6 +63,7 @@ export default {
   name: 'database-page',
   components: {
     PageHeader,
+    Breadcrumbs,
     DatabaseTables,
     DatabaseDiffs,
   },
@@ -80,13 +82,6 @@ export default {
   computed: {
     activeTab() {
       return this.$store.state.pages.database.activeTab;
-    },
-    pageTitle() {
-      let pageTitle = `Database '${this.databaseTitle}'`;
-      if (this.$route.name === 'diffs') {
-        pageTitle = `${pageTitle} - Diffs`;
-      }
-      return pageTitle;
     },
     snapshotsExist() {
       return this.$store.state.tables.snapshotsExist;

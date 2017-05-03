@@ -24,9 +24,15 @@
                   @change="pageChanged">
     </b-pagination>
   
-    <div v-if="!table.rows.length"
-         class="notification is-info">
-      No data found.
+    <b-message has-icon v-if="showSnapshot && !table.snapshotCreated" type="is-info" >
+      No snapshot exists.
+    </b-message>
+    <span v-else> 
+      <b-message has-icon v-if="!table.rows.length" type="is-info" >
+          No data.
+      </b-message>
+    </span>
+
     </div>
   </div>
 </template>
@@ -35,6 +41,9 @@
 export default {
   name: 'table-page',
   computed: {
+    showSnapshot() {
+      return this.$store.state.tables.current.showSnapshot;
+    },
     table() {
       return this.$store.getters['tables/current'];
     },

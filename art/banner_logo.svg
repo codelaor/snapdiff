@@ -15,7 +15,7 @@
    viewBox="0 0 135.46667 33.866667"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.0 r"
+   inkscape:version="0.92.1 r"
    sodipodi:docname="banner_logo.svg"
    inkscape:export-filename="/home/peter/Git/snapdiff/art/banner_logo_512_128.png"
    inkscape:export-xdpi="96"
@@ -30,7 +30,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.78076374"
-     inkscape:cx="-36.157676"
+     inkscape:cx="-37.438473"
      inkscape:cy="87.430488"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -49,7 +49,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -73,7 +73,9 @@
        y="291.35785"
        x="7.8496637"
        style="font-style:normal;font-weight:normal;font-size:30.98790169px;line-height:19.36743736px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#006599;fill-opacity:1;stroke:#006599;stroke-width:0.77469754;stroke-opacity:1"
-       xml:space="preserve"><tspan
+       xml:space="preserve"
+       inkscape:export-xdpi="37.619999"
+       inkscape:export-ydpi="37.619999"><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24.79032135px;font-family:'Bitstream Vera Sans Mono';-inkscape-font-specification:'Bitstream Vera Sans Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#006599;fill-opacity:1;stroke:#006599;stroke-width:0.77469754;stroke-opacity:1"
          y="291.35785"
          x="7.8496637"
@@ -85,7 +87,9 @@
        style="font-style:normal;font-weight:normal;font-size:30.98790169px;line-height:19.36743736px;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffde00;fill-opacity:1;stroke:#ffde00;stroke-width:0.77469754;stroke-opacity:1;"
        x="67.121651"
        y="291.6059"
-       id="text4514"><tspan
+       id="text4514"
+       inkscape:export-xdpi="37.619999"
+       inkscape:export-ydpi="37.619999"><tspan
          sodipodi:role="line"
          id="tspan4512"
          x="67.121651"

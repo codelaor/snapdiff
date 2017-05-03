@@ -129,7 +129,6 @@ export default {
     const limit = state.current.rowsPerPage;
     const pageMultiplier = state.current.page ? state.current.page - 1 : 0;
     const offset = pageMultiplier * state.current.rowsPerPage;
-    debugger; // eslint-disable-line
     const selectedTable = state.all[state.current.index];
     const rows = await dispatch('getTableRows', {
       schemaName: selectedTable.schema,
@@ -174,7 +173,6 @@ export default {
   setCurrentRowsPerPage({ dispatch, commit, state, getters }, rowsPerPage) {
     commit('setCurrentRowsPerPage', rowsPerPage);
     const newPageCount = getters.tablePageCount;
-    debugger; //eslint-disable-line
     if (state.current.page > newPageCount) {
       // Current page is now out of bounds - reset to last page
       commit('setCurrentPage', newPageCount);

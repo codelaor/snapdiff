@@ -1,30 +1,28 @@
 <template>
   <nav v-bind:class="{
-      nav: true,
-      'has-shadow': !noHome
-     }">
-    <div v-if="!noHome"
-         class="nav-left">
-      <b-tooltip label="Sign-out"
-                 position="is-bottom">
-        <a class="nav-item"
-           v-on:click="goHome">
+        nav: true,
+        'has-shadow': $route.name !== 'home'
+       }">
+    <div v-if="$route.name !== 'home'" class="nav-left">
+      <a class="nav-item" v-on:click="goHome">
+        <b-tooltip label="Sign-out" position="is-right">
           <b-icon icon="home" />
-          <img src="../../../../art/banner_logo_nav.png" />
-        </a>
-      </b-tooltip>
+        </b-tooltip>
+      </a>
+      <a class="nav-item" v-if="$route.name !== 'database'" v-on:click="$router.go(-1)">
+        <b-tooltip label="Go back" position="is-right">
+          <b-icon icon="arrow_back" />
+        </b-tooltip>
+      </a>
     </div>
   
-    <div class="nav-center">
-      <strong class="nav-item"
-              v-if="title">{{ title }}</strong>
+    <div v-if="$route.name !== 'home'" class="nav-center">
+      <img class="nav-item" src="../../../../art/banner_logo_nav.png" />
     </div>
   
     <div class="nav-right">
-      <b-tooltip label="Quit"
-                 position="is-bottom">
-        <a class="nav-item"
-           v-on:click="quit">
+      <b-tooltip label="Quit" position="is-bottom">
+        <a class="nav-item" v-on:click="quit">
           <b-icon icon="power_settings_new" />
         </a>
       </b-tooltip>
@@ -36,7 +34,6 @@
 import electron from 'electron';
 export default {
   name: 'page-header',
-  props: ['title', 'noHome'],
   data() {
     return {
       connection: this.$store.state['connection/knex'],

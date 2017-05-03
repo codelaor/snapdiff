@@ -1,20 +1,30 @@
 <template>
   <div class="container">
-    <page-header :title="pageTitle" />
+    <page-header/>
+
     <div class="column">
-      <div class="level">
-        <div class="level-left">
-          <div class="level-item">
-            <b-tooltip label="Go back"
-                       position="is-bottom">
-              <a v-on:click="$router.go(-1)">
-                <b-icon icon="arrow_back" />
-              </a>
-            </b-tooltip>
+      <!--Content header / toolbar-->
+      <div class="columns">
+        <div class="column">
+          <!--Breadcrumbs-->
+          <breadcrumbs class="is-half" />
+        </div>
+        <div class="column is-narrow">
+          <!--Toolbar-->
+          <div class="level">
+            <div class="level-right">
+              <div class="level-item">
+                <b-tooltip label="Refresh current data" position="is-bottom">
+                  <a class="button" :disabled="table.showSnapshot" @click="refresh">
+                    <b-icon icon="refresh" />
+                  </a>
+                </b-tooltip>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-  
+
       <b-table :data="row"
                :striped="true">
         <b-table-column field="key"
@@ -34,12 +44,14 @@
 
 <script>
 import PageHeader from './PageHeader';
+import Breadcrumbs from './Breadcrumbs';
 import { formatTime } from '../formatters';
 
 export default {
   name: 'table-row-page',
   components: {
     PageHeader,
+    Breadcrumbs,
   },
   created() {
     this.$store.dispatch('tables/getCurrentRow')
@@ -53,10 +65,6 @@ export default {
     };
   },
   computed: {
-    pageTitle() {
-      const title = `Table '${this.$store.getters['tables/current'].name}' Row`;
-      return title;
-    },
     table() {
       return this.$store.getters['tables/current'];
     },

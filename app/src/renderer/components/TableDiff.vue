@@ -1,5 +1,5 @@
 <template>
-  <b-table v-if="table.diff.length"
+  <b-table v-if="table.diff && table.diff.length"
            :selectable="true"
            @select="onSelect"
            :data="table.diff"
@@ -10,10 +10,9 @@
                     :field="column.name"
                     :label="column.name" />
   </b-table>
-  <div v-else
-       class="notification is-primary">
+  <b-message has-icon v-else type="is-info" >
     No differences found between snapshot and current data
-  </div>
+  </b-message>
 </template>
 
 <script>
@@ -27,9 +26,6 @@ export default {
   computed: {
     table() {
       return this.$store.getters['tables/current'];
-    },
-    pageTitle() {
-      return `Table '${this.table.name}' Diff`;
     },
   },
   data() {

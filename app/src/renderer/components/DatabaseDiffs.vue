@@ -31,19 +31,18 @@
   
       <span v-else>
         <!--Message if snapshots don't exist-->
-        <b-message title="Snapshots not created yet"
-                  has-icon
+        <b-message has-icon
                   type="is-info"
                   v-if="!snapshotsExist">
           Click 'Create snapshots' to snapshot all tables. These snapshots can then be diffed to look for changes.
         </b-message>
 
         <!--Message if no diffs-->
-        <b-message title="No differences"
+        <b-message 
                   has-icon
                   type="is-info"
                   v-else>
-          No diffs found. Click 'Diff snapshots' to check / re-check difference between current data and snapshots.
+          No differences found. Click 'Diff snapshots' to check / re-check difference between current data and snapshots.
         </b-message>
       </span>
   
